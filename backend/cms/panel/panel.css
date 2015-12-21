@@ -1,0 +1,261 @@
+
+/* COMMON changes */
+.routerunner-content.panel-open .routerunner-content-wrapper {
+    overflow: hidden;
+    padding: 0;
+}
+
+.routerunner-properties .img-input {
+    max-width: 100%;
+}
+
+/*
+.routerunner-framework * {
+    font-weight: normal !important;
+    font-size: 100% !important;
+}
+*/
+
+
+/* PAGE PROPERTIES PANEL */
+#routerunner-pageproperties-panel {
+    position: relative;
+    height: 75px;
+    padding: 0;
+}
+
+.page-panel {
+    width: 100%;
+    max-height: 46px;
+    background-color: #2d5f8b;
+    z-index: 100000;
+    overflow: hidden;
+    padding: 0 15px;
+    margin: 18px 0 0;
+}
+
+.page-panel .extended {
+    z-index: 999;
+    position: relative;
+    margin-top: 5px;
+    overflow-y: auto;
+
+    background-color: #2d5f8b;
+    border-right: 1px solid #1d3d59;
+    border-bottom: 1px solid #1d3d59;
+
+    -webkit-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.2);
+    box-shadow: 0px 5px 10px 0px rgba(50, 50, 50, 0.2);
+}
+
+.page-panel .page-prop-header .form-control, .page-panel .page-prop-header button {
+    height: 36px;
+}
+
+.form-horizontal .form-group.form-md-line-input {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 25px 15px 0;
+}
+
+.form-group.form-md-line-input textarea.form-control {
+    max-width: 100%;
+}
+/*
+.form-control[value] ~ label {
+    top: 0;
+    font-size: 13px;
+}
+*/
+
+.light ::-moz-selection, input::-moz-selection {
+    color: #fff;
+    background: #2d5f8b;
+}
+.light ::selection, input::selection {
+    color: #fff;
+    background: #2d5f8b;
+}
+
+.page-panel label {
+    color: #ffffff;
+    font-size: 11px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.page-panel .btn {
+    font-size: 11px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 9px;
+    height: 35px;
+    width: 100%;
+}
+.page-panel.open {
+    transition: max-height 0.3s;
+    max-height: 1000px;
+}
+.page-panel-padding {
+    margin-top: 5px;
+}
+.page-panel a.selected {
+    background: #d64635 !important;
+}
+.social-image {
+    width: auto;
+}
+.page-panel .btn span.selected {
+    left: 50%;
+    bottom: 0;
+    position: absolute;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #d64635;
+    display: inline-block;
+    margin: 0;
+    width: 0px;
+    height: 0px;
+    margin-left: -7px;
+    margin-bottom: -6px;
+}
+
+.panel-hider {
+    display: none;
+}
+
+.model-loading {
+    color: #fff;
+}
+.model-loading .fa {
+    color: #fff;
+    font-size: 24px;
+}
+
+/* ACTION PANEL */
+
+.action-panel > ul > li > button {
+    padding: 10px;
+    margin: 5px 0 0 10px;
+}
+.action-panel > ul > li > .alert {
+    margin-left: 10px;
+}
+.action-panel > ul > li > button .fa {
+    font-size: 18px;
+    line-height: 18px;
+    position: relative;
+    top: 2px;
+}
+.action-panel > ul > li > button .badge {
+    margin-left: 5px;
+}
+.action-panel #action-new-model {
+    margin-right: 10px;
+}
+.action-panel #action-new-model > button {
+    padding: 10px;
+    margin-top: 5px;
+    line-height: 20px;
+}
+.action-panel #action-new-model > .dropdown-menu .dropdown-menu > li > a {
+    font-size: 14px;
+}
+.action-changes-waiting {
+    height: 48px;
+}
+.action-changes-waiting .alert {
+    margin-bottom: 0;
+}
+
+@media (max-width: 800px) {
+    .action-browse .btn-label,
+    .action-edit .btn-label,
+    .action-new .btn-label,
+    .routerunner-page-properties .btn-label {
+        display: none;
+    }
+    .page-header .page-header-menu.page-header-top {
+        padding: 0;
+    }
+    .page-header .page-header-menu.page-header-top .top-menu {
+        float: right;
+        clear: none;
+    }
+    #routerunner-pageproperties-panel.opened .page-panel {
+        position: fixed;
+        width: 100%;
+    }
+
+    .navbar-default .navbar-collapse {
+        position: relative;
+    }
+}
+@media (min-width: 1200px) {
+    .action-browse .btn-label, .action-edit .btn-label {
+        display: none;
+    }
+}
+@media (min-width: 1366px) {
+    .action-browse .btn-label, .action-edit .btn-label {
+        display: inline;
+    }
+}
+
+/* FOOTER PANEL */
+
+.scroll-to-top {
+    right: 40px;
+}
+.scroll-to-top i {
+    color: #fff;
+}
+
+/* IVIEWER BUTTONS */
+
+.iviewer_button.btn {
+    padding-top: 6px;
+    margin: 0;
+}
+.iviewer_common {
+    border: 0 !important;
+    box-sizing: border-box !important;
+    z-index: 900 !important;
+}
+.iviewer_zoom_status {
+    padding-top: 0 !important;
+}
+
+.dropzone {
+    box-sizing: border-box;
+}
+
+/* BROWSER MODAL */
+.browse-modal {
+    width: 80%;
+    height: 80%;
+    padding: 0;
+    padding-right: 0 !important;
+    margin: auto auto;
+}
+.browse-modal .modal-dialog {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+}
+.browse-modal .modal-dialog .modal-content {
+    width: 100%;
+    height: 100%;
+}
+.browse-modal .modal-dialog .modal-content .modal-header .close {
+    opacity: 0.8;
+}
+.browse-modal .modal-dialog .modal-content .modal-body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+.browse-modal .modal-dialog .modal-content .modal-body iframe {
+    width: 100% !important;
+    height: 100% !important;
+}

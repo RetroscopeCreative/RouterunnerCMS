@@ -1,0 +1,300 @@
+/* content page panel */
+
+.routerunner-content {
+    position: relative;
+}
+
+/* panel titlebar */
+
+#routerunner-panel-titlebar {
+    width: 50px;
+    height: 100%;
+    float: left;
+}
+
+#routerunner-panel-titlebar .buttons {
+    position: relative;
+    top: 0;
+    height: 120px;
+}
+
+#routerunner-panel-titlebar .buttons a {
+    color: #444d58;
+    margin: 8px 0 8px 8px;
+    padding: 10px 8px 0 7px;
+}
+#routerunner-panel-titlebar .buttons a span {
+    font-size: 18px;
+}
+#routerunner-panel-titlebar .buttons a:hover {
+    color: #fff;
+}
+
+#routerunner-panel #routerunner-panel-titlebar #routerunner-lock-panel-btn {
+    display: none;
+}
+#routerunner-panel.open-on-hover #routerunner-panel-titlebar #routerunner-lock-panel-btn {
+    display: inline-block;
+}
+
+#routerunner-panel-titlebar h3 {
+    font-family: 'Open Sans', Arial, sans-serif;
+    filter: none;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #BCC2CB;
+    text-shadow: none;
+
+    width: 300px;
+    position: relative;
+    top: 100%;
+    margin: -135px 0 0 13px;
+
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin: 0 0;
+    -moz-transform: rotate(-90deg);
+    -moz-transform-origin: 0 0;
+    -o-transform: rotate(-90deg);
+    -o-transform-origin: 0 0;
+    -ms-transform: rotate(-90deg);
+    -ms-transform-origin: 0 0;
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); /* 3 */
+    transform: rotate(-90deg);
+    transform-origin: 0 0;
+}
+
+/* panel main */
+
+#routerunner-panel {
+    position: fixed;
+    left: 100%;
+    top: 125px;
+    background-color: #4276a4 !important;
+}
+
+#routerunner-panel.expanded {
+    width: 100% !important;
+    left: 0 !important;
+}
+/*
+#routerunner-panel.left-side {
+    left: 0 !important;
+}
+*/
+#routerunner-panel.left-side #routerunner-panel-titlebar {
+    float: right;
+}
+#routerunner-panel.left-side #routerunner-changes-panel,
+#routerunner-panel.left-side #routerunner-modelselector-panel,
+#routerunner-panel.left-side #routerunner-model-panel
+{
+    margin: 10px 60px 10px 10px;
+    /*right: 50px;*/
+}
+
+/* panel model selector */
+
+#routerunner-modelselector-panel {
+    position: relative;
+    height: 70px;
+    margin: 10px 10px 10px 60px;
+    min-width: 400px;
+}
+
+#routerunner-modelselector-panel select {
+    color: #BCC2CB;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* panel model content */
+
+#routerunner-model-panel {
+    position: relative;
+    margin: 10px 10px 10px 60px;
+    overflow: auto;
+    height: 100%;
+    text-align: left !important;
+}
+
+#routerunner-model-navbar {
+    display: none;
+}
+
+#routerunner-model-navbar .nav.navbar-nav > li {
+    display: none;
+}
+
+#routerunner-model {
+    position: relative;
+    /*height: 400px;*/
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#routerunner-model > div > .portlet {
+    margin-right: 20px;
+}
+
+#routerunner-model-panel .portlet.light > .portlet-title > .caption > i {
+    margin-top: 2px;
+}
+
+/* properties panel */
+
+.portlet.light > .portlet-title > .caption {
+    overflow: hidden;
+}
+
+.routerunner-properties .select2-container-multi .select2-choices {
+    background-image: none;
+}
+
+.routerunner-properties .panel-property {
+    margin-bottom: 40px;
+}
+.routerunner-properties .panel-property.routerunner-error {
+    display: block !important;
+}
+
+.routerunner-properties .panel-property .has-error .form-control,
+.routerunner-page-properties .has-error .form-control {
+    border-color: #ec113f;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline: 0;
+}
+.routerunner-properties .panel-property .has-error label,
+.routerunner-page-properties .has-error label {
+    color: #F3565D;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+.routerunner-properties .panel-property .has-error .help-block,
+.routerunner-page-properties .has-error .help-block {
+    color: #F3565D;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.routerunner-properties .panel-property .help-block {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-group.form-md-line-input > .input-icon.right > i {
+    margin-bottom: 30px;
+}
+
+/* movement panel */
+
+#routerunner-tree .jstree-node .label {
+    /*background-color: #337ab7;*/
+    padding: 2px 6px;
+}
+
+/* visibility panel */
+
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 10px 15px 0;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .input-icon.right .form-control {
+    padding-left: 10px;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .form-control[disabled] {
+    border-bottom: 1px dashed #999;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .form-control {
+    border-bottom: 1px solid #999;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .form-control[disabled] + .fa {
+    color: #999;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .form-control + .fa {
+    color: #555;
+}
+.routerunner-visibility .form-horizontal .form-group.form-md-line-input .visibility-cols {
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.routerunner-visibility .form-horizontal .form-section.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* remove panel */
+
+.routerunner-remove .bootstrap-switch-container {
+    height: 48px;
+}
+.routerunner-remove .bootstrap-switch-container > span {
+    height: 48px;
+    vertical-align: top;
+}
+
+.routerunner-remove .portlet-body ul {
+    margin: 0 20px 20px;
+}
+
+/* changes panel */
+
+#routerunner-changes-panel {
+    position: relative;
+    margin: 10px 10px 10px 60px;
+    overflow: auto;
+}
+
+#routerunner-changes li .desc .label {
+    margin-left: 10px;
+}
+
+#routerunner-changes-panel .portlet.light .btn.btn-circle.btn-default:hover,
+#routerunner-changes-panel .portlet.light .btn.btn-circle.btn-default.active {
+    color: #fff;
+    background: #4db3a4;
+    border-color: #4db3a4;
+}
+
+#routerunner-changes-panel .portlet.light .btn.btn-circle.btn-default:hover .fa,
+#routerunner-changes-panel .portlet.light .btn.btn-circle.btn-default.active .fa {
+    color: #fff;
+}
+
+#routerunner-changes-panel .tasks-widget .task-list > li {
+    height: 40px;
+    padding: 5px;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li.undid {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+#routerunner-changes-panel .tasks-widget .task-list > li > .task-checkbox {
+    height: 30px;
+    padding: 8px 6px 8px 6px;
+    margin-right: 10px;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li > .task-title {
+    margin-top: 5px;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li > .task-date {
+    position: absolute;
+    top: 10px;
+    right: 90px;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li > .task-config {
+    top: 5px;
+    right: 0;
+    width: 80px;
+    display: block;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li > .task-config .btn {
+    width: 80px;
+    height: 30px;
+    padding: 8px 0;
+}
+#routerunner-changes-panel .tasks-widget .task-list > li .error-label {
+    margin-left: 10px;
+    cursor: pointer;
+}

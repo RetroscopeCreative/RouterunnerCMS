@@ -1,0 +1,21 @@
+
+.routerunner-panel-wrapper {
+    overflow: hidden;
+    /*position: fixed;*/
+    left: 100%;
+
+    z-index: 997;
+}
+.routerunner-panel {
+    background-color: #4276a4 !important;
+}
+.routerunner-inline[contenteditable=true], .routerunner-inline [contenteditable=true] {
+    cursor: text !important;
+}
+
+.routerunner-to-remove {
+    display: none !important;
+}
+.routerunner-tree-remove {
+    display: none !important;
+}
