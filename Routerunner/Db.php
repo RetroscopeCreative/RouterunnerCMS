@@ -230,4 +230,8 @@ class Db
 
 		return $return;
 	}
+
+	public static function escape($str) {
+		return self::$db_conn->quote($str);
+	}
 }

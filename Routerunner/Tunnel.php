@@ -275,6 +275,9 @@ class db extends tunnel
 	{
 		return \Routerunner\Db::insert($SQL, $params);
 	}
+	public static function escape($str) {
+		return \Routerunner\Db::escape($str);
+	}
 }
 
 class context extends tunnel
