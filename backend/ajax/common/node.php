@@ -51,6 +51,6 @@ new runner(array(
 
 	$router = false;
 	$override = null;
-	$root = 'Routerunner' . DIRECTORY_SEPARATOR . 'scaffold';
+	$root = 'RouterunnerCMS' . DIRECTORY_SEPARATOR . 'scaffold';
 	echo \runner::route('/backend/tree/container', $context, $router, true, $override, $root);
 });

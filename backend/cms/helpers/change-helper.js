@@ -6,7 +6,7 @@ helper.change = $.extend({}, routerunner.components.helper, {
         return false;
     },
     log_change: function(change_obj, fn) {
-        var url = "Routerunner/backend/ajax/action/log_change.php";
+        var url = "RouterunnerCMS/backend/ajax/action/log_change.php";
         var data = {
             "change_id": change_obj.id,
             "reference": change_obj.data.reference,
@@ -42,10 +42,10 @@ helper.change = $.extend({}, routerunner.components.helper, {
         var url = false;
         var data = { change_id: change_obj.id };
         if (change_obj.section == "routerunner-page-properties") {
-            url = 'Routerunner/backend/ajax/action/apply_pageprops.php';
+            url = 'RouterunnerCMS/backend/ajax/action/apply_pageprops.php';
             data.resource = routerunner.page.pageproperties.resource;
         } else {
-            url = 'Routerunner/backend/ajax/action/apply_change.php';
+            url = 'RouterunnerCMS/backend/ajax/action/apply_change.php';
             data.route = change_obj.model.route;
         }
         if (change_obj.caller instanceof property) {
@@ -94,7 +94,7 @@ helper.change = $.extend({}, routerunner.components.helper, {
 
     delete_change: function(change_obj) {
         var success = false;
-        var url = 'Routerunner/backend/ajax/action/delete_change.php';
+        var url = 'RouterunnerCMS/backend/ajax/action/delete_change.php';
         var data = {
             change_id: change_obj.id
         };

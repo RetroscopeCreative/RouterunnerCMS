@@ -97,7 +97,7 @@ pageproperties = function(caller, selector) {
         var _input_base = new baserunner(this);
         _input_base.helper = this.helper;
 
-        var url = "Routerunner/backend/ajax/page/pageproperties.php";
+        var url = "RouterunnerCMS/backend/ajax/page/pageproperties.php";
         var data = {
                 url: loc,
             };
@@ -190,7 +190,7 @@ pageproperties = function(caller, selector) {
         }
 
         if (!this.url_changed_by_key) {
-            var url = 'Routerunner/backend/ajax/common/label2ascii.php';
+            var url = 'RouterunnerCMS/backend/ajax/common/label2ascii.php';
             var params = {"method": "post", "data": {
                 "str": value,
                 "reference": this.resource.reference }, "dataType": "json" };
@@ -350,7 +350,7 @@ pageproperties = function(caller, selector) {
         var self = this;
         var _fn = fn;
         var params = {};
-        this.ajax("Routerunner/backend/ajax.php", params, function(data) {
+        this.ajax("RouterunnerCMS/backend/ajax.php", params, function(data) {
             self.panel.html(data);
             _fn();
         });

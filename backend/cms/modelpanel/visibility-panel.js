@@ -28,7 +28,7 @@ visibility_panel = function(caller, id) {
     this.changes = {};
 
     this.content = {
-        url: "Routerunner/backend/ajax/modelpanel/visibility.php",
+        url: "RouterunnerCMS/backend/ajax/modelpanel/visibility.php",
         data: {
             reference: this.model.reference,
             model_class: this.model.class_name,

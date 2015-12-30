@@ -22,6 +22,6 @@ new runner(array(
 	$router = false;
 	$route = "/backend/model/visibility";
 	$override = null;
-	$root = 'Routerunner' . DIRECTORY_SEPARATOR . 'scaffold';
+	$root = 'RouterunnerCMS' . DIRECTORY_SEPARATOR . 'scaffold';
 	echo \runner::route($route, $post, $router, true, $override, $root);
 });

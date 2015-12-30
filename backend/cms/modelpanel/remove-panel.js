@@ -20,7 +20,7 @@ remove_panel = function(caller, id) {
     this.changes = {};
 
     this.content = {
-        url: "Routerunner/backend/ajax/modelpanel/remove.php",
+        url: "RouterunnerCMS/backend/ajax/modelpanel/remove.php",
         data: {
             reference: this.model.reference,
             model_class: this.model.class_name,
@@ -68,7 +68,7 @@ remove_panel = function(caller, id) {
 
     this.save_changes = function() {
         var self = this;
-        var url = 'Routerunner/backend/ajax/model/set_changes.php';
+        var url = 'RouterunnerCMS/backend/ajax/model/set_changes.php';
         var data = {
             change_id: self.change_id,
             reference: self.panel.data("reference"),

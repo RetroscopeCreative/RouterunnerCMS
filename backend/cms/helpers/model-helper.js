@@ -76,7 +76,7 @@ helper.model = $.extend({}, routerunner.components.helper, {
     },
 
     script_loader: function(url_data, done) {
-        var url = 'Routerunner/backend/ajax/common/load_script.php?ver=' + routerunner.version;
+        var url = 'RouterunnerCMS/backend/ajax/common/load_script.php?ver=' + routerunner.version;
         var data = { url : url_data };
         var params = {
             dataType: "json",

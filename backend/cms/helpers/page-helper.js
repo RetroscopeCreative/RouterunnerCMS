@@ -9,7 +9,7 @@ helper.page = $.extend({}, routerunner.components.helper, {
             async: false,
             dataType: "json"
         };
-        this.ajax('Routerunner/backend/ajax/action/create.php', model, params, function(returned) {
+        this.ajax('RouterunnerCMS/backend/ajax/action/create.php', model, params, function(returned) {
             model_return = returned;
         });
         return model_return;

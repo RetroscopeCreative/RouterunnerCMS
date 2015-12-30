@@ -4,7 +4,7 @@
 
 /*
 $.ajax({
-    url: 'Routerunner/backend/js/baserunner.js',
+    url: 'RouterunnerCMS/backend/js/baserunner.js',
     dataType: "script",
     async: false
 });
@@ -169,7 +169,7 @@ routerunner.settings = {
     "panel_width": 560,
     "scaffold": "scaffold",
     "root": "default",
-    "backend": "Routerunner/scaffold/backend"
+    "backend": "RouterunnerCMS/scaffold/backend"
 };
 
 routerunner.init = function() {
@@ -249,7 +249,7 @@ routerunner.init = function() {
             }
         }
 
-        $(routerunner.iframe).on("load", function(evt) {
+        //$(routerunner.iframe).on("load", function(evt) {
             routerunner.content_window = routerunner.iframe.contentWindow;
             routerunner.content_document = routerunner.content_window.document;
 
@@ -311,10 +311,10 @@ routerunner.init = function() {
                 return (typeof routerunner.instance("page") === "object"
                     && typeof routerunner.instance("page").pageproperties === "object");
             });
-        });
+        //});
     });
 
-
+    /*
     if (routerunner.iframe) {
         routerunner._delayed_call(function () {
             $(routerunner.iframe).trigger("load");
@@ -322,6 +322,7 @@ routerunner.init = function() {
             return (routerunner.iframe_loaded === true);
         });
     }
+    */
 
     window.routerunner_attach = function(selector, iframe) {
         var routerunner_document = ((iframe && iframe.document) ? iframe.document : window.document);
@@ -366,7 +367,7 @@ routerunner.component = function (mainclass, subclass, success_fn, namespace, do
     var script_array = this.scripts;
     mainclass = (mainclass == undefined ? 'cms' : mainclass);
     subclass = (subclass == undefined ? 'common' : subclass);
-    var url = 'Routerunner/' + (mainclass !== 'metronic' ? 'backend/' : '') + mainclass + '/' + subclass + '/';
+    var url = 'RouterunnerCMS/' + (mainclass !== 'metronic' ? 'backend/' : '') + mainclass + '/' + subclass + '/';
     if (script_array[mainclass] != undefined) {
         script_array = script_array[mainclass];
     }
@@ -423,7 +424,7 @@ routerunner.component = function (mainclass, subclass, success_fn, namespace, do
 routerunner.session_open = function() {
     var session_id = false;
     $.ajax({
-        url: "Routerunner/backend/ajax/session/open.php",
+        url: "RouterunnerCMS/backend/ajax/session/open.php",
         async: false,
         dataType: "json",
         type: "get"
