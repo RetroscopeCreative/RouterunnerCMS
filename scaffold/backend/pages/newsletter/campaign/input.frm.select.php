@@ -12,7 +12,7 @@ if ($value) {
 	$value = explode(",", $value);
 }
 
-$SQL = "SELECT category FROM `e_subscriber` WHERE category <> '' GROUP BY category ORDER BY category";
+$SQL = "SELECT category FROM `e_subscriber` WHERE category <> '' UNION SELECT temp_category AS category FROM `e_subscriber` WHERE temp_category IS NOT NULL GROUP BY category ORDER BY category";
 $result = \db::query($SQL);
 ?>
 <div class="form-group">

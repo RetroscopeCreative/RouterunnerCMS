@@ -21,7 +21,7 @@ $SQL = "SELECT label FROM cs_menu ORDER BY cs_menu_id";
 $from = 'e_campaign';
 $select = array(
 	'sent' => "COALESCE((SELECT COUNT(DISTINCT d.id) FROM e_delivered AS d WHERE d.cron_id IN (SELECT id FROM e_cron AS c WHERE c.campaign = e_campaign.id)), 0)",
-	'to_send' => "COALESCE((SELECT COUNT(DISTINCT s.email) FROM e_subscriber AS s WHERE s.unsubscribe IS NULL AND CONCAT(',',e_campaign.category,',') LIKE CONCAT('%,',s.category,',%')), 0) - COALESCE((SELECT COUNT(DISTINCT d.id) FROM e_delivered AS d WHERE d.cron_id IN (SELECT id FROM e_cron AS c WHERE c.campaign = e_campaign.id)), 0)",
+	'to_send' => "COALESCE((SELECT COUNT(DISTINCT s.email) FROM e_subscriber AS s WHERE s.unsubscribe IS NULL AND ( CONCAT(',',e_campaign.category,',') LIKE CONCAT('%,',s.category,',%') OR (s.temp_category IS NOT NULL AND CONCAT(',',e_campaign.category,',') LIKE CONCAT('%,',s.temp_category,',%')) )), 0) - COALESCE((SELECT COUNT(DISTINCT d.id) FROM e_delivered AS d WHERE d.cron_id IN (SELECT id FROM e_cron AS c WHERE c.campaign = e_campaign.id)), 0)",
 	'opened' => "COALESCE((SELECT COUNT(DISTINCT d.id) FROM e_stat AS s LEFT JOIN e_delivered AS d ON d.id = s.deliver_id WHERE d.cron_id IN (SELECT id FROM e_cron AS c WHERE c.campaign = e_campaign.id) AND s.method = 'open'), 0)",
 	'clicked' => "COALESCE((SELECT COUNT(DISTINCT d.id) FROM e_stat AS s LEFT JOIN e_delivered AS d ON d.id = s.deliver_id WHERE d.cron_id IN (SELECT id FROM e_cron AS c WHERE c.campaign = e_campaign.id) AND s.method = 'click'), 0)",
 );
