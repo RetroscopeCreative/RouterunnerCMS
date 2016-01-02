@@ -45,7 +45,7 @@ property  = function(caller, property, property_data) {
                 this.property_data = properties[this.property];
             }
         }
-        if (this.property_data["is_label"] && this.property_data["is_label"] === true) {
+        if (this.property_data && this.property_data["is_label"] && this.property_data["is_label"] === true) {
             this.is_label = true;
         }
 
