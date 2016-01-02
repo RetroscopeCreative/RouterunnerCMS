@@ -11,7 +11,7 @@ session_start();
 require 'config.php';
 
 require $rootpath . 'runner-config.php';
-require $rootpath . 'Routerunner/Routerunner/Routerunner.php';
+require $rootpath . 'RouterunnerCMS/Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 new runner(array(
@@ -78,7 +78,7 @@ SQL;
 				}
 			}
 			if ($limit !== false) {
-
+				/*
 				$SQL_request = 'INSERT INTO `request` (`date`, `url`, `referer`, `bootstrap`, `ip`, `useragent`, `cookie`, `server`) VALUES (:date, :url, :referer, :bs, :ip, :ua, :cookie, :server)';
 				$params_request = array(
 					":date" => time(),
@@ -91,7 +91,7 @@ SQL;
 					":server" => '',
 				);
 				\db::insert($SQL_request, $params_request);
-
+				*/
 
 
 				if (!is_null($cron["test_address"]) && $cron["test_address"]) {
@@ -263,7 +263,7 @@ SQL;
 				}
 			}
 		}
-
+		/*
 		$SQL_request = 'INSERT INTO `request` (`date`, `url`, `referer`, `bootstrap`, `ip`, `useragent`, `cookie`, `server`) VALUES (:date, :url, :referer, :bs, :ip, :ua, :cookie, :server)';
 		$params_request = array(
 			":date" => time(),
@@ -276,6 +276,7 @@ SQL;
 			":server" => '',
 		);
 		\db::insert($SQL_request, $params_request);
+		*/
 	//}
 
 });
