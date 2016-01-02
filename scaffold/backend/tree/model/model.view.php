@@ -9,10 +9,7 @@
 $context = $runner->context;
 
 $_model_context = array(
-	"direct" => true,
-	'self' => array(
-		'reference' => $context['reference']
-	),
+	"direct" => $context['reference'],
 	"session" => \runner::stack("session_id"),
 );
 $router = false;
