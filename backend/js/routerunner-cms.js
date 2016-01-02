@@ -229,7 +229,7 @@ routerunner.init = function() {
         }
     }, "framework.loaded");
 
-    $(routerunner.iframe).one("load", function() {
+    $(routerunner.iframe).on("load", function() {
         routerunner.content_window = routerunner.iframe.contentWindow;
         routerunner.content_document = routerunner.content_window.document;
 
