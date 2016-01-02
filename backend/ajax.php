@@ -5,7 +5,9 @@
  * Date: 2014.10.18.
  * Time: 15:08
  */
-require '../RouterunnerCMS/Routerunner.php';
+require '../runner-config.php';
+
+require '../Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 $post = $_POST;

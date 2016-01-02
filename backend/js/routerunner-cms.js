@@ -367,7 +367,7 @@ routerunner.component = function (mainclass, subclass, success_fn, namespace, do
     var script_array = this.scripts;
     mainclass = (mainclass == undefined ? 'cms' : mainclass);
     subclass = (subclass == undefined ? 'common' : subclass);
-    var url = 'RouterunnerCMS/' + (mainclass !== 'metronic' ? 'backend/' : '') + mainclass + '/' + subclass + '/';
+    var url = routerunner.settings["BACKEND_DIR"] + '/' + (mainclass !== 'metronic' ? 'backend/' : '') + mainclass + '/' + subclass + '/';
     if (script_array[mainclass] != undefined) {
         script_array = script_array[mainclass];
     }
@@ -424,7 +424,7 @@ routerunner.component = function (mainclass, subclass, success_fn, namespace, do
 routerunner.session_open = function() {
     var session_id = false;
     $.ajax({
-        url: "RouterunnerCMS/backend/ajax/session/open.php",
+        url: routerunner.settings["BACKEND_DIR"] + "/backend/ajax/session/open.php",
         async: false,
         dataType: "json",
         type: "get"

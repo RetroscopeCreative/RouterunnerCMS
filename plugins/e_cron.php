@@ -11,7 +11,7 @@ session_start();
 require 'config.php';
 
 require $rootpath . 'runner-config.php';
-require $rootpath . 'RouterunnerCMS/Routerunner/Routerunner.php';
+require $rootpath . \runner::config("BACKEND_DIR") . '/Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 new runner(array(

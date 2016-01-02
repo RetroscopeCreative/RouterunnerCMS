@@ -33,7 +33,7 @@ class Router
 			}
 		}
 		if (substr($route, 0, 1) == '@' || substr($route, 0, 2) == '/@') {
-			$root = 'Routerunner' . DIRECTORY_SEPARATOR . 'scaffold';
+			$root = \runner::config("BACKEND_DIR") . DIRECTORY_SEPARATOR . 'scaffold';
 			$route = str_replace('@', '', $route);
 		}
 

@@ -20,7 +20,7 @@ if ($value && ($json = json_decode($value, true)) && isset($json["src"])) {
 } elseif ($value) {
 	$src = $value;
 } else {
-	$src = (isset($field_data["default"]) ? $field_data["default"] : "/RouterunnerCMS/placeholder/100x100");
+	$src = (isset($field_data["default"]) ? $field_data["default"] : "/" . \runner::config("BACKEND_DIR") . "/placeholder/100x100");
 }
 ?>
 <div class="form-group form-md-line-input" style="width: 100%;">

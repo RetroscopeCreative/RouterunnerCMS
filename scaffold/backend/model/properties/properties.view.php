@@ -54,7 +54,7 @@ if ($allowed) {
 		? $router->runner->backend_context["model"]["fields"] : array());
 	$route = (isset($runner->context["route"]) ? explode("/", $runner->context["route"]) : false);
 	$scaffold = \Routerunner\Helper::$scaffold_root . DIRECTORY_SEPARATOR . "input";
-	$backend_scaffold = \Routerunner\Helper::$document_root . DIRECTORY_SEPARATOR . 'Routerunner' . DIRECTORY_SEPARATOR . 'scaffold' . DIRECTORY_SEPARATOR . "input";
+	$backend_scaffold = \Routerunner\Helper::$document_root . DIRECTORY_SEPARATOR . \runner::config("BACKEND_DIR") . DIRECTORY_SEPARATOR . 'scaffold' . DIRECTORY_SEPARATOR . "input";
 
 	foreach ($fields as $field_name => $field_data) {
 		$_route = $route;

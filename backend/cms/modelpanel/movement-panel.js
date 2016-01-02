@@ -22,7 +22,7 @@ movement_panel = function(caller, id) {
     this.changes = {};
 
     this.content = {
-        url: "RouterunnerCMS/backend/ajax/modelpanel/movement.php",
+        url: routerunner.settings["BACKEND_DIR"] + "/backend/ajax/modelpanel/movement.php",
         data: {
             reference: this.model.reference,
             model_class: this.model.model_class,
@@ -43,7 +43,7 @@ movement_panel = function(caller, id) {
                         "responsive": false
                     },
                     "data": {
-                        "url": "RouterunnerCMS/backend/ajax/common/node.php",
+                        "url": routerunner.settings["BACKEND_DIR"] + "/backend/ajax/common/node.php",
                         "method": "get",
                         "data": function (node) {
                             var container = ((self.model && self.model.inline_elem) ? self.model.inline_elem : false);

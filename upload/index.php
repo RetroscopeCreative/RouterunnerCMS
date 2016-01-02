@@ -5,7 +5,10 @@
  * Date: 2015.06.05.
  * Time: 21:43
  */
-require '../RouterunnerCMS/Routerunner/Routerunner.php';
+
+require '../runner-config.php';
+
+require '../' . \runner::config("BACKEND_DIR") . '/Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 $files = array_merge($_FILES);

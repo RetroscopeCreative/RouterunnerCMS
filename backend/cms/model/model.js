@@ -185,7 +185,7 @@ model = function(caller, elem, ready_fn) {
         var self = this;
 
         this.changes[field] = value;
-        var url = 'RouterunnerCMS/backend/ajax/model/set_changes.php';
+        var url = routerunner.settings["BACKEND_DIR"] + '/backend/ajax/model/set_changes.php';
         var data = {
             change_id: this.change_id,
             reference: $(this.inline_elem).data("reference"),

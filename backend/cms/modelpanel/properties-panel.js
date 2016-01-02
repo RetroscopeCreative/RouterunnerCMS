@@ -21,7 +21,7 @@ properties_panel = function(caller, id, ready_fn) {
     this.changes = {};
 
     this.content = {
-        url: "RouterunnerCMS/backend/ajax/modelpanel/properties.php",
+        url: routerunner.settings["BACKEND_DIR"] + "/backend/ajax/modelpanel/properties.php",
         data: {
             reference: this.model.reference,
             model_class: this.model.class_name,

@@ -77,7 +77,7 @@ $debug = 1;
 				//$child_context['label'] = $child['label'];
 			}
 
-			$root = 'Routerunner' . DIRECTORY_SEPARATOR . 'scaffold';
+			$root = \runner::config("BACKEND_DIR") . DIRECTORY_SEPARATOR . 'scaffold';
 			\runner::route('/backend/tree/model', $child_context, $router, false, $override, $root);
 		}
 	}

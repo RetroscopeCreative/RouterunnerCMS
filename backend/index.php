@@ -6,7 +6,9 @@ header('Content-type: text/html; charset=utf-8');
 // bench start
 $bench = array("start"=>array("mem"=>memory_get_usage(), "peak"=>memory_get_peak_usage(true), "time"=>microtime(true)));
 
-require '../RouterunnerCMS/Routerunner.php';
+require '../../runner-config.php';
+
+require '../Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 $runner = false;

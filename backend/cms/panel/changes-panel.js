@@ -298,7 +298,7 @@ changes_panel = function(caller, selector) {
             change_id = false;
         }
 
-        var url = 'RouterunnerCMS/backend/ajax/model/save_changes.php';
+        var url = routerunner.settings["BACKEND_DIR"] + '/backend/ajax/model/save_changes.php';
         var data = {};
         if (change_id) {
             data = {
