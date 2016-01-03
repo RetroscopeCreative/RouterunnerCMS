@@ -142,7 +142,7 @@ filebrowser = function (_model, _input, _field) {
             this.file_form[type] = $("<div class='frm row' style='padding: 0 15px;'><input type='text' class='col-md-9' style='padding: 1px 5px;' readonly value='" + filename + "' /><button class='browse col-md-3'>Browse</button></div>");
             this.file_form[type].find(".browse").on("click", function () {
                 var dir = routerunner.settings["MEDIA_ROOT"].substring(0, routerunner.settings["MEDIA_ROOT"].length - 1);
-                var url = 'Routerunner/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
+                var url = routerunner.settings["BACKEND_DIR"] + '/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
 
                 self.modal_body.kcfinder({
                     url: url,

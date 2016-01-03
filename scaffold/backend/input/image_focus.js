@@ -138,7 +138,7 @@ image_focus = function (_model, _input, _field) {
             this.img_object[type].on("click", function() {
                 if ($(this).hasClass("browse-enabled")) {
                     var dir = routerunner.settings["MEDIA_ROOT"].substring(0, routerunner.settings["MEDIA_ROOT"].length - 1);
-                    var url = 'Routerunner/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
+                    var url = routerunner.settings["BACKEND_DIR"] + '/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
 
                     self.modal_body.kcfinder({
                         url: url,

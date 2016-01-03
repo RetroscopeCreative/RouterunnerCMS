@@ -532,7 +532,7 @@ image_iviewer = function (_model, _input, _field) {
 
             var success = false;
             var self = this;
-            var url = 'Routerunner/backend/ajax/action/crop_iviewer.php';
+            var url = routerunner.settings["BACKEND_DIR"] + '/backend/ajax/action/crop_iviewer.php';
             var params = {
                 dataType: 'json',
                 async: false,

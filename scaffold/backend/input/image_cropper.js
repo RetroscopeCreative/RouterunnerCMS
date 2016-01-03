@@ -9,8 +9,8 @@ image_cropper = function (_model, _input, _field) {
     var mediasize = (_field.mediasize ? _field.mediasize : "m");
 
     if (!$(routerunner.content_document).find("body > #cropper_css").length) {
-        $(routerunner.content_document).find("body").append('<link id="cropper_css" rel="stylesheet" type="text/css" href="Routerunner/backend/thirdparty/cropper/dist/cropper.min.css">');
-        //$(routerunner.content_document).find("body").append('<script src="Routerunner/backend/thirdparty/cropper/dist/cropper.min.js" type="text/javascript"></script>');
+        $(routerunner.content_document).find("body").append('<link id="cropper_css" rel="stylesheet" type="text/css" href="' + routerunner.settings["BACKEND_DIR"] + '/backend/thirdparty/cropper/dist/cropper.min.css">');
+        //$(routerunner.content_document).find("body").append('<script src="' + routerunner.settings["BACKEND_DIR"] + '/backend/thirdparty/cropper/dist/cropper.min.js" type="text/javascript"></script>');
     }
 
     this.return_data = {
@@ -215,7 +215,7 @@ image_cropper = function (_model, _input, _field) {
                 this.file_form[type] = $("<div class='frm row' style='padding: 0 15px;'><input type='text' class='col-md-9' style='padding: 1px 5px;' readonly value='" + filename + "' /><button class='browse col-md-3'>Browse</button></div>");
                 this.file_form[type].find(".browse").on("click", function () {
                     var dir = routerunner.settings["MEDIA_ROOT"].substring(0, routerunner.settings["MEDIA_ROOT"].length - 1);
-                    var url = 'Routerunner/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
+                    var url = routerunner.settings["BACKEND_DIR"] + '/backend/thirdparty/kcfinder/browse.php?type=' + dir + '&dir=' + dir + '/public';
 
                     self.modal_body.kcfinder({
                         url: url,
@@ -577,7 +577,7 @@ image_cropper = function (_model, _input, _field) {
         if (this.cropper) {
             var success = false;
             var self = this;
-            var url = 'Routerunner/backend/ajax/action/crop_cropper.php';
+            var url = routerunner.settings["BACKEND_DIR"] + '/backend/ajax/action/crop_cropper.php';
             var params = {
                 dataType: 'json',
                 async: false,
