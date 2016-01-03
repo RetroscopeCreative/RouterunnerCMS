@@ -66,7 +66,7 @@ function create_image($width, $height, $bg_color, $txt_color )
 	imagettftext($image,$fontsize, 0,
 		($width/2) - ($fontsize * 2.75),
 		($height/2) + ($fontsize* 0.2),
-		$txt_color, '../backend/thirdparty/ImageWorkshop/tests/Resources/fonts/arial.ttf', $text);
+		$txt_color, '../backend/thirdparty/ImageWorkshop/arial.ttf', $text);
 
 	//Tell the browser what kind of file is come in
 	header("Content-Type: image/png");
