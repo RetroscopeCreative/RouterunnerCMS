@@ -490,21 +490,23 @@ SQL;
 				foreach ($context['pager'] as $pager_section => $pager_params) {
 					if (is_array($pager_params)) {
 						$pager_SQL_params = array();
-						$pager_params['select'] = (isset($pager_params['select'])) ? $pager_params['select'] : array('c' => 'COUNT(*)');
-						$pager_params['from'] = (isset($pager_params['from'])) ? $pager_params['from'] : $from;
+						//$pager_params['select'] = (isset($pager_params['select'])) ? $pager_params['select'] : array('c' => 'COUNT(*)');
 						$pager_params['primary_key'] = (isset($pager_params['primary_key'])) ? $pager_params['primary_key'] : $pk;
+						$pager_params['select'] = (isset($pager_params['select'])) ? $pager_params['select'] : array($pager_params['primary_key'] => 'id');
+						$pager_params['from'] = (isset($pager_params['from'])) ? $pager_params['from'] : $from;
 						$pager_params['leftJoin'] = (isset($pager_params['leftJoin'])) ? $pager_params['leftJoin'] : $leftJoin;
 						$pager_params['where'] = (isset($pager_params['where'])) ? $pager_params['where'] : $where;
 						$pager_params['orderBy'] = (isset($pager_params['orderBy'])) ? $pager_params['orderBy'] : $orderBy;
+						$pager_params['groupBy'] = (isset($pager_params['groupBy'])) ? $pager_params['groupBy'] : $groupBy;
 						$pager_params['limit'] = (isset($pager_params['limit'])) ? $pager_params['limit'] : false;
 						$pager_params['offset'] = (isset($pager_params['offset'])) ? $pager_params['offset'] : $offset;
 
 						$pager_SQL = self::SQL_creator($pager_params['select'], $pager_params['from'],
 							$pager_params['primary_key'], $pager_params['leftJoin'], $pager_params['where'],
-							$pager_SQL_params, $pager_params['orderBy'],
+							$pager_SQL_params, $pager_params['orderBy'], $pager_params['groupBy'],
 							$pager_params['limit'], $pager_params['offset']);
 						if ($result = \Routerunner\Db::query($pager_SQL, $pager_SQL_params)) {
-							$pager[$pager_section] = array_shift($result[0]);
+							$pager[$pager_section] = count($result);
 						} else {
 							$pager[$pager_section] = 0;
 						}
@@ -871,10 +873,14 @@ SQL;
 					$SQL .= 'ORDER BY ' . $primary_key . PHP_EOL;
 			}
 
-			if ($limit) {
+			if ($limit !== false) {
 				$SQL .= 'LIMIT ' . $limit . PHP_EOL;
-				if ($offset)
+				if ($offset !== false) {
 					$SQL .= 'OFFSET ' . $offset . PHP_EOL;
+				}
+			} elseif ($limit === false && $offset !== false) {
+				$SQL .= 'LIMIT 18446744073709551615' . PHP_EOL;
+				$SQL .= 'OFFSET ' . $offset . PHP_EOL;
 			}
 		}
 		return $SQL;
