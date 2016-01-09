@@ -241,7 +241,7 @@ class model extends tunnel
 			}
 			$arg = ((isset($args[0])) ? array_shift($args) : false);
 			if ($arg) {
-				if (!is_null(model::property($arg)) && count($args) == 0) {
+				if (is_string($arg) && !is_null(model::property($arg)) && count($args) == 0) {
 					$return = $runner->functions[$fn](model::$object, model::property($arg), $arg, $args);
 				} else {
 					$return = $runner->functions[$fn](model::$object, null, $arg, $args);
