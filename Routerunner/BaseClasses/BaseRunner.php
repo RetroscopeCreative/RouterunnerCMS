@@ -571,15 +571,19 @@ HTML
 	{
 		$html = $this->backend_wrapper($html, 'model');
 
-		$script = '';
-		foreach ($this->backend_id as $backend_id) {
-			$script .= 'routerunner_attach("' . $backend_id . '");' . PHP_EOL;
-		}
+		if ($this->backend_id) {
+			$script = '';
+			foreach ($this->backend_id as $backend_id) {
+				$script .= 'routerunner_attach("' . $backend_id . '");' . PHP_EOL;
+			}
 
-		$html .= <<<HTML
+			$html .= <<<HTML
 <script id="script_{$backend_id}">{$script}</script>
 
 HTML;
+		} else {
+			// todo: throw exception
+		}
 
 		return $html;
 	}
