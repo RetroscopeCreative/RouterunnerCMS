@@ -44,7 +44,8 @@ return array(
 	'types' => array(
 		(isset($_SESSION["routerunner-config"]["MEDIA_ROOT"])
 			? trim($_SESSION["routerunner-config"]["MEDIA_ROOT"], "/") : "content") => array(
-			'type' => "*img",
+			'type' => (isset($_SESSION["routerunner-config"]["MEDIA_TYPE"])
+				? $_SESSION["routerunner-config"]["MEDIA_TYPE"] : "*img"),
 			'thumbWidth' => 200,
 			'thumbHeight' => 200
 		),

@@ -15,15 +15,15 @@ if (isset($runner->context["model"]) && is_array($runner->context["model"])
 	&& isset($runner->context["model"]->$field_name)) {
 	$value = $runner->context["model"]->$field_name;
 }
-
+/*
 if (!$value) {
 	$value = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 }
+*/
 ?>
 <div class="form-group form-md-line-input" style="width: 100%;">
 	<div class="input-group form-control">
-		<input type="hidden" name="<?=$field_name?>" value='<?=$value?>' />
-		<img id="property-<?=$field_name?>" class="input img-input" src="<?=$value?>" />
+		<input type="hidden" name="<?=$field_name?>" id="property-<?=$field_name?>" class="input file-input" value='<?=$value?>' />
 	</div>
 	<label for="property-<?=$field_name?>"><?=$field_name?></label>
 </div>
