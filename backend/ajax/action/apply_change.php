@@ -165,6 +165,9 @@ SQL;
 													$value = json_encode($value, JSON_UNESCAPED_SLASHES);
 												}
 											}
+											if (isset($field_context["type"]) && $field_context["type"] == "checkbox") {
+												$value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+											}
 
 											$SQL_UPDATE = 'UPDATE `' . $model->table_from . '` SET `' . $field .
 												'` = :value WHERE `' . $pk . '` = :id';
