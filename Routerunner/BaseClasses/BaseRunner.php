@@ -643,6 +643,17 @@ HTML;
 				&& is_array($traverse = $backend_type_context['traverse'])) {
 				if (count($traverse) && ($lvl = array_pop($traverse))
 					&& ($parent_table_id = \bootstrap::get($lvl))) {
+					if (is_array($parent_table_id)) {
+						$tmp_parent_table_id = false;
+						foreach ($parent_table_id["parents"] as $tmp_parent) {
+							if ($tmp_parent["model_class"] == $lvl) {
+								$tmp_parent_table_id = $tmp_parent["reference"];
+							}
+						}
+						if ($tmp_parent_table_id) {
+							$parent_table_id = $tmp_parent_table_id;
+						}
+					}
 					$SQL = 'SELECT reference FROM {PREFIX}models WHERE model_class = :class AND table_id = :table_id';
 					if ($result = \db::query($SQL, array(':class' => $lvl, ':table_id' => $parent_table_id))) {
 						$parent = $result[0]['reference'];
