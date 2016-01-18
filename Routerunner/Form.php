@@ -71,7 +71,7 @@ class Form
 			}
 			if ($runner->model) {
 				if (is_array($runner->model) && $runner->model) {
-					$this->class = get_class($runner->model[0]);
+					$this->class = get_class(current($runner->model));
 				} elseif (is_object($runner->model)) {
 					$this->class = get_class($runner->model);
 				}
