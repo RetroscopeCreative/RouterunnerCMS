@@ -28,7 +28,11 @@ class Router
 			$root = \runner::config("scaffold");
 			$route = str_replace('~', '', $route);
 			if (strpos($route, '@') !== false) {
-				\runner::now("redirected-subpage", substr($route, strpos($route, '@')+1));
+				$redirect_to = substr($route, strpos($route, '@')+1);
+				if (strpos($redirect_to, '?')) {
+					$redirect_to = substr($redirect_to, 0, strpos($redirect_to, '?'));
+				}
+				\runner::now("redirected-subpage", $redirect_to);
 				$route = DIRECTORY_SEPARATOR . trim(substr($route, 0, strpos($route, '@')), DIRECTORY_SEPARATOR);
 			}
 		}
