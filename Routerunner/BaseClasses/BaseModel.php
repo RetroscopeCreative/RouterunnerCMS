@@ -642,6 +642,7 @@ SQL;
 		if (!$prevs) {
 			$prevs = array();
 		}
+		$strict = false;
 		if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC ||
 			 $orderBy === \Routerunner\Routerunner::BY_INDEX || $orderBy === \Routerunner\Routerunner::BY_INDEX_DESC ||
 			isset($where["direct"]) && $where["direct"]) {
@@ -653,6 +654,7 @@ SQL;
 				$SQL .= 'FROM {PREFIX}models AS models ' . PHP_EOL;
 				$SQL .= 'WHERE models.reference = :reference';
 				$params = array(":reference" => $where["direct"]);
+				$strict = true;
 			} elseif (isset($where["direct"]) && is_array($where["direct"])) {
 				$SQL = 'SELECT models.reference, NULL AS parent_ref, NULL AS prev, table_from, table_id ' . PHP_EOL;
 				$SQL .= 'FROM {PREFIX}models AS models ' . PHP_EOL;
@@ -662,19 +664,23 @@ SQL;
 				} else {
 					$params = array(":class" => current($where["direct"]), ":id" => key($where["direct"]));
 				}
+				$strict = true;
 			} else {
 				$where_reference = array();
 				// get self reference
 				if ($self_reference = self::resolve_model_reference('self', $where, true)) {
 					$where_reference['model_traverse.reference IN (' . implode(',', $self_reference) . ')'] = null;
+					$strict = true;
 				}
 				// get parent reference
 				if ($parent_reference = self::resolve_model_reference('parent', $where, true)) {
 					$where_reference['model_traverse.parent_ref IN (' . implode(',', $parent_reference) . ')'] = null;
+					$strict = true;
 				}
 				// get lang condition
 				if ($lang = self::resolve_model_reference('lang', $where, true)) {
 					$where_reference['model_traverse.lang IN (' . implode(',', $lang) . ')'] = null;
+					$strict = true;
 				}
 				if (!$where_reference && $where) {
 					$SQL_reference = "SELECT models.reference FROM `" . $from .
@@ -703,6 +709,7 @@ SQL;
 							$parent_reference = $parent_obj["reference"];
 							$where_reference['model_traverse.parent_ref IN (' . $parent_reference . ')'] = null;
 						}
+						$strict = true;
 					}
 				}
 
@@ -711,12 +718,14 @@ SQL;
 					$prev_reference = self::resolve_model_reference('prev', $where, true);
 					if ($prev_reference !== false) {
 						$where_reference['model_traverse.prev_ref IN (' . implode(',', $prev_reference) . ')'] = null;
+						$strict = true;
 					}
 					// get next sibling
 					// todo: check --- is it ok?
 					$next_reference = self::resolve_model_reference('next', $where, true);
 					if ($next_reference !== false) {
 						$where_reference['model_traverse.prev_ref IN (SELECT reference FROM {PREFIX}model_trees WHERE prev_ref IN (' . implode(',', $next_reference) . '))'] = null;
+						$strict = true;
 					}
 				}
 
@@ -725,29 +734,33 @@ SQL;
 					$order_no_reference = self::resolve_model_reference('order_no', $where, true);
 					if ($order_no_reference !== false) {
 						$where_reference['model_traverse.order_no IN (' . implode(',', $order_no_reference) . ')'] = null;
+						$strict = true;
 					}
 				}
 
-				$SQL = 'SELECT models.reference, model_traverse.parent_ref' . PHP_EOL;
-				if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC) {
-					$SQL .= ', prev_ref AS prev' . PHP_EOL;
-				} elseif ($orderBy === \Routerunner\Routerunner::BY_INDEX
-					|| $orderBy === \Routerunner\Routerunner::BY_INDEX_DESC) {
-					$SQL .= ', order_no AS prev' . PHP_EOL;
-				}
-				$SQL .= 'FROM {PREFIX}models AS models ' . PHP_EOL;
-				if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC) {
-					$SQL .= 'LEFT JOIN {PREFIX}model_trees AS model_traverse ON model_traverse.reference = models.reference ' . PHP_EOL;
-				} else {
-					$SQL .= 'LEFT JOIN {PREFIX}model_orders AS model_traverse ON model_traverse.reference = models.reference ' . PHP_EOL;
-				}
-				$SQL .= 'WHERE ' . implode(' AND ', array_keys($where_reference)) . PHP_EOL;
-				if ($orderBy === \Routerunner\Routerunner::BY_INDEX) {
-					$SQL .= 'ORDER BY model_traverse.parent_ref, model_traverse.order_no, models.reference';
+				if ($where_reference) {
+					$SQL = 'SELECT models.reference, model_traverse.parent_ref' . PHP_EOL;
+					if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC) {
+						$SQL .= ', prev_ref AS prev' . PHP_EOL;
+					} elseif ($orderBy === \Routerunner\Routerunner::BY_INDEX
+						|| $orderBy === \Routerunner\Routerunner::BY_INDEX_DESC
+					) {
+						$SQL .= ', order_no AS prev' . PHP_EOL;
+					}
+					$SQL .= 'FROM {PREFIX}models AS models ' . PHP_EOL;
+					if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC) {
+						$SQL .= 'LEFT JOIN {PREFIX}model_trees AS model_traverse ON model_traverse.reference = models.reference ' . PHP_EOL;
+					} else {
+						$SQL .= 'LEFT JOIN {PREFIX}model_orders AS model_traverse ON model_traverse.reference = models.reference ' . PHP_EOL;
+					}
+					$SQL .= 'WHERE ' . implode(' AND ', array_keys($where_reference)) . PHP_EOL;
+					if ($orderBy === \Routerunner\Routerunner::BY_INDEX) {
+						$SQL .= 'ORDER BY model_traverse.parent_ref, model_traverse.order_no, models.reference';
+					}
 				}
 			}
 
-			if ($result = \db::query($SQL, $params)) {
+			if ($strict && ($result = \db::query($SQL, $params))) {
 				// modify SQL params
 				if (!$leftJoin) {
 					$leftJoin = array();
@@ -803,6 +816,8 @@ SQL;
 				}
 				$where['models.reference IN (' . implode(',', $tree) . ')'] = null;
 				$where['`' . $model_class . '`.`' . $primary_key . '` IS NOT NULL'] = null;
+			} elseif ($strict) {
+				$where['1 = 0'] = null;
 			}
 
 			if ($config_reference = \runner::config('reference')) {
