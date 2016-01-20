@@ -140,6 +140,9 @@ class Helper
 
 		if (\runner::config("mode") == "backend" && file_exists($path.$versionroute.'backend'.DIRECTORY_SEPARATOR)) {
 			$backendroute = 'backend'.DIRECTORY_SEPARATOR;
+			if (!$created && \runner::stack("model_create")) {
+				$created = \runner::stack("model_create");
+			}
 			if ($created && file_exists($path.$versionroute.$backendroute."create".DIRECTORY_SEPARATOR.$file)) {
 				$versionroute = $versionroute.$backendroute."create".DIRECTORY_SEPARATOR;
 			} elseif (file_exists($path.$versionroute.$backendroute.$file)) {

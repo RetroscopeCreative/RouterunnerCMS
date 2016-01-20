@@ -521,7 +521,9 @@ SQL;
 				var_dump("debug::model->return", $model);
 			}
 			return $model;
-		} elseif (\runner::config('mode') == 'backend' && ($model_create = \runner::stack("model_create"))) {
+		} elseif (\runner::config('mode') == 'backend' &&
+			($model_create = \runner::stack("model_create")) && $model && isset($model_create["class"]) &&
+			substr(get_class($model), strrpos(get_class($model), "\\") + 1) == $model_create["class"]) {
 			$return = true;
 			if (is_array($model_create)) {
 				$created_model = $model;
