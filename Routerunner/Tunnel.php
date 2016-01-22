@@ -143,6 +143,16 @@ class model extends tunnel
 					$route = '/model/' . $context["resource"][0];
 					$context = array("direct" => $result[0]["reference"]);
 				}
+			} elseif (isset($context["resource"]) && !is_array($context["resource"])
+				&& strpos($context["resource"], '/') !== false) {
+				$context["resource"] = explode('/', $context["resource"]);
+				$SQL = 'SELECT reference FROM {PREFIX}models WHERE model_class = :class AND table_id = :id';
+				if ($result = \db::query($SQL,
+					array(':class' => $context["resource"][0], ":id" => $context["resource"][1]))
+				) {
+					$route = '/model/' . $context["resource"][0];
+					$context = array("direct" => $result[0]["reference"]);
+				}
 			}
 		}
 		if ($route && $context) {
