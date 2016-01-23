@@ -220,7 +220,7 @@ class Bootstrap
 		\Routerunner\Routerunner::$static->request = strtolower(self::$method);
 	}
 
-	private static function getTree($reference)
+	public static function getTree($reference)
 	{
 		$current_index = $reference;
 		$tree = array(
@@ -244,16 +244,24 @@ class Bootstrap
 		}
 		return false;
 	}
-	public static function parent($reference, & $treeroot=false)
+	public static function parent($reference, & $treeroot=false, & $route=array())
 	{
 		$SQL = 'CALL `{PREFIX}tree_parent`(:reference, :session)';
 		if ($parents = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,
 			':session' => \runner::stack('session_id'),
 		))) {
-			if (count($parents) && isset($parents[0]["model_class"])
-				&& ($parents[0]["model_class"] == "tree")) {
-				$treeroot = array_shift($parents);
+			if (count($parents)) {
+				$_temp_parents = $parents;
+				while ($_temp_parent = array_shift($_temp_parents)) {
+					if ($_temp_parent["model_class"] != "lang") {
+						$route[] = $_temp_parent["model_class"];
+					}
+					if ($_temp_parent["model_class"] == "tree") {
+						$treeroot = $_temp_parent;
+						//$parents = $_temp_parents;
+					}
+				}
 			}
 			return $parents;
 		}

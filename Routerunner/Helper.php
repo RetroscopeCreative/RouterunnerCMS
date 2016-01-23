@@ -603,7 +603,16 @@ $array_keys = array_keys($value);
 			} elseif (isset($tree['children'][$branch])) {
 				$tree = $tree['children'][$branch];
 			} elseif (!$found) {
-				return array();
+				if (strpos($branch, '/') !== false) {
+					$branch = substr($branch, 0, strpos($branch, '/'));
+					if (isset($tree['children'][$branch])) {
+						$tree = $tree['children'][$branch];
+					} else {
+						return array();
+					}
+				} else {
+					return array();
+				}
 			}
 		}
 		return $tree;

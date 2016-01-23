@@ -22,27 +22,27 @@ $select = array(
 	'id' => 'trees.model_tree_id',
 	'lang' => 'trees.lang',
 	'parent' => 'trees.parent_ref',
-	'reference' => 'models.reference',
-	'model_class' => 'models.model_class',
-	'table_id' => 'models.table_id',
+	'reference' => '{PREFIX}models.reference',
+	'model_class' => '{PREFIX}models.model_class',
+	'table_id' => '{PREFIX}models.table_id',
 	'accept' => 'NULL',
 );
 
-$from = \runner::config('PREFIX') . 'models AS models';
+$from = '{PREFIX}models';
 
 $leftJoin = array(
-	'{PREFIX}model_trees AS trees ON trees.reference = models.reference'
+	'{PREFIX}model_trees AS trees ON trees.reference = {PREFIX}models.reference'
 );
 
 $where = array();
 if (isset($runner->context['reference'])) {
-	$where['models.reference = :reference'] = $runner->context['reference'];
+	$where['{PREFIX}models.reference = :reference'] = $runner->context['reference'];
 }
 if (isset($runner->context['model_class'])) {
-	$where['models.model_class = :modelclass'] = $runner->context['model_class'];
+	$where['{PREFIX}models.model_class = :modelclass'] = $runner->context['model_class'];
 }
 if (isset($runner->context['table_id'])) {
-	$where['models.table_id = :tableid'] = $runner->context['table_id'];
+	$where['{PREFIX}models.table_id = :tableid'] = $runner->context['table_id'];
 }
 $primary_key = 'id';
 $force_view = true;

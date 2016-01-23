@@ -22,9 +22,16 @@ new runner(array(
 ), function() use ($post) {
 	$lang = \runner::config("language");
 	$treeroot = false;
+	$route = array('');
 	if (isset($post["current"]) && is_numeric($post["current"])) {
 		$lang = \Routerunner\Bootstrap::lang($post["current"]);
 		$parents = \Routerunner\Bootstrap::parent($post["current"], $treeroot);
+		if ($treeroot) {
+			$route[] = $treeroot["model_class"] . '/' . $treeroot["table_id"];
+		}
+		$tree = \Routerunner\Bootstrap::getTree($post["current"]);
+		$current = $tree["current"];
+		//$route[] = $current["model_class"];
 	}
 	if ($treeroot && isset($treeroot["reference"])) {
 		$treeroot = $treeroot["reference"];
@@ -36,7 +43,8 @@ new runner(array(
 		'reference' => ((isset($post["reference"]) && $post["reference"]) ? $post["reference"] : $treeroot),
 		'model_class' => '',
 		'table_id' => 0,
-		'route' => ((isset($post['route']) && $post['route']) ? $post['route'] : array('')),
+		//'route' => ((isset($post['route']) && $post['route']) ? $post['route'] : array('')),
+		'route' => ($route ? $route : array('')),
 		'open' => true,
 		//'movements' => \runner::config('movements'),
 	);
@@ -46,7 +54,7 @@ new runner(array(
 		$context['reference'] = $post['reference'];
 		$context['model_class'] = $post['model_class'];
 		$context['table_id'] = $post['table_id'];
-		$context['route'] = $post['route'];
+		$context['route'] = $route;
 	}
 
 	$router = false;

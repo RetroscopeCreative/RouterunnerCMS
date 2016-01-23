@@ -25,7 +25,18 @@ if (isset($runner->context["route"], $runner->context["reference"])) {
 		"silent" => true
 	);
 	$model = \model::load($context, $runner->context["route"], $router, false, \runner::config("scaffold"));
-	if ($model && $model->permission && !$model->movable()) {
+	if (is_array($model)) {
+		$models = $model;
+		foreach ($models as $item) {
+			if ($item->reference == $runner->context["reference"]) {
+				$model = $item;
+				break;
+			}
+		}
+	}
+	if ($model && is_object($model) && $model->permission && !$model->movable()) {
+		$allowed = false;
+	} elseif ($model && !is_object($model)) {
 		$allowed = false;
 	}
 }

@@ -836,15 +836,25 @@ SQL;
 		$visible_references = array();
 		$params = array();
 
-		if (\runner::get("mode") != "backend") {
-			$SQL = "SELECT models.reference FROM " . $from . PHP_EOL;
+		if (\runner::config("mode") != "backend") {
+			$_from = $from;
+			if (strpos($_from, "AS") !== false) {
+				$_from = substr($_from, 0, strpos($_from, "AS"));
+			}
+			$SQL = "SELECT models.reference FROM " . $_from;
+			if (strpos($_from, "models") !== false) {
+				$SQL .= " AS models";
+			}
+			$SQL .= PHP_EOL;
 			if ($leftJoin) {
 				foreach ($leftJoin as $join) {
 					$SQL .= 'LEFT JOIN ' . $join . PHP_EOL;
 				}
 			}
-			$SQL .= "LEFT JOIN {PREFIX}models AS models ON models.table_from = '" . $from . "' AND models.table_id = " .
-				$from . "." . $primary_key . PHP_EOL;
+			if (strpos($_from, "models") === false) {
+				$SQL .= "LEFT JOIN {PREFIX}models AS models ON models.table_from = '" . $_from . "' AND models.table_id = " .
+					$_from . "." . $primary_key . PHP_EOL;
+			}
 			$_where = array();
 			if (isset($where) && is_array($where)) {
 				$_where = $where;
