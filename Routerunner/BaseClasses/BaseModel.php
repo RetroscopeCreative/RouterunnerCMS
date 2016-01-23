@@ -832,8 +832,53 @@ SQL;
 		\runner::stack("prevs", $prevs);
 
 		$SQL = '';
-
 		unset($where["direct"]);
+		$visible_references = array();
+		$params = array();
+
+		if (\runner::get("mode") != "backend") {
+			$SQL = "SELECT models.reference FROM " . $from . PHP_EOL;
+			if ($leftJoin) {
+				foreach ($leftJoin as $join) {
+					$SQL .= 'LEFT JOIN ' . $join . PHP_EOL;
+				}
+			}
+			$SQL .= "LEFT JOIN {PREFIX}models AS models ON models.table_from = '" . $from . "' AND models.table_id = " .
+				$from . "." . $primary_key . PHP_EOL;
+			$_where = array();
+			if (isset($where) && is_array($where)) {
+				$_where = $where;
+			}
+			$_where["models.reference NOT IN (SELECT model FROM {PREFIX}model_states AS states WHERE states.active = 0 OR :time NOT BETWEEN COALESCE(begin, :time) AND COALESCE(end, :time))"] = time();
+			if (is_array($_where) && count($_where)) {
+				$SQL .= 'WHERE ';
+				$i = 0;
+				foreach ($_where as $filter => $param) {
+					if (!is_numeric($filter))
+						$SQL .= $filter;
+					if (preg_match('/(:[a-z0-9]+)/i', $filter, $match)) {
+						$params[$match[0]] = $param;
+					} elseif (strpos($filter, '?') !== false) {
+						$params[] = $param;
+					}
+					$i++;
+					if (!is_numeric($filter) && $i < count($_where))
+						$SQL .= ' AND ';
+					$SQL .= PHP_EOL;
+				}
+			} elseif ($_where) {
+				$SQL .= 'WHERE ' . $_where . PHP_EOL;
+			}
+			if ($state_results = \db::query($SQL, $params)) {
+				foreach ($state_results as $state_result) {
+					$visible_references[] = $state_result["reference"];
+				}
+			}
+
+			$SQL = '';
+			$params = array();
+		}
+
 		if (($orderBy !== \Routerunner\Routerunner::BY_INDEX && $orderBy !== \Routerunner\Routerunner::BY_INDEX_DESC
 				&& $orderBy !== \Routerunner\Routerunner::BY_TREE
 				&& $orderBy !== \Routerunner\Routerunner::BY_TREE_DESC) || $where) {
@@ -857,6 +902,14 @@ SQL;
 				foreach ($leftJoin as $join) {
 					$SQL .= 'LEFT JOIN ' . $join . PHP_EOL;
 				}
+			}
+			if ($visible_references) {
+				$SQL .= "LEFT JOIN {PREFIX}models AS models ON models.table_from = '" . $from .
+					"' AND models.table_id = " . $from . "." . $primary_key . PHP_EOL;
+				if (!isset($where) || !is_array($where)) {
+					$where = array();
+				}
+				$where["models.reference IN (" . implode(",", $visible_references) . ")"] = null;
 			}
 
 			if (is_array($where) && count($where)) {
