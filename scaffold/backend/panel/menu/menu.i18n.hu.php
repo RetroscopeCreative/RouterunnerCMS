@@ -11,6 +11,11 @@ $i18n = array(
 	"Editor mode" => "Szerkesztő felület",
 	"Newsletter" => "Hírlevél",
 	"New campaign" => "Új kampány",
-	"Existing campaign" => "Létező kampány",
+	"Campaigns" => "Kampányok",
+	"Send campaign" => "Kampány küldése",
+	"Subscribers" => "Feliratkozók",
 	"Statistics" => "Statisztikák",
+	"Users" => "Szerkesztők",
+	"New user" => "Új szerkesztő",
+	"Usergroups" => "Szerkesztő csoportok",
 );

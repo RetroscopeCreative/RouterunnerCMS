@@ -92,7 +92,7 @@ if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $r
 		if ($saved) {
 			$url = \bootstrap::get("url");
 			echo <<<HTML
-<h1 class="client-form-success text-success">Sikeresen elmentve!</h1>
+<h1 class="client-form-success text-success">Saved successfully!</h1>
 <script>
 	setTimeout(function() {
 		window.location.href = "admin/{$url}";
@@ -102,11 +102,11 @@ HTML;
 		}
 	}
 	if (!$saved) {
-		echo '	<h1 class="text-danger">Ismeretlen vagy jogosultsági hiba történt!</h1>';
+		echo '	<h1 class="text-danger">Unexpected error or authentication problem happened!</h1>';
 	}
 
 	if ($errors) {
-		echo '	<h1 class="text-danger">Hiba történt!</h1>';
+		echo '	<h1 class="text-danger">Error happened!</h1>';
 		foreach ($errors as $field => $row) {
 			echo '<!--' . $field . '//-->' . PHP_EOL;
 			echo $row;
@@ -114,7 +114,7 @@ HTML;
 	}
 
 } else {
-	echo '	<h1 class="text-danger">Hiba történt!</h1>';
+	echo '	<h1 class="text-danger">Error happened!</h1>';
 	if ($errors) {
 		foreach ($errors as $field => $row) {
 			echo '<!--' . $field . '//-->' . PHP_EOL;

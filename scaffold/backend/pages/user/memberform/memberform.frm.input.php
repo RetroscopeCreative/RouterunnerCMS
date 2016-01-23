@@ -90,7 +90,7 @@ $input = array(
 	'email' => array(
 		'type' => (\context::get("profile") ? 'label' : 'text'),
 		'field' => 'email',
-		'label' => 'E-mail cím',
+		'label' => 'E-mail address',
 
 		'input-id' => 'frm-email',
 		'class' => '',
@@ -153,7 +153,7 @@ $input = array(
 	'submit' => array(
 		'type' => 'submit',
 		'input-id' => 'frm-submit',
-		'value' => 'Mentés'
+		'value' => 'Submit changes'
 	),
 );
 $debug = 1;

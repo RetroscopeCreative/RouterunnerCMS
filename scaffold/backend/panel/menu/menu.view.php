@@ -68,13 +68,13 @@ if ($badges) {
 								New campaign </a>
 						</li>
 						<li class=" ">
-							<a href="admin/newsletter/campaign">
-								Campaigns <span class="badge badge-roundless badge-danger"><?php echo $badges_data["campaigns"]; ?></span>
+							<a href="admin/newsletter/send">
+								Send campaign
 							</a>
 						</li>
 						<li class=" ">
-							<a href="admin/newsletter/send">
-								Send campaign
+							<a href="admin/newsletter/campaign">
+								Campaigns <span class="badge badge-roundless badge-danger"><?php echo $badges_data["campaigns"]; ?></span>
 							</a>
 						</li>
 						<li class=" ">
