@@ -849,7 +849,8 @@ SQL;
 			if (isset($where) && is_array($where)) {
 				$_where = $where;
 			}
-			$_where["models.reference NOT IN (SELECT model FROM {PREFIX}model_states AS states WHERE states.active = 0 OR :time NOT BETWEEN COALESCE(begin, :time) AND COALESCE(end, :time))"] = time();
+			$time = time();
+			$_where["models.reference NOT IN (SELECT model FROM {PREFIX}model_states AS states WHERE states.active = 0 OR " . $time . " NOT BETWEEN COALESCE(begin, " . $time . ") AND COALESCE(end, " . $time . "))"] = null;
 			if (is_array($_where) && count($_where)) {
 				$SQL .= 'WHERE ';
 				$i = 0;
