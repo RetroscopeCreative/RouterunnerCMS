@@ -645,6 +645,7 @@ SQL;
 			$prevs = array();
 		}
 		$strict = false;
+		$skip_state = false;
 		if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC ||
 			 $orderBy === \Routerunner\Routerunner::BY_INDEX || $orderBy === \Routerunner\Routerunner::BY_INDEX_DESC ||
 			isset($where["direct"]) && $where["direct"]) {
@@ -657,6 +658,7 @@ SQL;
 				$SQL .= 'WHERE models.reference = :reference';
 				$params = array(":reference" => $where["direct"]);
 				$strict = true;
+				$skip_state = true;
 			} elseif (isset($where["direct"]) && is_array($where["direct"])) {
 				$SQL = 'SELECT models.reference, NULL AS parent_ref, NULL AS prev, table_from, table_id ' . PHP_EOL;
 				$SQL .= 'FROM {PREFIX}models AS models ' . PHP_EOL;
@@ -667,22 +669,26 @@ SQL;
 					$params = array(":class" => current($where["direct"]), ":id" => key($where["direct"]));
 				}
 				$strict = true;
+				$skip_state = true;
 			} else {
 				$where_reference = array();
 				// get self reference
 				if ($self_reference = self::resolve_model_reference('self', $where, true)) {
 					$where_reference['model_traverse.reference IN (' . implode(',', $self_reference) . ')'] = null;
 					$strict = true;
+					$skip_state = true;
 				}
 				// get parent reference
 				if ($parent_reference = self::resolve_model_reference('parent', $where, true)) {
 					$where_reference['model_traverse.parent_ref IN (' . implode(',', $parent_reference) . ')'] = null;
 					$strict = true;
+					$skip_state = true;
 				}
 				// get lang condition
 				if ($lang = self::resolve_model_reference('lang', $where, true)) {
 					$where_reference['model_traverse.lang IN (' . implode(',', $lang) . ')'] = null;
 					$strict = true;
+					$skip_state = true;
 				}
 				if (!$where_reference && $where) {
 					$SQL_reference = "SELECT models.reference FROM `" . $from .
@@ -712,6 +718,7 @@ SQL;
 							$where_reference['model_traverse.parent_ref IN (' . $parent_reference . ')'] = null;
 						}
 						$strict = true;
+						$skip_state = true;
 					}
 				}
 
@@ -721,6 +728,7 @@ SQL;
 					if ($prev_reference !== false) {
 						$where_reference['model_traverse.prev_ref IN (' . implode(',', $prev_reference) . ')'] = null;
 						$strict = true;
+						$skip_state = true;
 					}
 					// get next sibling
 					// todo: check --- is it ok?
@@ -728,6 +736,7 @@ SQL;
 					if ($next_reference !== false) {
 						$where_reference['model_traverse.prev_ref IN (SELECT reference FROM {PREFIX}model_trees WHERE prev_ref IN (' . implode(',', $next_reference) . '))'] = null;
 						$strict = true;
+						$skip_state = true;
 					}
 				}
 
@@ -737,6 +746,7 @@ SQL;
 					if ($order_no_reference !== false) {
 						$where_reference['model_traverse.order_no IN (' . implode(',', $order_no_reference) . ')'] = null;
 						$strict = true;
+						$skip_state = true;
 					}
 				}
 
@@ -837,7 +847,7 @@ SQL;
 		$params = array();
 
 		if (\runner::config("mode") != "backend" && \runner::config("mode") != "sitemap"
-			&& !\runner::now("skip_state_check")) {
+			&& !\runner::now("skip_state_check") && !$skip_state) {
 			$_from = $from;
 			if (strpos($_from, "AS") !== false) {
 				$_from = substr($_from, 0, strpos($_from, "AS"));
