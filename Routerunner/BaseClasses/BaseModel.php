@@ -836,7 +836,8 @@ SQL;
 		$visible_references = array();
 		$params = array();
 
-		if (\runner::config("mode") != "backend") {
+		if (\runner::config("mode") != "backend" && \runner::config("mode") != "sitemap"
+			&& !\runner::now("skip_state_check")) {
 			$_from = $from;
 			if (strpos($_from, "AS") !== false) {
 				$_from = substr($_from, 0, strpos($_from, "AS"));
