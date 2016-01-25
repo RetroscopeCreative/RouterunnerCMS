@@ -136,6 +136,11 @@ class Routerunner
 		\Routerunner\Config::custom_config($this->container['settings']);
 		\runner::config("notFound", false);
 
+		if (\Routerunner\Bootstrap::$component) {
+			return false;
+			exit();
+		}
+
 		if (isset($arguments) && isset($function) && !is_string($function) && is_callable($function)
 			&& \Routerunner\Routerunner::$slim->now('redirect_url')) {
 			$arguments["skip_redirect"] = true;

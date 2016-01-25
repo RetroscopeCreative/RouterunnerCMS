@@ -56,6 +56,8 @@ class Bootstrap
 	static $resources;
 	static $bootstrap = false;
 
+	static $component = false;
+
 	public static function initialize($settings, $breadcrumb = true)
 	{
 		if (!$breadcrumb) {
@@ -95,6 +97,10 @@ class Bootstrap
 				}
 			} else {
 				$plainUri = self::$request->getResourceUri();
+			}
+
+			if (preg_match('/\.(jp(e)?g|png|gif|svg|css|js(on)?|woff(2)?|ttf|pdf|xml)$/i', $plainUri)) {
+				self::$component = true;
 			}
 
 			$baseRoot = self::$host . self::$rootUri;
