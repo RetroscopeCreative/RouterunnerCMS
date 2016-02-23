@@ -321,14 +321,14 @@ class BaseRunner
 		$i = 0;
 		foreach ($models as $index => $model) {
 			if ($model->readable()) {
-				$this->render_eq($i);
-
 				$this->model = $model;
 				$explode = explode('\\', get_class($this->model));
 				if ($explode[0] != "backend") {
 					\model::object($this->model);
 				}
-				$this->render($i+1);
+				if (!$this->render_eq($i)) {
+					$this->render($i + 1);
+				}
 				$i++;
 			}
 		}
@@ -361,6 +361,7 @@ class BaseRunner
 
 	public function render_eq($index)
 	{
+		$returned = false;
 		//$view = $this->path . $this->route . $this->versionroute . DIRECTORY_SEPARATOR . str_replace('.php', '.eq' . $index . '.php', $this->view);
 		$file = str_replace('.php', '.eq' . $index . '.php', $this->view);
 		$path = "";
@@ -380,9 +381,13 @@ class BaseRunner
 			if ($this->i18n) {
 				$this->html = str_replace(array_keys($this->i18n), array_values($this->i18n), $this->html);
 			}
+			$this->html = $this->backend($this->html);
+
 			\Routerunner\Routerunner::process($this);
+			$returned = true;
 		}
 		$this->html_render = $this->html;
+		return $returned;
 	}
 
 	public function render_null()
