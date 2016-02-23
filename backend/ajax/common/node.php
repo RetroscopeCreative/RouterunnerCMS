@@ -29,6 +29,19 @@ new runner(array(
 		if ($treeroot) {
 			$route[] = $treeroot["model_class"] . '/' . $treeroot["table_id"];
 		}
+		if (isset($post['route']) && is_array($post['route'])) {
+			$treeroot_index = false;
+			foreach ($post['route'] as $post_route_index => $post_route) {
+				if ($post_route && ($post_route == $treeroot["model_class"]
+					|| strpos($post_route, $treeroot["model_class"] . '/') !== false)) {
+					$treeroot_index = $post_route_index;
+					break;
+				}
+			}
+			if ($treeroot_index && count($post['route']) > $treeroot_index) {
+				$route = array_merge($route, array_slice($post['route'], $treeroot_index+1));
+			}
+		}
 		$tree = \Routerunner\Bootstrap::getTree($post["current"]);
 		$current = $tree["current"];
 		//$route[] = $current["model_class"];
