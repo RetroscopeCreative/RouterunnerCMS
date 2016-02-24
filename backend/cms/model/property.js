@@ -356,7 +356,9 @@ property  = function(caller, property, property_data) {
         if (typeof this[return_value] == "function") {
             return this[return_value]();
         } else if (input.length) {
-            if (typeof input[return_value] == "function") {
+            if (input.is('input[type=checkbox]') && return_value == 'val') {
+                return input.is(':checked');
+            } else if (typeof input[return_value] == "function") {
                 return input[return_value]();
             } else if (input.attr(return_value)) {
                 return input.attr(return_value);
