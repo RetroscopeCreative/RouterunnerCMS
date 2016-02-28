@@ -163,7 +163,7 @@ class uploader {
         // UPLOAD FOLDER INIT
 
         // FULL URL
-        if (preg_match('/^([a-z]+)\:\/\/([^\/^\:]+)(\:(\d+))?\/(.+)\/?$/',
+        if (preg_match('/^([a-z]+)\:\/\/([^\/^\:]+)(\:(\d+))?\/((.+)\/?)?$/',
                 $this->config['uploadURL'], $patt)
         ) {
             list($unused, $protocol, $domain, $unused, $port, $path) = $patt;
