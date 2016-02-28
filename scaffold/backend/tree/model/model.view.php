@@ -84,7 +84,7 @@ if ($route) {
 		}
 
 		?>
-		<li id="jstreenode_<?=$parsed['id']?>"<?=$html?> data-jstree='<?=json_encode($jstree)?>' data-route='<?=json_encode($context['route'])?>' data-model='<?=json_encode($model)?>'>
+		<li id="jstreenode_<?=$parsed['id']?>"<?=$html?> data-jstree='<?=json_encode($jstree, JSON_HEX_APOS)?>' data-route='<?=json_encode($context['route'])?>' data-model='<?=json_encode($model, JSON_HEX_APOS)?>'>
 			<?=$label?>
 			<?php
 			\runner::route('/backend/tree/container', $context, $router);
