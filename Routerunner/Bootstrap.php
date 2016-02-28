@@ -157,6 +157,9 @@ class Bootstrap
 				self::$lang = \runner::config('language');
 			} elseif (self::$reference) {
 				self::$lang = self::lang(self::$reference);
+			} elseif ($lang_result =
+				\db::query('SELECT id FROM {PREFIX}lang WHERE code = ?', array(trim($plainUri, '/')))) {
+				self::$lang = $lang_result[0]['id'];
 			} else {
 				self::$lang = 1;
 			}
