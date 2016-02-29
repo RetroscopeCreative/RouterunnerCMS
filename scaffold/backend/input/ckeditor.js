@@ -24,8 +24,12 @@ ckeditor = function(_model, _input, _field) {
             readOnly: true,
             autoParagraph: false,
             forcePasteAsPlainText: true,
-            extraPlugins: 'sourcedialog',
-            removePlugins: 'resize',
+            extraPlugins: 'sourcedialog,sharedspace,autogrow',
+            removePlugins: 'floatingspace,resize',
+            autoGrow_onStartup: true,
+            autoGrow_minHeight: 100,
+            /*autoGrow_maxHeight: 600,*/
+            autoGrow_bottomSpace: 50,
             toolbar: [
                 { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Sourcedialog', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
                 { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
