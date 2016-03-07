@@ -71,10 +71,14 @@
     top: 125px;
     background-color: #4276a4 !important;
 }
+#routerunner-panel.open-on-hover {
+    z-index: 9999;
+}
 
 #routerunner-panel.expanded {
     width: 100% !important;
     left: 0 !important;
+    z-index: 9999;
 }
 /*
 #routerunner-panel.left-side {
