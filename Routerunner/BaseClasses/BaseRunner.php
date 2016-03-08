@@ -24,6 +24,7 @@ class BaseRunner
 		array('i18n','(:lang:)+'),
 		'property',
 		array('model','params'),
+		array('model','params', 'extend'),
 		'external',
 		'model',
 		array('script','return'),

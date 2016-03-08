@@ -264,6 +264,8 @@ class Helper
 						}
 					} elseif (substr($class, -13) == ".model.params") {
 						$runner->model_context[$key] = $val;
+					} elseif (substr($class, -20) == ".model.params.extend") {
+						$runner->model_context[$key] = $val;
 					} elseif (substr($class, -6) == ".input") {
 						$runner->form_context[$sections[1]][$key] = $val;
 					} elseif (substr($class, -10) == ".construct") {
