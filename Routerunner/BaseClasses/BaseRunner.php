@@ -577,6 +577,9 @@ HTML
 
 	private function backend($html){
 		if (\runner::config('mode') == 'backend') {
+			if (isset($this->model_context['skip_backend']) && $this->model_context['skip_backend'] === true) {
+				return $html;
+			}
 			if (isset($this->backend_context['model']) && isset($this->model) && $this->model) {
 				$html = $this->backend_model_wrapper($html);
 			}
