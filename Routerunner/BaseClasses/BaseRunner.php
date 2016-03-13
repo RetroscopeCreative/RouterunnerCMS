@@ -24,9 +24,11 @@ class BaseRunner
 		array('i18n','(:lang:)+'),
 		'property',
 		array('model','params'),
+		array('model','params', 'extend'),
 		'external',
 		'model',
 		array('script','return'),
+		array('event','(:request:)?','load'),
 		array('event','(:request:)?','before'),
 		array('event','(:request:)?','after'),
 		array('backend','global','(:owner|group:)?'),
@@ -48,6 +50,7 @@ class BaseRunner
 	public $model = false;
 	public $functions = array();
 	public $resources = array();
+	public $event_load = false;
 	public $event_before = false;
 	public $event_after = false;
 
@@ -197,11 +200,14 @@ class BaseRunner
 					\model::unstack();
 				} elseif ($this->section[0] == 'event'
 					&& ($this->section[count($this->section)-1] == 'before'
-						|| $this->section[count($this->section)-1] == 'after')) {
+						|| $this->section[count($this->section)-1] == 'after'
+						|| $this->section[count($this->section)-1] == 'load')) {
 					if ($this->section[count($this->section) - 1] == 'before') {
 						$this->event_before = $file;
 					} elseif ($this->section[count($this->section) - 1] == 'after') {
 						$this->event_after = $file;
+					} elseif ($this->section[count($this->section) - 1] == 'load') {
+						$this->event_load = $file;
 					}
 				} elseif ($this->section[0] == 'backend' && \runner::config('mode') == 'backend') {
 					\Routerunner\Helper::loader($this, $file, $output);
@@ -240,6 +246,10 @@ class BaseRunner
 	public function render($list_index=null)
 	{
 		$html = '';
+		if ($this->event_load) {
+			\Routerunner\Helper::loader($this, $this->event_load, $output);
+			$this->event_load = false;
+		}
 		if ($this->event_before)
 			\Routerunner\Helper::loader($this, $this->event_before, $output);
 
@@ -295,6 +305,10 @@ class BaseRunner
 
 	public function render_list(&$models=array())
 	{
+		if ($this->event_load) {
+			\Routerunner\Helper::loader($this, $this->event_load, $output);
+			$this->event_load = false;
+		}
 		//$view = $this->path . $this->route . $this->versionroute . DIRECTORY_SEPARATOR . str_replace('.php', '.before.php', $this->view);
 		$file = str_replace('.php', '.before.php', $this->view);
 		$path = "";
@@ -563,6 +577,9 @@ HTML
 
 	private function backend($html){
 		if (\runner::config('mode') == 'backend') {
+			if (isset($this->model_context['skip_backend']) && $this->model_context['skip_backend'] === true) {
+				return $html;
+			}
 			if (isset($this->backend_context['model']) && isset($this->model) && $this->model) {
 				$html = $this->backend_model_wrapper($html);
 			}
