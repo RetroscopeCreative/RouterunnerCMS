@@ -144,6 +144,13 @@ routerunner_input = function(input, params, form, input_name) {
                         $(self.error_wrapper).data("error-object")[self.input_name].remove();
                     }
                     clear_error = true;
+                } else if (self.error_wrapper == self.input && method == "after") {
+                    $(self.error_wrapper).closest("div").removeClass("input-icon").removeClass("right");
+                    if ($(self.error_wrapper).data("error-object")
+                        && $(self.error_wrapper).data("error-object")[self.input_name]) {
+                        $(self.error_wrapper).data("error-object")[self.input_name].remove();
+                    }
+                    clear_error = true;
                 } else if (self.error_wrapper && method == "append") {
                     //$(self.error_wrapper).children().remove();
                     if ($(self.error_wrapper).data("error-object")
