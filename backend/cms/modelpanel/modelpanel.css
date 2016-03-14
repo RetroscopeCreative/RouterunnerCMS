@@ -302,3 +302,7 @@
     margin-left: 10px;
     cursor: pointer;
 }
+
+.form-group.form-md-line-input .input-group > label {
+    margin-top: 0 !important;
+}
