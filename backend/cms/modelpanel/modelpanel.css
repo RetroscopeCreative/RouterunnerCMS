@@ -306,3 +306,6 @@
 .form-group.form-md-line-input .input-group > label {
     margin-top: 0 !important;
 }
+.nav.pull-right > li > .dropdown-menu, .nav > li > .dropdown-menu.pull-right {
+    z-index: 9999;
+}

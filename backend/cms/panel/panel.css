@@ -259,3 +259,6 @@
     width: 100% !important;
     height: 100% !important;
 }
+.page-panel .extended {
+    z-index: 9999;
+}
