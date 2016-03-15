@@ -27,7 +27,7 @@ class BaseRunner
 		array('model','params', 'extend'),
 		'external',
 		'model',
-		array('script','return'),
+		array('script', 'return'),
 		array('event','(:request:)?','load'),
 		array('event','(:request:)?','before'),
 		array('event','(:request:)?','after'),
@@ -297,8 +297,8 @@ class BaseRunner
 			\Routerunner\Helper::loader($this, $this->event_after, $output);
 
 		if ($this->script) {
-			$script = "<script>" . $this->script . "</script>";
-			$this->html .= $script;
+			$this->script = preg_replace(array('/<script[^>]+>/', '/<\/script>/'), '', $this->script);
+			\runner::stack_js($this->script);
 		}
 		$this->html_render = $this->html;
 	}
@@ -368,6 +368,9 @@ class BaseRunner
 				$this->html_after = str_replace(array_keys($this->i18n), array_values($this->i18n), $this->html_after);
 			}
 			\Routerunner\Routerunner::process($this);
+		}
+		if ($this->script) {
+			\runner::stack_js($this->script);
 		}
 
 		$this->html = $this->backend_container($this->html_before . $this->html . $this->html_after);
