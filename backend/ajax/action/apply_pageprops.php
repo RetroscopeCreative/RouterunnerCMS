@@ -117,9 +117,11 @@ new runner(array(
 										$SQL_UPDATE .= ')';
 
 										foreach ($urls as $url) {
-											$params[":url"] = \runner::get_rewrite_url($url,
-												$resource["reference"], $resource["resource_uri"]);
-											\db::query($SQL_UPDATE, $params);
+											if ($url) {
+												$params[":url"] = \runner::get_rewrite_url($url,
+													$resource["reference"], $resource["resource_uri"]);
+												\db::query($SQL_UPDATE, $params);
+											}
 										}
 									}
 
