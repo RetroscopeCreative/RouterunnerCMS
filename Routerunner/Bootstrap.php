@@ -22,6 +22,7 @@ class Bootstrap
 	static $isAjax;
 	static $reference = null;
 
+	static $canonical_url = false;
 	static $urls = array();
 	static $url_data = array();
 	static $params = array();
@@ -125,6 +126,9 @@ class Bootstrap
 				foreach ($rewrites as $rewrite) {
 					self::$urls[] = $rewrite['url'];
 					self::$url_data[$rewrite['url']] = $rewrite;
+					if (!self::$canonical_url || filter_var($rewrite['primary'], FILTER_VALIDATE_BOOLEAN)) {
+						self::$canonical_url = $rewrite['url'];
+					}
 
 					if (!self::$lang && !is_null($rewrite['lang'])) {
 						self::$lang = $rewrite['lang'];
@@ -146,6 +150,11 @@ class Bootstrap
 						if (is_array($params))
 							$env->offsetSet('QUERY_STRING', http_build_query($params, '', '&'));
 					}
+				}
+				if (count(self::$urls) > 1 && trim($plainUri, '/ ') != self::$canonical_url) {
+					Header("HTTP/1.1 301 Moved Permanently");
+					Header("Location: " . \runner::config('BASE') . self::$canonical_url);
+					exit();
 				}
 			} else {
 				self::$resourceUri = trim($plainUri, '/ ');
