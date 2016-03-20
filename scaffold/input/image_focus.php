@@ -28,7 +28,7 @@ if ($value && ($json = json_decode($value, true)) && isset($json["src"])) {
 		<label for="property-<?=$field_name?>" class="col-md-4"><?=$field_name?></label>
 		<input type="text" name="<?=$field_name?>" id="property-<?=$field_name?>" class="col-md-6" placeholder="Click below to browse" />
 		<div class="col-md-2"></div>
-		<div id="preview-<?=$field_name?>" class="preview col-md-12" data-src="<?php echo $src; ?>" style="width: 100%; height: 300px; background-image: url(<?php echo $src; ?>); background-size: cover; background-position: 50% 50%;">
+		<div id="preview-<?=$field_name?>" class="preview col-md-12" data-src="<?php echo $src; ?>" style="width: 100%; height: 300px; background-image: url('<?php echo $src; ?>'); background-size: cover; background-position: 50% 50%;">
 		</div>
 	</div>
 </div>
