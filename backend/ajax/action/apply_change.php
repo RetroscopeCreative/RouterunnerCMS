@@ -547,13 +547,18 @@ SQL;
 								// remove model
 
 								$SQL_SP = 'CALL `{PREFIX}tree_remove`(?)';
-								$params_SP = array($model->reference);
-								if (\db::query($SQL_SP, $params_SP)) {
-									$response["success"] = true;
 
-                                    if ($result_apply = \db::query($SQL_apply, $params_apply)) {
-                                        $response["apply"] = $result_apply[0];
-                                    }
+								$params_SP = array($model->reference);
+								\db::query($SQL_SP, $params_SP);
+								$response["success"] = true;
+
+								$pk = $router->runner->model_context["primary_key"];
+								$SQL_DELETE = "DELETE FROM `" . trim($model->table_from, " `") . "` WHERE `" .
+									$pk . "` = :id";
+								\db::query($SQL_DELETE, array(':id' => $model->table_id));
+
+								if ($result_apply = \db::query($SQL_apply, $params_apply)) {
+									$response["apply"] = $result_apply[0];
 								}
 
 							} elseif ($changes["from"] && is_array($changes["from"])
