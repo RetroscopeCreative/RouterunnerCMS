@@ -3,7 +3,7 @@ $debug = 1;
 
 \user::logout();
 
-\runner::stack_js('setTimeout(function() { window.location.href = "' . \runner::config('BASE') . 'admin/user/loggedout"; }, 100);');
+\runner::stack_js('setTimeout(function() { window.location.href = "' . \runner::config('BASE') . '"; }, 2000);');
 ?>
 
 <body class="page-md page-header-top-fixed">
