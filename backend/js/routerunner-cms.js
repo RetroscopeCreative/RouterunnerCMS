@@ -262,8 +262,8 @@ routerunner.init = function() {
                         ? $(routerunner.content_document).find("body").data("beforeunload")
                         : "Are you sure to leave without saving changes?");
                 } else {
-                    routerunner.instance("page").clear_page();
-                    $(".page-container").hide();
+                    //routerunner.instance("page").clear_page();
+                    //$(".page-container").hide();
                     $(routerunner.content_window).off("beforeunload");
                 }
             });
@@ -282,7 +282,7 @@ routerunner.init = function() {
                 }, 300);
             });
 
-            $(".page-container").slideDown();
+            //$(".page-container").slideDown();
 
             routerunner._delayed_call(function() {
                 routerunner.instance("page").page_init();

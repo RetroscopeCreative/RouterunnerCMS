@@ -18,7 +18,7 @@ $url .= '?' . http_build_query($_GET);
 ?>
 
 <!-- BEGIN CONTAINER -->
-<div class="page-container row" style="display: none;">
+<div class="page-container row">
 	<!-- BEGIN PAGE CONTENT-->
 	<div class="routerunner-content">
 		<div class="routerunner-content-wrapper">
