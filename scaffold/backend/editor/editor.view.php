@@ -6,6 +6,9 @@ $backend_uri = false;
 $backend_session = false;
 $code = false;
 backend_mode($backend_uri, $backend_session, $code);
+
+unset($_GET[$backend_uri]);
+$url .= '?' . http_build_query($_GET);
 ?>
 
 <body class="page-md page-header-top-fixed">
@@ -19,7 +22,7 @@ backend_mode($backend_uri, $backend_session, $code);
 	<!-- BEGIN PAGE CONTENT-->
 	<div class="routerunner-content">
 		<div class="routerunner-content-wrapper">
-			<iframe src="<?=$url?>?<?=$backend_uri?>=<?=$code?>" class="content-iframe" id="routerunner-content-iframe" style="border: 0;" frameborder="0"></iframe>
+			<iframe src="<?=$url?>&<?=$backend_uri?>=<?=$code?>" class="content-iframe" id="routerunner-content-iframe" style="border: 0;" frameborder="0"></iframe>
 		</div>
 	</div>
 	<!-- END PAGE CONTENT-->

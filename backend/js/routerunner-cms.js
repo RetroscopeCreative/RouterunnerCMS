@@ -355,8 +355,28 @@ routerunner.links_under_backend = function(elem, evt) {
         return false;
     }
     if (routerunner.state() != "browse") {
-        evt.stopImmediatePropagation();
-        evt.stopPropagation();
+        return false;
+    }
+    evt.stopImmediatePropagation();
+    evt.stopPropagation();
+
+    if ($(elem).attr("href")) {
+        var href = $(elem).attr("href");
+        var uri = new URI(href);
+        if (href.length < 7 || (href.substr(0, 7) != "http://" && href.substr(0, 8) != "https://")) {
+            uri.href('admin/' + href);
+        } else if (href.indexOf(routerunner.settings.BASE) === 0) {
+            uri.href(href.replace(routerunner.settings.BASE, ''));
+            uri.href('admin/' + uri.href());
+        }
+        uri.setQuery((routerunner.settings.backend_uri ? routerunner.settings.backend_uri : "backend"),
+            routerunner.content_window.routerunner_backend);
+        $(this).attr({
+            "href": uri.toString(),
+            "target": "_top",
+        });
+        top.location.href = uri.toString();
+
         return false;
     }
     return true;
