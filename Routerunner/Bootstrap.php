@@ -153,7 +153,7 @@ class Bootstrap
 				}
 				if (count(self::$urls) > 1 && trim($plainUri, '/ ') != self::$canonical_url) {
 					Header("HTTP/1.1 301 Moved Permanently");
-					Header("Location: " . \runner::config('BASE') . self::$canonical_url);
+					Header("Location: " . $baseUri . self::$canonical_url);
 					exit();
 				}
 			} else {
