@@ -44,6 +44,11 @@ pageproperties = function(caller, selector) {
             _input_base.helper = this.helper;
             $.each(this.form.inputs, function (input_name, input) {
                 var input_instance = $.extend(input, _input_base);
+                $(input_instance.input).on('focus', function() {
+                    self.focused = this;
+                }).on('blur', function() {
+                    self.focused = false;
+                });
                 self.instance(input_name, input_instance);
             });
 
@@ -117,6 +122,11 @@ pageproperties = function(caller, selector) {
 
                 $.each(self.form.inputs, function (input_name, input) {
                     var input_instance = $.extend(input, _input_base);
+                    $(input_instance.input).on('focus', function() {
+                        self.focused = this;
+                    }).on('blur', function() {
+                        self.focused = false;
+                    });
                     self.instance(input_name, input_instance);
                 });
 
@@ -159,6 +169,10 @@ pageproperties = function(caller, selector) {
     };
 
     this.force_blur = function() {
+        if (this.focused) {
+            $(this.focused).trigger('blur').trigger("focusout").trigger("change");
+        }
+        /*
         $.each(this.instance(), function(instance_id, instance) {
             var label = "pageproperties." + instance_id
             if ($.isArray(instance)) {
@@ -172,6 +186,7 @@ pageproperties = function(caller, selector) {
             }
             routerunner.page.unqueue(label, "apply_ready");
         });
+        */
     };
 
     this.label_apply = function() {

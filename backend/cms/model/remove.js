@@ -78,10 +78,12 @@ remove = function(caller) {
     this.event = function() {
         var self = this;
 
-        this.panel.panel.find("#remove-button").on("click", function() {
-            self.set();
-            return false;
-        });
+        if (this.panel && this.panel.panel) {
+            this.panel.panel.find("#remove-button").on("click", function () {
+                self.set();
+                return false;
+            });
+        }
     };
 
     this.init();

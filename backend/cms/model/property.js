@@ -324,10 +324,31 @@ property  = function(caller, property, property_data) {
                 input.bind(change_event, this.inline_event_bind);
             }
         }
+        this.inline_focus_event();
     };
 
-    this.inline_focus = function() {
-        // not yet
+    this.inline_focus_event = function() {
+        var self = this;
+        var focus_event = this.control_get("focus", "inline", "focus");
+        var blur_event = this.control_get("blur", "inline", "blur");
+        var selector = this.control_get("selector", "inline", "");
+        var input = ((!selector || $(this.inline_input).is(selector))
+            ? $(this.inline_input) : $(this.inline_input).find(selector));
+        this.inline_focus_bind = function () {
+            if (routerunner.focused_property && routerunner.focused_property !== self) {
+                routerunner.focused_property.force_blur();
+            }
+            self.focus = true;
+            routerunner.focused_property = self;
+            routerunner.focused_is_inline = true;
+        };
+        this.inline_blur_bind = function () {
+            self.focus = false;
+            routerunner.focused_property = false;
+            routerunner.focused_is_inline = false;
+        };
+        input.bind(focus_event, this.inline_focus_bind);
+        input.bind(blur_event, this.inline_blur_bind);
     };
 
     /* panel input functions */
@@ -387,10 +408,35 @@ property  = function(caller, property, property_data) {
                 self.label_set(20, true);
             });
         }
+        this.panel_focus_event();
     };
 
     this.panel_focus = function() {
         $(this.panel_input).get(0).focus();
+    };
+
+    this.panel_focus_event = function() {
+        var self = this;
+        var focus_event = this.control_get("focus", "panel", "focus");
+        var blur_event = this.control_get("blur", "panel", "blur");
+        var selector = this.control_get("selector", "panel", "");
+        var input = ((!selector || $(this.panel_input).is(selector))
+            ? $(this.panel_input) : $(this.panel_input).find(selector));
+        this.panel_focus_bind = function () {
+            if (routerunner.focused_property && routerunner.focused_property !== self) {
+                routerunner.focused_property.force_blur();
+            }
+            self.focus = true;
+            routerunner.focused_property = self;
+            routerunner.focused_is_inline = false;
+        };
+        this.panel_blur_bind = function () {
+            self.focus = false;
+            routerunner.focused_property = false;
+            routerunner.focused_is_inline = false;
+        };
+        input.bind(focus_event, this.panel_focus_bind);
+        input.bind(blur_event, this.panel_blur_bind);
     };
 
     this.get = function(maxchar, resource_uri, label) {
@@ -445,7 +491,10 @@ property  = function(caller, property, property_data) {
         } else {
             $(this.panel_input).trigger("blur").trigger("focusout");
         }
-        routerunner.page.unqueue(this.model.id + ".property." + this.property, "apply_ready");
+        this.focus = false;
+        routerunner.focused_property = false;
+        routerunner.focused_is_inline = false;
+        //routerunner.page.unqueue(this.model.id + ".property." + this.property, "apply_ready");
     };
 
     this.control_get = function(data, mode, default_value) {

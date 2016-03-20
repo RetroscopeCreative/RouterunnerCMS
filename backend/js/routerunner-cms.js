@@ -503,7 +503,7 @@ routerunner.attach = function(elem) {
 };
 
 routerunner.refresh = function() {
-    location.reload();
+    window.location.reload();
 };
 
 

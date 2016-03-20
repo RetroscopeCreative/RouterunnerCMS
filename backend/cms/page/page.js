@@ -433,12 +433,19 @@ page = function(caller) {
         CKEDITOR.focusManager._.blurDelay = 0;
         var affected_models_length = 0;
 
+        /*
         $.each(routerunner.page.pageproperties.instance(), function(instance_id, pageprop_obj) {
             var label = "pageproperties." + ((pageprop_obj instanceof property) ? "property." : "") + instance_id;
             self.queue(label, "apply_ready");
         });
+        */
         routerunner.page.pageproperties.force_blur();
 
+        if (typeof routerunner.focused_property == "object" && routerunner.focused_property instanceof property) {
+            routerunner.focused_property.force_blur();
+        }
+
+        /*
         $.each(routerunner.affected_models, function(_index, model_id) {
             var obj = routerunner.page.models[model_id];
             if (obj && obj.instance() && typeof obj.instance() == "object" && Object.keys(obj.instance()).length) {
@@ -452,9 +459,12 @@ page = function(caller) {
                 affected_models_length++;
             }
         });
+        */
 
+        /*
         self.helper.delayed_call(function(){
             setTimeout(function() {
+            */
                 if (routerunner.panel.action.has_error()) {
                     alert("Error in changes!");
                     routerunner.set("apply_finished", "halt");
@@ -471,12 +481,14 @@ page = function(caller) {
                     routerunner.set("apply_finished", true);
                 }
                 CKEDITOR.focusManager._.blurDelay = ck_blurdelay;
+        /*
             }, 200);
         }, function(){
             return (self.ready("apply_ready") || !affected_models_length);
         }, undefined, undefined, function() {
             console.log("apply unready", self, self.queue());
         });
+        */
     };
 
     this.init();

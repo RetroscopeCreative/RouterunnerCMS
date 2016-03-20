@@ -153,7 +153,7 @@ model = function(caller, elem, ready_fn) {
                 self.remove.load();
                 self.action("modelselect");
                 if (property) {
-                    property.panel_focus();
+                    property.focus_panel();
                 }
             };
             var _modelpanel = this.instance("panel",
