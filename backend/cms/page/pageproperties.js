@@ -100,6 +100,7 @@ pageproperties = function(caller, selector) {
         var url = routerunner.settings["BACKEND_DIR"] + "/backend/ajax/page/pageproperties.php";
         var data = {
                 url: loc,
+                async: true,
             };
         var params = {};
         this.helper.ajax(url, data, params, function(returned_html) {

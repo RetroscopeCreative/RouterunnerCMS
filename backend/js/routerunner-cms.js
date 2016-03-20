@@ -230,6 +230,7 @@ routerunner.init = function() {
     }, "framework.loaded");
 
     $(routerunner.iframe).on("load", function() {
+
         routerunner.content_window = routerunner.iframe.contentWindow;
         routerunner.content_document = routerunner.content_window.document;
 
@@ -267,7 +268,7 @@ routerunner.init = function() {
                 }
             });
 
-            $(routerunner.content_document).on("click", ".routerunner-model", function() {
+            $(routerunner.content_document).on("click", ".routerunner-model", function(evt) {
                 var this_model = this;
                 setTimeout(function() {
                     if ($(this_model).data("model") && routerunner.page.current_model != $(this_model).data("model")) {
@@ -349,14 +350,35 @@ routerunner.init = function() {
         }
     });
 };
-
+routerunner.links_under_backend = function(elem, evt) {
+    if (routerunner.get("changes").length) {
+        return false;
+    }
+    if (routerunner.state() != "browse") {
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        return false;
+    }
+    return true;
+};
 routerunner.update_links = function() {
     if (routerunner.content_window && routerunner.content_document && routerunner.content_window.routerunner_backend) {
         $(routerunner.content_document).find("a[href]").each(function () {
             var uri = new URI($(this).attr("href"));
-            uri.setQuery((routerunner.settings.backend_uri ? routerunner.settings.backend_uri : "backend"),
-                routerunner.content_window.routerunner_backend);
-            $(this).attr("href", uri.toString());
+            var model = $(this).closest('.routerunner-model');
+            if (model.length && model.data('url') && model.data('url') == uri.href()) {
+                uri.setQuery((routerunner.settings.backend_uri ? routerunner.settings.backend_uri : "backend"),
+                    routerunner.content_window.routerunner_backend);
+                uri.href('admin/' + uri.href());
+                $(this).attr({
+                    "href": uri.toString(),
+                    "target": "_top",
+                });
+            } else {
+                $(this).on('click', function(e) {
+                    routerunner.links_under_backend(this, e);
+                });
+            }
         });
         $(routerunner.content_document).find("body").addClass("editable");
     }

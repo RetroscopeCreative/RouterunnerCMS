@@ -60,6 +60,11 @@ page = function(caller) {
         }
     };
 
+    this.clear = function() {
+        this.clear_page();
+        this.models = false;
+    };
+
     this.page_init = function(first) {
         var self = this;
 

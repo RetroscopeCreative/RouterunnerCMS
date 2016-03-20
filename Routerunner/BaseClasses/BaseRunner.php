@@ -211,6 +211,7 @@ class BaseRunner
 					}
 				} elseif ($this->section[0] == 'backend' && \runner::config('mode') == 'backend') {
 					\Routerunner\Helper::loader($this, $file, $output);
+					/*
 					if ($this->section[1] == "model" && isset($this->backend_context["model"]["fields"])) {
 						foreach ($this->backend_context["model"]["fields"] as $field_name => & $field_data) {
 							if (!isset($field_data["default"])) {
@@ -236,6 +237,7 @@ class BaseRunner
 							}
 						}
 					}
+					*/
 				} elseif (\runner::config('mode') == 'backend' || $this->section[0] != 'backend') {
 					\Routerunner\Helper::loader($this, $file, $output);
 				}
@@ -602,10 +604,13 @@ HTML
 				$script .= 'routerunner_attach("' . $backend_id . '");' . PHP_EOL;
 			}
 
+			\runner::stack_js($script);
+			/*
 			$html .= <<<HTML
 <script id="script_{$backend_id}">{$script}</script>
 
 HTML;
+			*/
 		} else {
 			// todo: throw exception
 		}
@@ -803,6 +808,7 @@ HTML;
 					$model->backend_ref = $this->backend_id[$index];
 					$pqnode->attr('data-routerunner-id', $this->backend_id[$index]);
 					$pqnode->attr('data-route', $this->router->runner->path . $this->router->runner->route);
+					$pqnode->attr('data-url', $model->url());
 					if ($model) {
 						foreach ($model as $data => $value) {
 							if (is_array($value)) {
