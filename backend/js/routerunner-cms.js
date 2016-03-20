@@ -352,15 +352,23 @@ routerunner.init = function() {
 };
 routerunner.links_under_backend = function(elem, evt) {
     if (routerunner.get("changes").length) {
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        evt.preventDefault();
         return false;
     }
     if (routerunner.state() != "browse") {
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        evt.preventDefault();
         return false;
     }
-    evt.stopImmediatePropagation();
-    evt.stopPropagation();
 
     if ($(elem).attr("href")) {
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        evt.preventDefault();
+
         var href = $(elem).attr("href");
         var uri = new URI(href);
         if (href.length < 7 || (href.substr(0, 7) != "http://" && href.substr(0, 8) != "https://")) {
