@@ -90,10 +90,17 @@ class Routerunner
 		if (isset($_SESSION["routerunner-config"])) {
 			$this->container['settings'] = array_merge($_SESSION["routerunner-config"], $this->container['settings']);
 		}
-		$site_root = rtrim((isset($_SERVER["DOCUMENT_ROOT"]) ? $_SERVER["DOCUMENT_ROOT"] : $this->settings['DOCUMENT_ROOT']), '/\\') . DIRECTORY_SEPARATOR
-			. $this->settings['SITEROOT'];
-		if (substr($site_root, -1) !== DIRECTORY_SEPARATOR) {
-			$site_root .= DIRECTORY_SEPARATOR;
+		if (isset($this->settings['DOCUMENT_ROOT'])) {
+			$site_root = $this->settings['DOCUMENT_ROOT'];
+			if (substr($site_root, -1) !== DIRECTORY_SEPARATOR) {
+				$site_root .= DIRECTORY_SEPARATOR;
+			}
+		} else {
+			$site_root = rtrim((isset($_SERVER["DOCUMENT_ROOT"]) ? $_SERVER["DOCUMENT_ROOT"] :
+					$this->settings['DOCUMENT_ROOT']), '/\\') . DIRECTORY_SEPARATOR . $this->settings['SITEROOT'];
+			if (substr($site_root, -1) !== DIRECTORY_SEPARATOR) {
+				$site_root .= DIRECTORY_SEPARATOR;
+			}
 		}
 		$this->container['settings']['SITEROOT'] = $site_root;
 
