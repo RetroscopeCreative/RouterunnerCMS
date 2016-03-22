@@ -103,6 +103,7 @@ class Router
 	{
 		if (\Routerunner\Routerunner::$cache &&
 			($html = \Routerunner\Routerunner::$cache->get($this->cache_route . '|html'))) {
+			$html = '<!--Cached start-->' . $html . '<!--Cached end-->';
 			if ($_model = \Routerunner\Routerunner::$cache->get($this->cache_route . '|model')) {
 				$model = $_model;
 			}
