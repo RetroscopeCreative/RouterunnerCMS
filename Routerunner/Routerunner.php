@@ -273,10 +273,10 @@ class Routerunner
 	public static function cache_connect()
 	{
 		if (!self::$cache) {
-			self::$cache = new \Memcache();
-			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : '127.0.0.1');
+			self::$cache = new \Memcached();
+			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : 'localhost');
 			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
-			@self::$cache->connect($cache_server, $cache_port);
+			@self::$cache->addServer($cache_server, $cache_port);
 			if (\runner::config('mode') == 'backend' && self::$cache) {
 				self::$cache->flush();
 			}

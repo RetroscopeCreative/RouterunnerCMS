@@ -115,9 +115,9 @@ class Router
 	{
 		if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache) {
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
-				$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+				$this->runner->html, $this->runner->cache_exp);
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
-				$this->runner->model, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+				$this->runner->model, $this->runner->cache_exp);
 		}
 	}
 
