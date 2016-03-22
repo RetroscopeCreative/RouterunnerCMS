@@ -82,7 +82,7 @@ if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $r
 						foreach ($result as $row) {
 							$perm_SQL = "
 	INSERT INTO `{PREFIX}permissions` (`reference`, `owner`, `group`, `other`, `permission`)
-	SELECT reference, :uid, :gid, 1, :perm FROM `{PREFIX}models` WHERE table_from = 'menu' AND table_id = :scope LIMIT 1";
+	SELECT reference, :uid, :gid, 0, :perm FROM `{PREFIX}models` WHERE table_from = 'menu' AND table_id = :scope LIMIT 1";
 							\db::query($perm_SQL, array(
 								':scope' => $row['id'],
 								':uid' => $uid,
