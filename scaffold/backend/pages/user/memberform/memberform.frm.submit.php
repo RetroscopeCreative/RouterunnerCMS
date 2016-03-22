@@ -60,10 +60,40 @@ if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $r
 				$saved = true;
 			}
 		} else {
+			$id = $return_params[':id'];
 			\db::query($return_SQL, $return_params);
 			$saved = true;
 		}
 		if ($saved) {
+
+			$scopes = false;
+			if (isset($return_params[':scope'])) {
+				$scopes = explode(',', $return_params[':scope']);
+
+				$perm_SQL = 'SELECT user_id FROM `{PREFIX}user` WHERE email = :email LIMIT 1';
+				if ($uid_result = \db::query($perm_SQL, array(':email' => $return_params[':email']))) {
+					$uid = $uid_result[0]['user_id'];
+
+					$perm_SQL = 'DELETE FROM `{PREFIX}permissions` WHERE `owner` = :uid';
+					\db::query($perm_SQL, array(':uid' => $uid));
+
+					$SQL = "SELECT id, label FROM menu ORDER BY id";
+					if ($result = \db::query($SQL)) {
+						foreach ($result as $row) {
+							$perm_SQL = "
+	INSERT INTO `{PREFIX}permissions` (`reference`, `owner`, `group`, `other`, `permission`)
+	SELECT reference, :uid, :gid, 1, :perm FROM `{PREFIX}models` WHERE table_from = 'menu' AND table_id = :scope LIMIT 1";
+							\db::query($perm_SQL, array(
+								':scope' => $row['id'],
+								':uid' => $uid,
+								':gid' => $usergroup,
+								':perm' => (in_array($row['id'], $scopes) ? 63 : 2),
+							));
+						}
+					}
+				}
+			}
+
 			$user_SQL = "SELECT u.user_id, u.name, u.usergroup FROM {PREFIX}user AS u WHERE u.email = :email";
 			$user_params = array(
 				":email" => $return_params[":email"],

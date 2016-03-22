@@ -42,6 +42,13 @@ if ($result = \db::query($SQL)) {
 		$usergroups[$row["usergroup_id"]] = $row["label"];
 	}
 }
+$scopes = array();
+$SQL = "SELECT id, label FROM menu ORDER BY id";
+if ($result = \db::query($SQL)) {
+	foreach ($result as $row) {
+		$scopes[$row["id"]] = $row["label"];
+	}
+}
 
 $value = array(
 	"email" => "",
@@ -54,7 +61,7 @@ $value = array(
 
 if ($id) {
 	$SQL = <<<SQL
-SELECT member.email, u.name, member.reg_date, member.confirm_date, member.licence, u.usergroup
+SELECT member.email, u.name, member.reg_date, member.confirm_date, member.licence, u.usergroup, member.scope
 FROM `member`
 LEFT JOIN {PREFIX}user as u ON u.email = member.email
 WHERE member.id = ?
@@ -65,7 +72,7 @@ SQL;
 		$value = array_merge($value, $result[0]);
 	}
 }
-
+$debug = 1;
 $input = array(
 	'id' => array(
 		'type' => 'hidden',
@@ -150,6 +157,20 @@ $input = array(
 
 		'value' => (\context::get("profile") ? $usergroups[$value["usergroup"]] : $value["usergroup"]),
 	),
+
+	'scope' => array(
+		'type' => (\context::get("profile") ? 'label' : 'multiple'),
+		'field' => 'scope',
+		'label' => 'Scope',
+
+		'input-id' => 'frm-scope',
+		'class' => '',
+
+		'options' => $scopes,
+
+		'value' => (\context::get("profile") ? $scopes[$value["scope"]] : $value["scope"]),
+	),
+
 	'submit' => array(
 		'type' => 'submit',
 		'input-id' => 'frm-submit',

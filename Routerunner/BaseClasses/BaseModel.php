@@ -36,6 +36,8 @@ class BaseModel
 
 		if ($this->readable()) {
 			$this->set($model_data);
+		} else {
+			$debug = 1;
 		}
 	}
 	public function set($model_data=array())
@@ -228,60 +230,12 @@ SQL;
 	public function permissioning()
 	{
 		$runner = \rr::instance();
-		$permissions = (isset($runner->permissions) ? $runner->permissions : false);
-		if ($permissions && is_array($permissions)) {
-			while ($permission = array_shift($permissions)) {
-				if (isset($permission['owner'])) {
-					if (isset($this->owner) && !is_array($this->owner)) {
-						$this->owner = array($this->owner);
-						$this->owner[] = $permission['owner'];
-					} else {
-						$this->owner = $permission['owner'];
-					}
-				}
-				if (isset($permission['group'])) {
-					if (isset($this->group) && !is_array($this->group)) {
-						$this->group = array($this->group);
-						$this->group[] = $permission['group'];
-					} else {
-						$this->group = $permission['group'];
-					}
-				}
-				if (isset($permission['other']))
-					$this->other = $permission['other'];
-
-				//if (isset($permission['owner'])
-				//	&& (int) $permission['owner'] === (int) \Routerunner\Routerunner::get('uid')) {
-				$email = null;
-				$name = null;
-				$group = null;
-				if ($me = \user::me($email, $name, $group)) {
-					if (isset($permission['owner'])
-						&& (int) $permission['owner'] === (int) $me) {
-						$this->permission = array('owner' => $permission['permission']);
-					}
-					//if (isset($permission['group']) &&
-					//	($this->permission === false || (is_array($this->permission) && key($this->permission) == 'other'))
-					//	&& (int) $permission['group'] === (int) \Routerunner\Routerunner::get('gid')) {
-					if (isset($permission['group']) &&
-						($this->permission === false || (is_array($this->permission) && key($this->permission) == 'other'))
-						&& (int) $permission['group'] === (int) $group) {
-						$this->permission = array('group' => $permission['permission']);
-					}
-				}
-				if (isset($permission['other']) && $this->permission === false && $permission['other'] === '1') {
-					$this->permission = array('other' => $permission['permission']);
-				}
-			}
-		} else {
-			$SQL = 'SELECT `label`, `owner`, `group`, `other`, `permission` FROM `{PREFIX}permissions` AS `permissions`' .
-				PHP_EOL;
-			$SQL .= 'WHERE `permissions`.`reference` = ?' . PHP_EOL;
-			$SQL .= 'ORDER BY CASE WHEN `other` = 1 THEN 2 WHEN `group` IS NOT NULL THEN 1 ' . PHP_EOL;
-			$SQL .= 'WHEN `owner` IS NOT NULL THEN 0 ELSE 4 END, `permission_id`';
-			if ($result = \Routerunner\Db::query($SQL, array($this->reference))) {
-				while ($permission = array_shift($result)) {
-					if (!is_null($permission['owner'])) {
+		if (!$this->permission && $runner->model_context
+			&& isset($runner->model_context['permission_need']) && $runner->model_context['permission_need']) {
+			$permissions = (isset($runner->permissions) ? $runner->permissions : false);
+			if ($permissions && is_array($permissions)) {
+				while ($permission = array_shift($permissions)) {
+					if (isset($permission['owner'])) {
 						if (isset($this->owner) && !is_array($this->owner)) {
 							$this->owner = array($this->owner);
 							$this->owner[] = $permission['owner'];
@@ -289,7 +243,7 @@ SQL;
 							$this->owner = $permission['owner'];
 						}
 					}
-					if (!is_null($permission['group'])) {
+					if (isset($permission['group'])) {
 						if (isset($this->group) && !is_array($this->group)) {
 							$this->group = array($this->group);
 							$this->group[] = $permission['group'];
@@ -297,20 +251,86 @@ SQL;
 							$this->group = $permission['group'];
 						}
 					}
-					if (!is_null($permission['other']))
+					if (isset($permission['other']))
 						$this->other = $permission['other'];
 
-
-					if (!is_null($permission['owner'])
-						&& (int) $permission['owner'] === (int) \Routerunner\Routerunner::get('uid')) {
-						$this->permission = array('owner' => $permission['permission']);
+					//if (isset($permission['owner'])
+					//	&& (int) $permission['owner'] === (int) \Routerunner\Routerunner::get('uid')) {
+					$email = null;
+					$name = null;
+					$group = null;
+					if ($me = \user::me($email, $name, $group)) {
+						if (isset($permission['owner'])
+							&& (int)$permission['owner'] === (int)$me
+						) {
+							$this->permission = array('owner' => $permission['permission']);
+						}
+						//if (isset($permission['group']) &&
+						//	($this->permission === false || (is_array($this->permission) && key($this->permission) == 'other'))
+						//	&& (int) $permission['group'] === (int) \Routerunner\Routerunner::get('gid')) {
+						if (isset($permission['group']) &&
+							($this->permission === false || (is_array($this->permission) && key($this->permission) == 'other'))
+							&& (int)$permission['group'] === (int)$group
+						) {
+							$this->permission = array('group' => $permission['permission']);
+						}
 					}
-					if (($this->permission === false || (is_array($this->permission) && key($this->permission) == 'other'))
-						&& (int) $permission['group'] === (int) \Routerunner\Routerunner::get('gid')) {
-						$this->permission = array('group' => $permission['permission']);
-					}
-					if ($this->permission === false && $permission['other'] === '1') {
+					if (isset($permission['other']) && $this->permission === false && $permission['other'] === '1') {
 						$this->permission = array('other' => $permission['permission']);
+					}
+				}
+			} else {
+
+				$SQL = 'SELECT `label`, `owner`, `group`, `other`, `permission` FROM `{PREFIX}permissions` AS `permissions`' .
+					PHP_EOL;
+				$SQL .= 'WHERE `permissions`.`reference` = ?' . PHP_EOL;
+				$SQL .= 'ORDER BY CASE WHEN `other` = 1 THEN 2 WHEN `group` IS NOT NULL THEN 1 ' . PHP_EOL;
+				$SQL .= 'WHEN `owner` IS NOT NULL THEN 0 ELSE 4 END, `permission_id`';
+				$perm_reference = $this->reference;
+				$perm_parents = \Routerunner\Bootstrap::parent($perm_reference);
+				$perm_result = false;
+				while ($perm_reference && !($perm_result = \Routerunner\Db::query($SQL, array($perm_reference)))
+					&& ($perm_parent = array_pop($perm_parents))) {
+					$perm_reference = $perm_parent['reference'];
+				}
+
+
+				if ($perm_result) {
+					while ($permission = array_shift($perm_result)) {
+						if (!is_null($permission['owner'])) {
+							if (isset($this->owner) && !is_array($this->owner)) {
+								$this->owner = array($this->owner);
+								$this->owner[] = $permission['owner'];
+							} else {
+								$this->owner = $permission['owner'];
+							}
+						}
+						if (!is_null($permission['group'])) {
+							if (isset($this->group) && !is_array($this->group)) {
+								$this->group = array($this->group);
+								$this->group[] = $permission['group'];
+							} else {
+								$this->group = $permission['group'];
+							}
+						}
+						if (!is_null($permission['other']))
+							$this->other = $permission['other'];
+
+						$uid = \user::me($email, $name, $gid);
+						if (!is_null($permission['owner'])
+							&& (int)$permission['owner'] === (int)$uid
+						) {
+							$this->permission = array('owner' => $permission['permission']);
+						}
+						if (($this->permission === false
+								|| (is_array($this->permission) && key($this->permission) == 'other'))
+							&& (int)$permission['group'] === (int)$gid
+						) {
+							$this->permission = array('group' => $permission['permission']);
+						}
+						if ($this->permission === false && $permission['other'] === '1') {
+							$this->permission = array('other' => $permission['permission']);
+						}
 					}
 				}
 			}
@@ -627,6 +647,8 @@ SQL;
 						$return_models[$model->$pk] = $model;
 					}
 				}
+			} else {
+				$debug = 1;
 			}
 		}
 		$model = $return_model;

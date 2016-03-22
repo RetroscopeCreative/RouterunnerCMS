@@ -153,6 +153,9 @@ class BaseRunner
 			}
 
 			if ($file) {
+				if (!$this->readable()) {
+					$debug = 1;
+				}
 				if ($this->readable() && ($this->section[0] == 'view' || $this->section[0] == 'list')) {
 					\model::stack();
 
@@ -169,6 +172,9 @@ class BaseRunner
 								&& $this->model_context['force_view'] === true))) {
 						if (is_array($this->model)) {
 							$this->model = array_shift($this->model);
+						}
+						if (!$this->model->readable()) {
+							$debug = 1;
 						}
 
 						if ($this->model->readable()) {
@@ -336,6 +342,9 @@ class BaseRunner
 
 		$i = 0;
 		foreach ($models as $index => $model) {
+			if (!$model->readable()) {
+				$debug = 1;
+			}
 			if ($model->readable()) {
 				$this->model = $model;
 				$explode = explode('\\', get_class($this->model));
@@ -582,7 +591,11 @@ HTML
 
 	private function backend($html){
 		if (\runner::config('mode') == 'backend') {
-			if (isset($this->model_context['skip_backend']) && $this->model_context['skip_backend'] === true) {
+			if ($this->model && $this->model->permission  && !($this->model->writable()
+					|| $this->model->deletable() || $this->model->activate_allowed() || $this->model->movable())) {
+				return $html;
+			}
+			if ((isset($this->model_context['skip_backend']) && $this->model_context['skip_backend'] === true)) {
 				return $html;
 			}
 			if (isset($this->backend_context['model']) && isset($this->model) && $this->model) {

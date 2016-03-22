@@ -16,35 +16,20 @@ $url = \bootstrap::get("url");
 		<div class="col-md-4">
 			<?php
 			echo form::input("email");
-			?>
-		</div>
-		<div class="col-md-4">
-			<?php
-			echo form::input("name");
-			?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-			<?php echo form::input("pwd"); ?>
-		</div>
-		<div class="col-md-4">
-			<?php echo form::input("pwd_confirm"); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-			<?php
+			echo form::input("pwd");
 			echo form::input("usergroup");
 			?>
 		</div>
 		<div class="col-md-4">
 			<?php
+			echo form::input("name");
+			echo form::input("pwd_confirm");
 			echo form::input("licence");
 			?>
 		</div>
-		<div class="col-md-2 col-md-push-2">
+		<div class="col-md-4">
 			<?php
+			echo form::input("scope");
 			echo form::input("submit");
 			?>
 		</div>

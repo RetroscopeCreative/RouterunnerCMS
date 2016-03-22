@@ -51,11 +51,13 @@ if ($badges) {
 								Users <span class="badge badge-roundless badge-danger"><?php echo $badges_data["users"]; ?></span>
 							</a>
 						</li>
+						<?php /*
 						<li class=" ">
 							<a href="admin/user/group">
 								Usergroups <span class="badge badge-roundless badge-danger"><?php echo $badges_data["usergroups"]; ?></span>
 							</a>
 						</li>
+ 						*/ ?>
 					</ul>
 				</li>
 				<li class=" dropdown-submenu">
@@ -88,11 +90,13 @@ if ($badges) {
 						</li>
 					</ul>
 				</li>
+				<?php /*
 				<li>
 					<a href="#">
 						<i class="fa fa-facebook-square"></i>
 						Facebook admin </a>
 				</li>
+ 				*/ ?>
 			</ul>
 		</li>
 		<?php
