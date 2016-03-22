@@ -18,6 +18,7 @@ class Router
 	public $parent = null;
 	public $scaffold_root = false;
 	public $scaffold_suffix = '';
+	public $cache_route = false;
 
     public function __construct($route=null, $context=array(), $override=null, $root=false)
     {
@@ -68,6 +69,7 @@ class Router
 			$this->route = DIRECTORY_SEPARATOR . $route;
 		}
 
+		$this->cache_route = \Routerunner\Bootstrap::$fullUri . '|' . $this->route;
 
 		if (\Routerunner\Helper::includeRoute($this, 'runner', \runner::config("version"))) { // return valid Router with runner included
 			if ($override) {
@@ -79,6 +81,10 @@ class Router
 			$this->runner->files = \Routerunner\Helper::getFiles($this->runner);
 			$this->runner->route_parser();
 			\Routerunner\Routerunner::getParentInstance();
+
+			if ($this->runner->cache_exp >= 0) {
+				$this->set_cache();
+			}
 		} else {
 			// exception: route not found
 		}
@@ -91,6 +97,28 @@ class Router
 			$return = DIRECTORY_SEPARATOR . $return;
 		}
 		return $return;
+	}
+
+	public function get_cache(& $model=false)
+	{
+		if (\Routerunner\Routerunner::$cache &&
+			($html = \Routerunner\Routerunner::$cache->get($this->cache_route . '|html'))) {
+			if ($_model = \Routerunner\Routerunner::$cache->get($this->cache_route . '|model')) {
+				$model = $_model;
+			}
+			return $html;
+		}
+		return false;
+	}
+
+	public function set_cache()
+	{
+		if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache) {
+			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
+				$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
+				$this->runner->model, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+		}
 	}
 
 	public function __destruct()

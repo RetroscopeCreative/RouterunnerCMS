@@ -46,6 +46,8 @@ class Routerunner
 
 	public static $loaded = false;
 
+	public static $cache = false;
+
 	//public $uid = false;
 	//public $gid = false;
 
@@ -212,6 +214,8 @@ class Routerunner
 	}
 
 	public function middleware($routerunner_object, $arguments=array()) {
+		self::cache_connect();
+
 		\Routerunner\Routerunner::$slim->flashKeep();
 
 		\Routerunner\User::initialize();
@@ -263,6 +267,19 @@ class Routerunner
 		if (\Routerunner\Routerunner::$slim->now('redirect_url') &&
 			(!isset($arguments["skip_redirect"]) || !$arguments["skip_redirect"])) {
 			\Routerunner\Routerunner::$slim->redirect(\Routerunner\Routerunner::$slim->now('redirect_url'));
+		}
+	}
+
+	public static function cache_connect()
+	{
+		if (!self::$cache) {
+			self::$cache = new \Memcache();
+			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : '127.0.0.1');
+			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
+			@self::$cache->connect($cache_server, $cache_port);
+			if (\runner::config('mode') == 'backend' && self::$cache) {
+				self::$cache->flush();
+			}
 		}
 	}
 
