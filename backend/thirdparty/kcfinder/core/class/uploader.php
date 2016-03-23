@@ -179,7 +179,7 @@ class uploader {
         } elseif ($this->config['uploadURL'] == "/") {
             $this->config['uploadDir'] = strlen($this->config['uploadDir'])
                 ? path::normalize($this->config['uploadDir'])
-                : path::normalize(realpath($_SERVER['DOCUMENT_ROOT']));
+                : path::normalize(realpath($_SESSION["runner_config"]['DOCUMENT_ROOT']));
             $this->typeDir = "{$this->config['uploadDir']}/{$this->type}";
             $this->typeURL = "/{$this->type}";
 
@@ -338,7 +338,22 @@ class uploader {
         if (isset($this->config['_normalizeFilenames']) && $this->config['_normalizeFilenames'])
             $filename = file::normalizeFilename($filename);
 
-        return $filename;
+        //$filename = \runner::toAscii($filename);
+        $replace=array();
+        $delimiter='-';
+        $str = $filename;
+
+        if( !empty($replace) ) {
+            $str = str_replace((array)$replace, ' ', $str);
+        }
+
+        $clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+        $clean = preg_replace("/[^a-zA-Z0-9\/_|+ -\.]/", '', $clean);
+        $clean = strtolower(trim($clean, '-'));
+        $clean = preg_replace("/[\/_|+ -,!?]+/", $delimiter, $clean);
+        $clean = trim(preg_replace("/[--]+/", "-", $clean), "-");
+
+        return $clean;
     }
 
     protected function normalizeDirname($dirname) {
