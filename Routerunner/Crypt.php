@@ -28,7 +28,7 @@ class Crypt
 		}
 
 		if (is_array($input)) {
-			$input = serialize($input);
+			$input = implode('', $input);
 		}
 		$hash = crypt($input, $salt);
 		if ($hash === $salt) {
