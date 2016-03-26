@@ -27,7 +27,7 @@ new runner(array(
 		"error" => array(),
 	);
 
-	require_once($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["runner_config"]["SITEROOT"] . $_SESSION["runner_config"]["BACKEND_ROOT"] . 'backend/thirdparty/ImageWorkshop/src' . '/PHPImageWorkshop/ImageWorkshop.php');
+	require_once($_SESSION["runner_config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["runner_config"]["SITEROOT"] . $_SESSION["runner_config"]["BACKEND_ROOT"] . 'backend/thirdparty/ImageWorkshop/src' . '/PHPImageWorkshop/ImageWorkshop.php');
 	foreach ($post["value"] as $field => $value) {
 		$crops = array();
 
@@ -95,7 +95,7 @@ new runner(array(
 
 		if (isset($value["src"])) {
 			// crop image
-			$src = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
+			$src = $_SESSION["runner_config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
 				$_SESSION["runner_config"]["SITEROOT"] . $value["src"];
 			$filename = substr($value["src"], strrpos($value["src"], DIRECTORY_SEPARATOR) + 1);
 
@@ -178,7 +178,7 @@ new runner(array(
 
 					$crop_path = $_SESSION["runner_config"]["MEDIA_ROOT"] .
 						$crop_field . DIRECTORY_SEPARATOR . $path_route;
-					$crop_dirPath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
+					$crop_dirPath = $_SESSION["runner_config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
 						$_SESSION["runner_config"]["SITEROOT"] . $crop_path;
 					$createFolders = true;
 					$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
@@ -213,7 +213,7 @@ new runner(array(
 			}
 			*/
 			$path = $_SESSION["runner_config"]["MEDIA_ROOT"] . $image_field . DIRECTORY_SEPARATOR . $path_route;
-			$dirPath = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["runner_config"]["SITEROOT"] . $path;
+			$dirPath = $_SESSION["runner_config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["runner_config"]["SITEROOT"] . $path;
 			$createFolders = true;
 			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
 			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
