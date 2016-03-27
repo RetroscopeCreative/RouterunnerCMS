@@ -30,9 +30,10 @@ class Crypt
 		if (is_array($input)) {
 			$input = implode('', $input);
 		}
-		$hash = crypt($input, $salt);
-		if ($hash === $salt) {
+		if (!$_method) {
 			$hash = md5($salt . $input);
+		} else {
+			$hash = crypt($input, $salt);
 		}
 
 		$return = $hash;
