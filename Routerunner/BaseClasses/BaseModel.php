@@ -114,8 +114,14 @@ class BaseModel
 		}
 
 		if (!isset($model_context['skip_referencing']) || !$model_context['skip_referencing']) {
-			$this->statement();
 			$this->permissioning();
+			if (!$this->permission && !empty($_POST['parent']) && is_numeric($_POST['parent']) &&
+				(\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
+					&& $this->route == \runner::stack("model_create")["route"])) {
+				$this->permissioning($_POST['parent']);
+			}
+
+			$this->statement();
 		}
 	}
 
@@ -225,11 +231,16 @@ SQL;
 			}
 		}
 		$this->states["active"] = filter_var($this->states["active"], FILTER_VALIDATE_BOOLEAN);
+		if ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
+			&& $this->route == \runner::stack("model_create")["route"])
+			&& $this->permission && !$this->activate_allowed()) {
+			$this->states["active"] = false;
+		}
 	}
 
-	public function permissioning()
+	public function permissioning($reference=false, $runner_passed=false)
 	{
-		$runner = \rr::instance();
+		$runner = ($runner_passed ? $runner_passed : \rr::instance());
 		if (!$this->permission && $runner->model_context
 			&& isset($runner->model_context['permission_need']) && $runner->model_context['permission_need']) {
 			$permissions = (isset($runner->permissions) ? $runner->permissions : false);
@@ -286,7 +297,7 @@ SQL;
 				$SQL .= 'WHERE `permissions`.`reference` = ?' . PHP_EOL;
 				$SQL .= 'ORDER BY CASE WHEN `other` = 1 THEN 2 WHEN `group` IS NOT NULL THEN 1 ' . PHP_EOL;
 				$SQL .= 'WHEN `owner` IS NOT NULL THEN 0 ELSE 4 END, `permission_id`';
-				$perm_reference = $this->reference;
+				$perm_reference = ($reference ? $reference : $this->reference);
 				$perm_parents = \Routerunner\Bootstrap::parent($perm_reference);
 				$perm_result = false;
 				while ($perm_reference && !($perm_result = \Routerunner\Db::query($SQL, array($perm_reference)))

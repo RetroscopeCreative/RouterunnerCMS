@@ -87,7 +87,7 @@ if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $r
 								':scope' => $row['id'],
 								':uid' => $uid,
 								':gid' => $usergroup,
-								':perm' => (in_array($row['id'], $scopes) ? 63 : 2),
+								':perm' => (in_array($row['id'], $scopes) ? 7 : 2),
 							));
 						}
 					}

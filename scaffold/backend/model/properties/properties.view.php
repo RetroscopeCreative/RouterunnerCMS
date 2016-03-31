@@ -7,7 +7,34 @@
  */
 
 $allowed = true;
-if (isset($runner->context["reference"], $runner->context["model_class"])) {
+if (\runner::stack("models_created") &&
+	isset($runner->context["reference"], \runner::stack("models_created")[$runner->context["reference"]])) {
+	$model_data = \runner::stack("models_created")[$runner->context["reference"]];
+
+	$model = new \Routerunner\BaseModel($model_data['route'], $model_data);
+	$model->permission = $model_data['permission'];
+
+	if ($model && is_object($model) && $model->permission && !$model->writable()) {
+		$allowed = false;
+	} elseif ($model && !is_object($model)) {
+		$allowed = false;
+	}
+	if ($allowed) {
+		$context = array(
+			"direct" => $runner->context["reference"],
+			"session" => \runner::stack("session_id"),
+			"silent" => true,
+		);
+
+		$model_route = "/model/" . $runner->context["model_class"];
+		\runner::redirect_route($model_route, \runner::config("scaffold"), true, $context, $router, $model);
+		if (is_array($model)) {
+			$model = array_shift($model);
+		}
+
+		$runner->context["model"] = $model;
+	}
+} elseif (isset($runner->context["reference"], $runner->context["model_class"])) {
 	$router = false;
 	$model = false;
 	/*

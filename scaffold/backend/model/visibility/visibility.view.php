@@ -8,7 +8,34 @@
 
 $allowed = true;
 $model = null;
-if (isset($runner->context["reference"], $runner->context["model_class"])) {
+if (\runner::stack("models_created") &&
+	isset($runner->context["reference"], \runner::stack("models_created")[$runner->context["reference"]])) {
+	$model_data = \runner::stack("models_created")[$runner->context["reference"]];
+
+	$model = new \Routerunner\BaseModel($model_data['route'], $model_data);
+	$model->permission = $model_data['permission'];
+
+	if ($model && is_object($model) && $model->permission && !$model->activate_allowed()) {
+		$allowed = false;
+	} elseif ($model && !is_object($model)) {
+		$allowed = false;
+	}
+	if ($allowed) {
+		$context = array(
+			"direct" => $runner->context["reference"],
+			"session" => \runner::stack("session_id"),
+			"silent" => true,
+		);
+
+		$model_route = "/model/" . $runner->context["model_class"];
+		\runner::redirect_route($model_route, \runner::config("scaffold"), true, $context, $router, $model);
+		if (is_array($model)) {
+			$model = array_shift($model);
+		}
+
+		$runner->context["model"] = $model;
+	}
+} elseif (isset($runner->context["reference"], $runner->context["model_class"])) {
 	$router = false;
 	$context = array(
 		"direct" => $runner->context["reference"],
@@ -34,10 +61,6 @@ if (isset($runner->context["reference"], $runner->context["model_class"])) {
 $reference = model::property("model");
 $data = ' data-reference="' . $reference . '"';
 
-$active = (!is_null(model::state("active", $model)) ? model::state("active", $model) : true);
-$begin = (model::state("begin", $model) ? filter_var(model::state("begin", $model), FILTER_VALIDATE_INT) : null);
-$end = (model::state("end", $model) ? filter_var(model::state("end", $model), FILTER_VALIDATE_INT) : null);
-
 ?>
 
 <div class="portlet light">
@@ -48,6 +71,9 @@ $end = (model::state("end", $model) ? filter_var(model::state("end", $model), FI
 		</div>
 		<?php
 		if ($allowed) {
+			$active = (!is_null(model::state("active", $model)) ? model::state("active", $model) : true);
+			$begin = (model::state("begin", $model) ? filter_var(model::state("begin", $model), FILTER_VALIDATE_INT) : null);
+			$end = (model::state("end", $model) ? filter_var(model::state("end", $model), FILTER_VALIDATE_INT) : null);
 			?>
 			<div class="col-md-9">
 				<div class="btn-group btn-group-circle pull-right">

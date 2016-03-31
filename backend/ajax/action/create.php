@@ -89,6 +89,7 @@ new runner(array(
 				"table_id" => $model->table_id,
 				"backend_ref" => $model->backend_ref,
 				"parent" => $parent,
+				"permission" => $model->permission,
 			);
 			\runner::stack("models_created", $models_created, true);
 
