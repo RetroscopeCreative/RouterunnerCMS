@@ -114,11 +114,18 @@ class Router
 
 	public function set_cache()
 	{
-		if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache) {
+		if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
+			&& \Routerunner\Routerunner::$cache_type == 'Memcached') {
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
 				$this->runner->html, $this->runner->cache_exp);
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
 				$this->runner->model, $this->runner->cache_exp);
+		} elseif (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
+			&& \Routerunner\Routerunner::$cache_type == 'Memcache') {
+			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
+				$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
+				$this->runner->model, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
 		}
 	}
 

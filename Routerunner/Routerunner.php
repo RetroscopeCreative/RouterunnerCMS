@@ -47,6 +47,7 @@ class Routerunner
 	public static $loaded = false;
 
 	public static $cache = false;
+	public static $cache_type = false;
 
 	//public $uid = false;
 	//public $gid = false;
@@ -272,8 +273,18 @@ class Routerunner
 
 	public static function cache_connect()
 	{
-		if (!self::$cache) {
+		if (!self::$cache && class_exists('Memcached')) {
 			self::$cache = new \Memcached();
+			self::$cache_type = 'Memcached';
+			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : 'localhost');
+			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
+			@self::$cache->addServer($cache_server, $cache_port);
+			if (\runner::config('mode') == 'backend' && self::$cache) {
+				self::$cache->flush();
+			}
+		} elseif (!self::$cache && class_exists('Memcache')) {
+			self::$cache = new \Memcache();
+			self::$cache_type = 'Memcache';
 			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : 'localhost');
 			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
 			@self::$cache->addServer($cache_server, $cache_port);
