@@ -520,7 +520,7 @@ class BaseRunner
 			$formhtml .= \Routerunner\Routerunner::$slim->render($this->path . $this->route . $this->versionroute
 				. DIRECTORY_SEPARATOR . $this->form[$formname]->view, array('runner' => $this));
 
-			$formhtml .= $this->plugins("form.js");
+			$formhtml .= $this->plugins("form.min.js");
 			if ($this->i18n) {
 				$formhtml = str_replace(array_keys($this->i18n), array_values($this->i18n), $formhtml);
 			}
@@ -588,7 +588,7 @@ class BaseRunner
 if (typeof routerunner_base != "function") {
 	var script_elem = document.createElement("script");
 	script_elem.setAttribute("type", "text/javascript");
-	script_elem.setAttribute("src", "{$plugin_dir}plugins/base.js");
+	script_elem.setAttribute("src", "{$plugin_dir}plugins/base.min.js");
 	document.getElementsByTagName("head")[0].appendChild(script_elem);
 	script_elem.addEventListener("load", function() {
 		routerunner_base().load_script("{$plugin_dir}plugins/{$script}", {$callback}, true);
