@@ -37,14 +37,15 @@ if (\runner::stack("models_created") &&
 			"session" => \runner::stack("session_id"),
 			"silent" => true,
 		);
+		if (!empty($runner->context["model_class"])) {
+			$model_route = "/model/" . $runner->context["model_class"];
+			\runner::redirect_route($model_route, \runner::config("scaffold"), true, $context, $router, $model);
+			if (is_array($model)) {
+				$model = array_shift($model);
+			}
 
-		$model_route = "/model/" . $runner->context["model_class"];
-		\runner::redirect_route($model_route, \runner::config("scaffold"), true, $context, $router, $model);
-		if (is_array($model)) {
-			$model = array_shift($model);
+			$runner->context["model"] = $model;
 		}
-
-		$runner->context["model"] = $model;
 	}
 } elseif (isset($runner->context["route"], $runner->context["reference"])) {
 	$context = array(
