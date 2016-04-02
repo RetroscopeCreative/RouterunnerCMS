@@ -9,6 +9,6 @@
  ?>
 <div class="form-group">
 	<label for="<?=input("input-id")?>"><?=input("label")?></label>
-	<input type="password" class="form-control" name="<?=input("field")?>" id="<?=input("input-id")?>" value="<?=input("value")?>"/>
+	<input type="password" autocomplete="off" class="form-control" name="<?=input("field")?>" id="<?=input("input-id")?>" value="<?=input("value")?>"/>
 </div>
 

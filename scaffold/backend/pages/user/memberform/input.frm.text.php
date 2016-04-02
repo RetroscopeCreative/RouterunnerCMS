@@ -9,5 +9,5 @@
  ?>
 <div class="form-group">
 	<label for="<?=input("input-id")?>"><?=input("label")?></label>
-	<input type="text" placeholder="<?=input("label")?>" class="form-control" name="<?=input("field")?>" id="<?=input("input-id")?>" value="<?=input("value")?>"/>
+	<input type="text" placeholder="<?=input("label")?>" autocomplete="off" class="form-control" name="<?=input("field")?>" id="<?=input("input-id")?>" value="<?=input("value")?>"/>
 </div>
