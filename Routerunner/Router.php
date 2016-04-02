@@ -69,9 +69,17 @@ class Router
 			$this->route = DIRECTORY_SEPARATOR . $route;
 		}
 
-		$this->cache_route = \Routerunner\Bootstrap::$fullUri . '|' . $this->route;
-
 		if (\Routerunner\Helper::includeRoute($this, 'runner', \runner::config("version"))) { // return valid Router with runner included
+
+			if (!empty($this->runner->cache_key)) {
+				$this->cache_route = str_replace(
+					array('{$url}', '{$route}'),
+					array(\Routerunner\Bootstrap::$fullUri, $this->runner->path . $this->runner->route),
+					$this->runner->cache_key);
+			} else {
+				$this->cache_route = \Routerunner\Bootstrap::$fullUri .'|'. $this->runner->path . $this->runner->route;
+			}
+
 			if ($override) {
 				$this->runner->override = $override;
 			}

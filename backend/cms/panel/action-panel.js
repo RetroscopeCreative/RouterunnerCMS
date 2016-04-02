@@ -154,6 +154,7 @@ action_panel = function(caller, selector) {
                         if ($(this).parent().data("place")) {
                             $("#action-add-model").trigger("click");
                         }
+                        $(".action-panel .dropdown-submenu, .action-panel .dropdown-menu").hide();
 
                         return false;
                     });
@@ -191,6 +192,7 @@ action_panel = function(caller, selector) {
                             a_place.click(function() {
                                 li.data("place", place).data("at", $(this).text());
                                 a.trigger("click");
+                                $(".action-panel .dropdown-submenu, .action-panel .dropdown-menu").hide();
                                 return false;
                             });
                             li_place.append(a_place);
@@ -256,6 +258,7 @@ action_panel = function(caller, selector) {
                     if ($(this).parent().data("place")) {
                         $("#action-add-model").trigger("click");
                     }
+                    $(".action-panel .dropdown-submenu, .action-panel .dropdown-menu").hide();
 
                     return false;
                 });
@@ -280,6 +283,7 @@ action_panel = function(caller, selector) {
                         a_place.click(function() {
                             li.data("place", place).data("at", $(this).text());
                             a.trigger("click");
+                            $(".action-panel .dropdown-submenu, .action-panel .dropdown-menu").hide();
                             return false;
                         });
                         li_place.append(a_place);

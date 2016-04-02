@@ -541,7 +541,7 @@ SQL;
 										$response["apply"] = $result_apply[0];
 
 										$model->permissioning($changes["to"]["parent"], $router->runner);
-										if (!$model->activate_allowed()) {
+										if ($model->permission && !$model->activate_allowed()) {
 											$SQL_STATE_INSERT = "INSERT INTO `{PREFIX}model_states` (`model`, `active`)
 																	VALUES (?, ?)";
 											\db::insert($SQL_STATE_INSERT, array($model->reference, 0));
