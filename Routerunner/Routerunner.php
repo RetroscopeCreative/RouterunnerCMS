@@ -279,7 +279,7 @@ class Routerunner
 			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : 'localhost');
 			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
 			@self::$cache->addServer($cache_server, $cache_port);
-			if (\runner::config('mode') == 'backend' && self::$cache) {
+			if ((\runner::config('mode') == 'backend' || (!empty($_GET['flush']))) && self::$cache) {
 				self::$cache->flush();
 			}
 		} elseif (!self::$cache && class_exists('Memcache')) {
@@ -288,7 +288,7 @@ class Routerunner
 			$cache_server = (\runner::config('CacheServer') ? \runner::config('CacheServer') : 'localhost');
 			$cache_port = (\runner::config('CachePort') ? \runner::config('CachePort') : 11211);
 			@self::$cache->addServer($cache_server, $cache_port);
-			if (\runner::config('mode') == 'backend' && self::$cache) {
+			if ((\runner::config('mode') == 'backend' || (!empty($_GET['flush']))) && self::$cache) {
 				self::$cache->flush();
 			}
 		}
