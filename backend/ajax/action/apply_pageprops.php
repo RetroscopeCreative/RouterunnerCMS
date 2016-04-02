@@ -60,7 +60,10 @@ new runner(array(
 								$condition['resource_uri'] = '`resource_uri` = :resource_uri';
 								$params[":resource_uri"] = $resource["resource_uri"];
 							}
-							if (isset($resource["params"]) && $resource["params"]) {
+							if (!empty($resource["params"])) {
+								$resource["params"] = str_replace('async=true', '', $resource["params"]);
+							}
+							if (!empty($resource["params"])) {
 								$condition['params'] = '`params` = :params';
 								$params[":params"] = $resource["params"];
 							}
