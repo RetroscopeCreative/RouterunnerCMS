@@ -95,7 +95,7 @@ class Mail
 							}
 						}
 					} else {
-						$mail->AddCC = $mail_value;
+						$mail->AddCC($mail_value);
 					}
 					break;
 				case "AddReplyTo":
@@ -108,7 +108,7 @@ class Mail
 							}
 						}
 					} else {
-						$mail->AddReplyTo = $mail_value;
+						$mail->AddReplyTo($mail_value);
 					}
 					break;
 				case "AddBCC":
@@ -121,7 +121,7 @@ class Mail
 							}
 						}
 					} else {
-						$mail->AddBCC = $mail_value;
+						$mail->AddBCC($mail_value);
 					}
 					break;
 			}
