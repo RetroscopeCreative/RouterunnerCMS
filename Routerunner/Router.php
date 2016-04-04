@@ -88,6 +88,9 @@ class Router
 			}
 			$this->runner->files = \Routerunner\Helper::getFiles($this->runner);
 			$this->runner->route_parser();
+			if (\runner::config('silent')) {
+				$this->runner->html = str_replace(array("\t", PHP_EOL . PHP_EOL), "", $this->runner->html);
+			}
 			\Routerunner\Routerunner::getParentInstance();
 
 			if ($this->runner->cache_exp >= 0) {
@@ -111,7 +114,7 @@ class Router
 	{
 		if (\Routerunner\Routerunner::$cache &&
 			($html = \Routerunner\Routerunner::$cache->get($this->cache_route . '|html'))) {
-			$html = '<!--Cached start-->' . $html . '<!--Cached end-->';
+			$html = ((\runner::config('silent')) ? '' : '<!--Cached start-->') . $html . ((\runner::config('silent')) ? '' : '<!--Cached end-->');
 			if ($_model = \Routerunner\Routerunner::$cache->get($this->cache_route . '|model')) {
 				$model = $_model;
 			}
