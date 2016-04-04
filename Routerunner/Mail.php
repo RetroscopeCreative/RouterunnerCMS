@@ -98,6 +98,19 @@ class Mail
 						$mail->AddCC = $mail_value;
 					}
 					break;
+				case "AddReplyTo":
+					if (is_array($mail_value)) {
+						foreach ($mail_value as $reply) {
+							if (isset($reply[0], $reply[1])) {
+								$mail->AddReplyTo($reply[0], $reply[1]);
+							} else {
+								$mail->AddReplyTo($reply);
+							}
+						}
+					} else {
+						$mail->AddReplyTo = $mail_value;
+					}
+					break;
 				case "AddBCC":
 					if (is_array($mail_value)) {
 						foreach ($mail_value as $bcc) {
