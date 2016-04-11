@@ -28,7 +28,7 @@ $runner = array_merge(array(
 	'root' => 'desktop',
 	'SITE' => '',
 	'SITENAME' => '',
-	'BASE' => 'http://' . $_SERVER['HTTP_HOST'] . '/RouterunnerDemo/',
+	'BASE' => ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/',
 
 	'tree' => $tree,
 	'language' => 1,

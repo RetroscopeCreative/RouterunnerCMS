@@ -95,7 +95,20 @@ class Mail
 							}
 						}
 					} else {
-						$mail->AddCC = $mail_value;
+						$mail->AddCC($mail_value);
+					}
+					break;
+				case "AddReplyTo":
+					if (is_array($mail_value)) {
+						foreach ($mail_value as $reply) {
+							if (isset($reply[0], $reply[1])) {
+								$mail->AddReplyTo($reply[0], $reply[1]);
+							} else {
+								$mail->AddReplyTo($reply);
+							}
+						}
+					} else {
+						$mail->AddReplyTo($mail_value);
 					}
 					break;
 				case "AddBCC":
@@ -108,7 +121,7 @@ class Mail
 							}
 						}
 					} else {
-						$mail->AddBCC = $mail_value;
+						$mail->AddBCC($mail_value);
 					}
 					break;
 			}

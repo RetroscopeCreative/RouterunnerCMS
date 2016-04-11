@@ -74,10 +74,10 @@ class Router
 			if (!empty($this->runner->cache_key)) {
 				$this->cache_route = str_replace(
 					array('{$url}', '{$route}'),
-					array(\Routerunner\Bootstrap::$fullUri, $this->runner->path . $this->runner->route),
+					array(\Routerunner\Bootstrap::$baseUri, $this->runner->path . $this->runner->route),
 					$this->runner->cache_key);
 			} else {
-				$this->cache_route = \Routerunner\Bootstrap::$fullUri .'|'. $this->runner->path . $this->runner->route;
+				$this->cache_route = \Routerunner\Bootstrap::$baseUri .'|'. $this->runner->path . $this->runner->route;
 			}
 
 			if ($override) {
@@ -88,6 +88,9 @@ class Router
 			}
 			$this->runner->files = \Routerunner\Helper::getFiles($this->runner);
 			$this->runner->route_parser();
+			if (\runner::config('silent')) {
+				$this->runner->html = str_replace(array("\t", PHP_EOL . PHP_EOL), "", $this->runner->html);
+			}
 			\Routerunner\Routerunner::getParentInstance();
 
 			if ($this->runner->cache_exp >= 0) {
@@ -111,7 +114,7 @@ class Router
 	{
 		if (\Routerunner\Routerunner::$cache &&
 			($html = \Routerunner\Routerunner::$cache->get($this->cache_route . '|html'))) {
-			$html = '<!--Cached start-->' . $html . '<!--Cached end-->';
+			$html = ((\runner::config('silent')) ? '' : '<!--Cached start-->') . $html . ((\runner::config('silent')) ? '' : '<!--Cached end-->');
 			if ($_model = \Routerunner\Routerunner::$cache->get($this->cache_route . '|model')) {
 				$model = $_model;
 			}
@@ -129,7 +132,7 @@ class Router
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
 				$this->runner->model, $this->runner->cache_exp);
 		} elseif (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
-			&& \Routerunner\Routerunner::$cache_type == 'Memcache') {
+			&& \Routerunner\Routerunner::$cache_type == 'Memcache' && strlen($this->cache_route) < 250) {
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
 				$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
 			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',

@@ -163,6 +163,9 @@ class BaseRunner
 				if ($this->readable() && ($this->section[0] == 'view' || $this->section[0] == 'list')) {
 					if (\runner::config('mode') != 'backend' && $this->router->cache_route
 						&& ($html = $this->router->get_cache($_model))) {
+						if (\runner::config('silent')) {
+							$html = str_replace(array("\t", PHP_EOL . PHP_EOL), "", $html);
+						}
 						$this->html = $html;
 						if ($_model) {
 							$this->model = $_model;

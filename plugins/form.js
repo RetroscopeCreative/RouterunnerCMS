@@ -267,6 +267,7 @@ routerunner_form = function(form, params) {
 
     this.inputs = this.instance();
     this.errors = {};
+    this.submitted = false;
 
     this.init = function() {
         var self = this;
@@ -297,20 +298,26 @@ routerunner_form = function(form, params) {
             $(this.form).data("routerunner-form", true);
 
             $(this.form).on("submit", function() {
-                self.errors = {};
-                $.each(self.inputs, function(input_name, input_obj) {
-                    if ($.isArray(input_obj) && input_obj.length > 1) {
-                        $.each(input_obj, function(input_obj_index, input_obj_item) {
-                            if (input_obj_item.check()) {
-                                self.errors[input_name] = input_obj_item;
-                            }
-                        })
-                    } else if (input_obj && input_obj.check()) {
-                        self.errors[input_name] = input_obj;
-                    }
-                });
-                if (Object.keys(self.errors).length) {
+                if (self.submitted) {
                     return false;
+                } else {
+                    self.submitted = true;
+                    self.errors = {};
+                    $.each(self.inputs, function (input_name, input_obj) {
+                        if ($.isArray(input_obj) && input_obj.length > 1) {
+                            $.each(input_obj, function (input_obj_index, input_obj_item) {
+                                if (input_obj_item.check()) {
+                                    self.errors[input_name] = input_obj_item;
+                                }
+                            })
+                        } else if (input_obj && input_obj.check()) {
+                            self.errors[input_name] = input_obj;
+                        }
+                    });
+                    if (Object.keys(self.errors).length) {
+                        self.submitted = false;
+                        return false;
+                    }
                 }
             });
         }
