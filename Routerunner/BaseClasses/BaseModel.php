@@ -979,12 +979,15 @@ SQL;
 				}
 			}
 			if ($visible_references) {
+				/*
 				$SQL .= "LEFT JOIN {PREFIX}models AS models ON models.table_from = '" . $from .
 					"' AND models.table_id = " . $from . "." . $primary_key . PHP_EOL;
+				*/
 				if (!isset($where) || !is_array($where)) {
 					$where = array();
 				}
-				$where["models.reference IN (" . implode(",", $visible_references) . ")"] = null;
+				$where["`" . $from . "`.`" . $primary_key . "` IN (SELECT models.table_id FROM {PREFIX}models AS models
+WHERE models.reference IN (" . implode(",", $visible_references) . "))"] = null;
 			}
 
 			if (is_array($where) && count($where)) {
