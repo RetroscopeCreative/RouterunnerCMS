@@ -265,9 +265,13 @@ class Bootstrap
 	public static function parent($reference, & $treeroot=false, & $route=array())
 	{
 		$SQL = 'CALL `{PREFIX}tree_parent`(:reference, :session)';
+		$session_id = \runner::stack('session_id');
+		if (empty($session_id)) {
+			$session_id = 0;
+		}
 		if ($parents = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,
-			':session' => \runner::stack('session_id'),
+			':session' => $session_id,
 		))) {
 			if (count($parents)) {
 				$_temp_parents = $parents;
@@ -288,10 +292,14 @@ class Bootstrap
 	public static function children($reference, $lang=false)
 	{
 		$SQL = 'CALL `{PREFIX}tree_children`(:reference, :lang, NULL, NULL, :session)';
+		$session_id = \runner::stack('session_id');
+		if (empty($session_id)) {
+			$session_id = 0;
+		}
 		if ($children = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,
 			':lang' => ($lang ? $lang : NULL),
-			':session' => (\runner::stack('session_id') ? \runner::stack('session_id') : NULL)))) {
+			':session' => $session_id))) {
 			return $children;
 		}
 		return array();
@@ -299,10 +307,14 @@ class Bootstrap
 	public static function siblings($reference, $lang=false, & $find=null)
 	{
 		$SQL = 'CALL `{PREFIX}tree_siblings`(:reference, :lang, NULL, NULL, :session)';
+		$session_id = \runner::stack('session_id');
+		if (empty($session_id)) {
+			$session_id = 0;
+		}
 		if ($siblings = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,
 			':lang' => ($lang ? $lang : NULL),
-			':session' => \runner::stack('session_id')))) {
+			':session' => $session_id))) {
 			if (!is_null($find)) {
 				$found = null;
 				foreach ($siblings as $index => $sibling) {
