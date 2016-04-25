@@ -29,10 +29,10 @@ new runner(array(
 
 	$SQL = "CALL {PREFIX}change_get(:change_id, :session, :draft, :applied)";
 	$params = array(
-		":change_id" => (is_numeric($post["change_id"]) ? $post["change_id"] : null),
-		":session" => (\runner::stack("session_id") ? \runner::stack("session_id") : null),
-		":draft" => true,
-		":applied" => false,
+		":change_id" => (is_numeric($post["change_id"]) ? $post["change_id"] : 0),
+		":session" => (\runner::stack("session_id") ? \runner::stack("session_id") : 0),
+		":draft" => 1,
+		":applied" => 0,
 	);
 	if ($change_get = \db::query($SQL, $params)) {
 		foreach ($change_get as $change) {
@@ -41,7 +41,7 @@ new runner(array(
             $SQL_apply = "CALL `{PREFIX}change_apply`(:change_id, :session)";
             $params_apply = array(
                 ":change_id" => $change["change_id"],
-                ":session" => \runner::stack("session_id"),
+                ":session" => (\runner::stack("session_id") ? \runner::stack("session_id") : 0),
             );
 
 			$model_class = false;
@@ -167,6 +167,7 @@ SQL;
 											}
 											if (isset($field_context["type"]) && $field_context["type"] == "checkbox") {
 												$value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+												$value = ($value ? "1" : "0");
 											}
 
 											$SQL_UPDATE = 'UPDATE `' . $model->table_from . '` SET `' . $field .
@@ -533,7 +534,7 @@ SQL;
 									$model->reference,
 									$changes["to"]["parent"],
 									$changes["to"]["prev"],
-									NULL);
+									0);
 								if (\db::query($SQL_SP, $params_SP)) {
 									$response["success"] = true;
 
@@ -579,7 +580,7 @@ SQL;
 									$model->reference,
 									$changes["to"]["parent"],
 									$changes["to"]["prev"],
-									NULL);
+									0);
 								if (\db::query($SQL_SP, $params_SP)) {
 									$response["success"] = true;
 

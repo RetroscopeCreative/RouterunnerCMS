@@ -38,7 +38,7 @@ new runner(array(
             $SQL_apply = "CALL `{PREFIX}change_apply`(:change_id, :session)";
             $params_apply = array(
                 ":change_id" => $change["change_id"],
-                ":session" => \runner::stack("session_id"),
+                ":session" => (\runner::stack("session_id") ? \runner::stack("session_id") : 0),
             );
 
 

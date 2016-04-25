@@ -26,7 +26,8 @@ if (isset($value) && ($value === "1" || $value === true || $value === "true" || 
 	<div class="col-md-offset-2 col-md-10">
 		<div class="md-checkbox-list">
 			<div class="md-checkbox">
-				<input type="checkbox" id="property-<?=$field_name?>" name="<?=$field_name?>"<?=$checked?> class="md-check">
+				<input type="hidden" id="hidden-<?=$field_name?>" name="<?=$field_name?>" value="<?= $checked ? '1' : '0' ?>">
+				<input type="checkbox" id="property-<?=$field_name?>"<?=$checked?> class="md-check">
 				<label for="property-<?=$field_name?>">
 					<span></span>
 					<span class="check"></span>
@@ -36,3 +37,8 @@ if (isset($value) && ($value === "1" || $value === true || $value === "true" || 
 		</div>
 	</div>
 </div>
+<script>
+	$("#property-<?=$field_name?>").on('change', function() {
+		$("#hidden-<?=$field_name?>").val($(this).is(":checked") ? "1" : "0");
+	});
+</script>

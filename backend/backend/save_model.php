@@ -17,7 +17,7 @@ $table_from = (isset($_POST['table_from']) ? $_POST['table_from'] : false);
 $parent = (isset($_POST['parent']) ? $_POST['parent'] : false);
 $prev = (isset($_POST['prev']) ? $_POST['prev'] : false);
 $order_no = (isset($_POST['order_no']) ? $_POST['order_no'] : false);
-$lang = (isset($_POST['lang']) ? $_POST['lang'] : false);
+$lang = (isset($_POST['lang']) ? $_POST['lang'] : 0);
 
 new runner(array(
 	'mode' => 'cms',
