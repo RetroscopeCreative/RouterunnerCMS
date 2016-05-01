@@ -12,11 +12,21 @@ model = function(caller, elem, ready_fn) {
     this.inline_elem = ($(elem).is(".routerunner-inline") ? elem : $(elem).find(".routerunner-inline").get(0));
     if ($(this.inline_elem).length > 1) {
         var first_inline = false;
-        $.each(this.inline_elem, function() {
-            if (!first_inline && (this.nodeType === 1 && $.inArray(this.nodeName, ["SCRIPT", "LINK", "STYLE"]) === -1)) {
-                first_inline = this;
-            }
-        });
+        if ($(this.inline_elem).find('.rr-model')) {
+            $.each(this.inline_elem, function () {
+                if (!first_inline && ($(this).hasClass('rr-model'))) {
+                    first_inline = this;
+                }
+            });
+        }
+        if (!first_inline) {
+            $.each(this.inline_elem, function () {
+                if (!first_inline && (this.nodeType === 1
+                    && $.inArray(this.nodeName, ["SCRIPT", "LINK", "STYLE"]) === -1)) {
+                    first_inline = this;
+                }
+            });
+        }
         if (!first_inline) {
             $.each(this.inline_elem, function() {
                 if (!first_inline) {
