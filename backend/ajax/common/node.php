@@ -26,6 +26,18 @@ new runner(array(
 	if (isset($post["current"]) && is_numeric($post["current"])) {
 		$lang = \Routerunner\Bootstrap::lang($post["current"]);
 		$parents = \Routerunner\Bootstrap::parent($post["current"], $treeroot);
+		if (!$treeroot && !empty($post['current'])) {
+			if ($current_model = \model::load(array('direct' => $post['current']))) {
+				if ($current_model->class == 'tree') {
+					$treeroot = array(
+						"lvl" => 1,
+						"reference" => $current_model->reference,
+						"model_class" => $current_model->class,
+						"table_id" => $current_model->table_id,
+					);
+				}
+			}
+		}
 		if ($treeroot) {
 			$route[] = $treeroot["model_class"] . '/' . $treeroot["table_id"];
 		}

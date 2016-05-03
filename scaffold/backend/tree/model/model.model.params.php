@@ -22,16 +22,16 @@ $select = array(
 	'id' => 'trees.model_tree_id',
 	'lang' => 'trees.lang',
 	'parent' => 'trees.parent_ref',
-	'reference' => '{PREFIX}models.reference',
-	'model_class' => '{PREFIX}models.model_class',
-	'table_id' => '{PREFIX}models.table_id',
+	'reference' => \runner::config('PREFIX') . 'models.reference',
+	'model_class' => \runner::config('PREFIX') . 'models.model_class',
+	'table_id' => \runner::config('PREFIX') . 'models.table_id',
 	'accept' => 'NULL',
 );
 
-$from = '{PREFIX}models';
+$from = \runner::config('PREFIX') . 'models';
 
 $leftJoin = array(
-	'{PREFIX}model_trees AS trees ON trees.reference = {PREFIX}models.reference'
+	\runner::config('PREFIX') . 'model_trees AS trees ON trees.reference = ' . \runner::config('PREFIX') . 'models.reference'
 );
 
 $where = array();
