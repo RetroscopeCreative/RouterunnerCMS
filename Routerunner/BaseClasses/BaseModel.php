@@ -946,7 +946,9 @@ SQL;
 			}
 			if ($state_results = \db::query($SQL, $params)) {
 				foreach ($state_results as $state_result) {
-					$visible_references[] = $state_result["reference"];
+					if (!empty($state_result["reference"])) {
+						$visible_references[] = $state_result["reference"];
+					}
 				}
 			}
 
