@@ -26,9 +26,9 @@ new runner(array(
 
 	$SQL = "CALL {PREFIX}change_log(:change_id, :session, :reference, :resource, :changes, :state)";
 	$params = array(
-		":change_id" => (is_numeric($post["change_id"]) ? $post["change_id"] : null),
+		":change_id" => (is_numeric($post["change_id"]) ? $post["change_id"] : 0),
 		":session" => \runner::stack("session_id"),
-		":reference" => $post["reference"],
+		":reference" => (is_numeric($post["reference"]) ? $post["reference"] : 0),
 		":resource" => json_encode($post["resource"]),
 		":changes" => json_encode($post["changes"]),
 		":state" => $post["state"],

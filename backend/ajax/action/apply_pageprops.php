@@ -28,8 +28,8 @@ new runner(array(
 	$params = array(
 		":change_id" => (is_numeric($post["change_id"]) ? $post["change_id"] : null),
 		":session" => (\runner::stack("session_id") ? \runner::stack("session_id") : null),
-		":draft" => true,
-		":applied" => false,
+		":draft" => 1,
+		":applied" => 0,
 	);
 	if ($change_get = \db::query($SQL, $params)) {
 		foreach ($change_get as $change) {
