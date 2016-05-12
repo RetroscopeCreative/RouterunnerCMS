@@ -137,6 +137,10 @@ movement_panel = function(caller, id) {
                                 .closest(".routerunner-container[data-reference='" + parent + "']"));
                         }
                     }
+                    if (!container.length && model && model.inline_elem
+                        && $(model.inline_elem).closest(".routerunner-container").length) {
+                        container.push($(model.inline_elem).closest(".routerunner-container"));
+                    }
                     if (!container.length
                         && $(routerunner.content_document).find(".routerunner-container[data-reference='" +
                             parent + "']").length) {
