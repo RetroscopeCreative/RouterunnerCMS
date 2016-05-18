@@ -18,6 +18,8 @@ class Form
 	protected $class = '';
 	public $view = '';
 
+	private $nonce = false;
+
 	public static $forms = array();
 	public static $id = false;
 
@@ -30,6 +32,9 @@ class Form
 
 		if (\Routerunner\Routerunner::$slim->request) {
 			$request_params = \Routerunner\Routerunner::$slim->request->params();
+			if (!empty($request_params['_routerunner_form_id'])) {
+				$this->fid = $request_params['_routerunner_form_id'];
+			}
 
 			$form_method = (($repost_form_after_submit && ($repost_form_after_submit === 'put'
 					|| $repost_form_after_submit === 'get' || $repost_form_after_submit === 'post'
@@ -58,11 +63,27 @@ class Form
 			$flash['fields'] = array_keys($params['input']);
 
 			if ($method == 'form') {
+				$this->nonce = uniqid(rand(0, 1000000));
+				$_SESSION["nonce-" . $this->fid] = \Routerunner\Crypt::crypter($this->nonce);
 				\Routerunner\Routerunner::$slim->flash($this->path . DIRECTORY_SEPARATOR . $formname, $flash);
 			}
 
 			$this->params = $params["form"];
 			$this->fields = $params["input"];
+
+			$this->fields['_routerunner_form_id'] = array(
+				'type' => 'hidden',
+				'field' => '_routerunner_form_id',
+				'input-id' => '_routerunner_form_id',
+				'value' => $this->fid,
+			);
+			$this->fields['_routerunner_form_nonce'] = array(
+				'type' => 'hidden',
+				'field' => '_routerunner_form_nonce',
+				'input-id' => '_routerunner_form_nonce',
+				'value' => $this->nonce,
+			);
+
 			if (isset($params["unset"])) {
 				$this->unset = $params["unset"];
 			}
@@ -103,6 +124,9 @@ class Form
 
 	public function field($field, $value=null, $overwrite=array())
 	{
+		if (!isset($this->fields[$field])) {
+			return '';
+		}
 		$field_params = $this->fields[$field];
 		$fieldname = (isset($overwrite['name']) ? $overwrite['name'] : $field);
 		$field_params = array_merge($field_params, $overwrite);
@@ -153,6 +177,10 @@ class Form
 			ob_start();
 			include $input_path;
 			$return = ob_get_clean();
+		} else {
+			$field_id = (isset($field_params['input-id']) ? $field_params['input-id'] : $fieldname);
+			$val = (!is_null($value) ? $value : (isset($field_params['value']) ? $field_params['value'] : ''));
+			$return = '<input type="hidden" name="'.$fieldname.'" id="'.$field_id.'" value="'.$val.'" />';
 		}
 		return $return . PHP_EOL;
 	}
@@ -182,8 +210,10 @@ class Form
 			$forms = array($forms);
 		}
 		foreach ($forms as $frm_name => $form) {
-			$slim = \Routerunner\Routerunner::$slim;
-			$flashed = $slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
+			//$slim = \Routerunner\Routerunner::$slim;
+			//$flashed = $slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
+
+			$flashed = \Routerunner\Routerunner::$slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
 
 			$params = \Routerunner\Bootstrap::$params;
 
@@ -209,6 +239,25 @@ class Form
 			} else {
 				$errors[] = 'Form not exists or the page has been refreshed!';
 			}
+
+
+			$fid = false;
+			if (!empty($form->fields['_routerunner_form_id']['value'])) {
+				$fid = $form->fields['_routerunner_form_id']['value'];
+			}
+			if ($fid && !empty($form->fields['_routerunner_form_nonce']['value'])) {
+				if (!isset($_SESSION['nonce-' . $fid]) ||
+					!\Routerunner\Crypt::checker($form->fields['_routerunner_form_nonce']['value'], $_SESSION['nonce-' . $fid])) {
+					$errors[] = 'Error in form submit or data has been sent already!';
+					$halt = true;
+				}
+			}
+			if (!$halt) {
+				unset($form->fields['_routerunner_form_id']);
+				unset($form->fields['_routerunner_form_nonce']);
+				unset($_SESSION['nonce-' . $fid]);
+			}
+
 			$succeed = false;
 			if (!$halt) {
 				$error_row = (isset($form->params['error_format']))
