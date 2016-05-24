@@ -410,7 +410,7 @@ class Routerunner
 		if (isset($output['form'], $output['input'])) {
 			$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit);
 			$html = $form->render($runner);
-			$form_addon = $form->field('_routerunner_form_id') . $form->field('_routerunner_form_nonce');
+			$form_addon = $form->field($form->id_field) . $form->field('_routerunner_form_nonce');
 			$html = str_replace('</form>', $form_addon . '</form>', $html);
 			if (\runner::stack("form_failed:" . $formname) === true) {
 				$repost = true;

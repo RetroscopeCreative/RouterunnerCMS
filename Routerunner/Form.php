@@ -17,6 +17,7 @@ class Form
 	private $fid = '';
 	protected $class = '';
 	public $view = '';
+	public $id_field = '_routerunner_form_id';
 
 	private $nonce = false;
 
@@ -29,11 +30,12 @@ class Form
 		$this->fid = str_replace('.', '_', uniqid('', true));
 		$this->path = $runner->path . $runner->route;
 		$this->formname = $formname;
+		$this->id_field .= str_replace('/', '_', $this->path . '/' . $this->formname);
 
 		if (\Routerunner\Routerunner::$slim->request) {
 			$request_params = \Routerunner\Routerunner::$slim->request->params();
-			if (!empty($request_params['_routerunner_form_id'])) {
-				$this->fid = $request_params['_routerunner_form_id'];
+			if (!empty($request_params[$this->id_field])) {
+				$this->fid = $request_params[$this->id_field];
 			}
 
 			$form_method = (($repost_form_after_submit && ($repost_form_after_submit === 'put'
@@ -71,9 +73,9 @@ class Form
 			$this->params = $params["form"];
 			$this->fields = $params["input"];
 
-			$this->fields['_routerunner_form_id'] = array(
+			$this->fields[$this->id_field] = array(
 				'type' => 'hidden',
-				'field' => '_routerunner_form_id',
+				'field' => $this->id_field,
 				'input-id' => '_routerunner_form_id',
 				'value' => $this->fid,
 			);
@@ -210,9 +212,6 @@ class Form
 			$forms = array($forms);
 		}
 		foreach ($forms as $frm_name => $form) {
-			//$slim = \Routerunner\Routerunner::$slim;
-			//$flashed = $slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
-
 			$flashed = \Routerunner\Routerunner::$slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
 
 			$params = \Routerunner\Bootstrap::$params;
@@ -221,8 +220,13 @@ class Form
 			if (isset($flashed, $flashed['fields'])) {
 				// check form fields
 				$fields = $flashed['fields'];
+				$form_fields = array_keys($form->fields);
+				if (($_routerunner_form_id_index = array_search($form->id_field, $form_fields)) &&
+					($_routerunner_form_nonce_index = array_search('_routerunner_form_nonce', $form_fields))) {
+					unset($form_fields[$_routerunner_form_id_index], $form_fields[$_routerunner_form_nonce_index]);
+				}
 
-				if (\Routerunner\Common::arrDiff($fields, array_keys($form->fields))) {
+				if (\Routerunner\Common::arrDiff($fields, $form_fields)) {
 					// exception
 					$halt = true;
 				}
@@ -242,8 +246,8 @@ class Form
 
 
 			$fid = false;
-			if (!empty($form->fields['_routerunner_form_id']['value'])) {
-				$fid = $form->fields['_routerunner_form_id']['value'];
+			if (!empty($form->fields[$form->id_field]['value'])) {
+				$fid = $form->fields[$form->id_field]['value'];
 			}
 			if ($fid && !empty($form->fields['_routerunner_form_nonce']['value'])) {
 				if (!isset($_SESSION['nonce-' . $fid]) ||
@@ -253,7 +257,7 @@ class Form
 				}
 			}
 			if (!$halt) {
-				unset($form->fields['_routerunner_form_id']);
+				unset($form->fields[$form->id_field]);
 				unset($form->fields['_routerunner_form_nonce']);
 				unset($_SESSION['nonce-' . $fid]);
 			}

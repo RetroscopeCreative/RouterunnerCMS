@@ -14,5 +14,8 @@ if (isset($runner->context["model"]) && is_array($runner->context["model"])
 	&& isset($runner->context["model"]->$field_name)) {
 	$value = $runner->context["model"]->$field_name;
 }
+if (empty($field_name)) {
+	$field_name = (isset($fieldname) ? $fieldname : uniqid());
+}
 ?>
 <input type="hidden" name="<?=$field_name?>" id="property-<?=$field_name?>" value="<?=$value?>" />

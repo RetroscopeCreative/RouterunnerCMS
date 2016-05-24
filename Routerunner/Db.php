@@ -212,13 +212,16 @@ class Db
 			$parameters = $params;
 		}
 		$return = null; // return null if execution fails
-		if ($stmt->execute($parameters)) {
+		$stmt_result = $stmt->execute($parameters);
+		if ($stmt_result) {
 			// execute & fetch the last inserted id
 			$return = self::$db_conn->lastInsertId();
 			if ($return == false) {
 				$return = true;
 			}
 		} else {
+			$log = new \Routerunner\Log();
+			$log->write($stmt->errorInfo(), 8);
 			//exc::soft(null, $stmt->errorInfo(), array("SQL"=>$SQL, "params"=>$params));
 		}
 		$end = microtime(true) - self::$inited;

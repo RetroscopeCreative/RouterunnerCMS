@@ -129,6 +129,9 @@ class Flash extends \Slim\Middleware implements \ArrayAccess, \IteratorAggregate
      */
     public function save()
     {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
         $_SESSION[$this->settings['key']] = $this->messages['next'];
     }
 

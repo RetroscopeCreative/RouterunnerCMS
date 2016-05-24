@@ -29,8 +29,9 @@ class Common {
 
 	public static function arrDiff($arg1, $arg2=array())
 	{
+		return (count(array_diff($arg1, $arg2)) > 0 || count(array_diff($arg2, $arg1)) > 0) ? true : false;
+		/*
 		$diff = array();
-		$keys = array_merge(array_keys($arg1), array_keys($arg2));
 		foreach ($keys as $key)
 		{
 			if (!isset($arg2[$key]) || $arg1[$key] !== $arg2[$key]) {
@@ -38,6 +39,7 @@ class Common {
 			}
 		}
 		return $diff;
+		*/
 	}
 
 	public static function inc($path='', $file='', $root=true, $require=false, $once=false, $suffix='')

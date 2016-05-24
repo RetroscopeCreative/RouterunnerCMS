@@ -60,27 +60,30 @@ class Log
 			$message = array_shift($backtrace);
 			$skip_shift = true;
 		}
+		if (is_array($message)) {
+			$message = print_r($message, true);
+		}
 
 		$log = array(
-			'date' => time(),
-			'exception' => 'EXCEPTION',
-			'message' => $message,
-			'file' => '',
-			'line' => '',
-			'trace' => array(),
+			':date' => time(),
+			':exception' => 'EXCEPTION',
+			':message' => $message,
+			':file' => '',
+			':line' => '',
+			':trace' => array(),
 		);
-		$log['exception'] = $this->levels[$level];
+		$log[':exception'] = $this->levels[$level];
 
 		if (is_array($backtrace) && ($skip_shift || count($backtrace) > 2)) {
 			if (!$skip_shift) {
 				array_shift($backtrace);
 				array_shift($backtrace);
 				$current = array_shift($backtrace);
-				$log['file'] = $current['file'];
-				$log['line'] = $current['line'];
+				$log[':file'] = $current['file'];
+				$log[':line'] = $current['line'];
 			} elseif (($in_pos = strrpos($message, ' in ')) !== false) {
-				$log['file']  = substr($message, $in_pos+4, strpos($message, ':', $in_pos+4)-($in_pos+4));
-				$log['line'] = substr($message, strpos($message, ':', $in_pos+4)+1);
+				$log[':file']  = substr($message, $in_pos+4, strpos($message, ':', $in_pos+4)-($in_pos+4));
+				$log[':line'] = substr($message, strpos($message, ':', $in_pos+4)+1);
 			}
 			/*
 			if (isset($current['function'])) {
@@ -88,15 +91,21 @@ class Log
 			}
 			*/
 			if (!is_null($level)) {
-				$log['exception'] .= ' (level=' . $level . ')';
+				$log[':exception'] .= ' (level=' . $level . ')';
 			}
 			if ($backtrace) {
-				$log['trace'] = print_r($backtrace, true);
+				foreach ($backtrace as $item) {
+					if (isset($item['object'])) {
+						$item['object'] = get_class($item['object']);
+					}
+					$log[':trace'][] = $item;
+				}
+				$log[':trace'] = print_r($log[':trace'], true);
 			}
 
 			$SQL = <<<SQL
-INSERT INTO `{PREFIX}log` (`date`, `exception`, `message`, `file`, `line`, `trace`)
-VALUES (:date, :exception, :message, :file, :line, :trace)
+INSERT INTO `{PREFIX}log` (`date`, `exception`, `message`, `file`, `line`, `trace`, `solved`)
+VALUES (:date, :exception, :message, :file, :line, :trace, 0)
 
 SQL;
 			\db::insert($SQL, $log);
@@ -104,10 +113,10 @@ SQL;
 			if ($level < 5) {
 				$traced = print_r($backtrace, true);
 				echo <<<HTML
-<h1>{$log['exception']} raised!</h1>
+<h1>{$log[':exception']} raised!</h1>
 <h3>Message: {$message}</h3>
-<h5>File: {$log['file']}:{$log['line']}</h5>
-<h5>Date: {$log['date']}</h5>
+<h5>File: {$log[':file']}:{$log[':line']}</h5>
+<h5>Date: {$log[':date']}</h5>
 {$traced}
 
 HTML;

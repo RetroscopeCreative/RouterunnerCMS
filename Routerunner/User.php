@@ -27,7 +27,7 @@ class User
 	private static $token_id=false;
 	private static $expire=false;
 
-	private static $alias=false;
+	private static $alias=0;
 
 	public static function initialize()
 	{
@@ -67,7 +67,7 @@ class User
 		}
 	}
 
-	public static function me(& $email=null, & $name=null, & $group=null, & $custom=array(), & $scope=null, & $auth=null, & $alias=false)
+	public static function me(& $email=null, & $name=null, & $group=null, & $custom=array(), & $scope=null, & $auth=null, & $alias=0)
 	{
 		$return = false;
 		if (self::$me) {
@@ -138,7 +138,7 @@ class User
 			self::$scope = null;
 			self::$auth = null;
 			self::$custom = array();
-			self::$alias = false;
+			self::$alias = 0;
 			self::close_token(self::$token);
 
 			if ($logout) {
