@@ -114,6 +114,12 @@ class form extends tunnel
 		$instance = rr::instance();
 		return $instance->field($field, $overwrite, $formname);
 	}
+
+	public static function field_value($field, $formname=null)
+	{
+		$instance = rr::instance();
+		return $instance->field_value($field, $formname);
+	}
 }
 
 class model extends tunnel

@@ -547,6 +547,25 @@ class BaseRunner
 		}
 	}
 
+	public function field_value($field, $formname=null)
+	{
+		if (is_null($formname) && isset($this->currentform) && isset($this->form[$this->currentform])) {
+			$formname = $this->currentform;
+		}
+		$formname = (is_null($formname) && count(array_keys($this->form)))
+			? array_shift(array_keys($this->form)) : $formname;
+		if (!is_null($formname) && isset($this->form[$formname], $this->form_context[$formname]['input'][$field])) {
+			$value = null;
+			if (isset($this->model, $this->model->$field)) {
+				$value = $this->model->$field;
+			} elseif (isset($this->form_context[$formname]['input'][$field]['value'])) {
+				$value = $this->form_context[$formname]['input'][$field]['value'];
+			}
+			return $value;
+		}
+		return null;
+	}
+
 	public function parent($property=null, $return='model')
 	{
 		$value = false;
