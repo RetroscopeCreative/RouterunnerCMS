@@ -238,9 +238,9 @@ class Helper
 								$runner->i18n = array_merge($runner->i18n, $i18n_addon);
 							}
 						}
-					} elseif (strpos($class, "script") !== false) {
+					} elseif (strpos($class, ".script") !== false) {
 						$runner->script = $returned;
-					} elseif (strpos($class, "external") !== false) {
+					} elseif (strpos($class, ".external") !== false) {
 						if (!isset($runner->external)) {
 							$runner->external = array(
 								"models" => $returned,
