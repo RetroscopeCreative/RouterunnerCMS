@@ -68,6 +68,9 @@ model = function(caller, elem, ready_fn) {
         if ($(self.inline_elem).data("fields") != undefined) {
             $.each($(self.inline_elem).data("fields"), function (prop_name, prop_data) {
                 self.queue(prop_name, self.id + "_ready");
+                if (prop_data == undefined || prop_data == null) {
+                    alert('property `' + prop_name + '` data not found!');
+                }
                 self.instance(prop_name, new property(self, prop_name, prop_data), "property");
             });
         }
