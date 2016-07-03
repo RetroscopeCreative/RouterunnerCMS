@@ -188,53 +188,57 @@ routerunner.init = function() {
         routerunner.statenames[state_no] = statename;
     });
 
-    routerunner.queue(function () {
-        routerunner.component("cms", "thirdparty", false, "helpers");
-        routerunner.component("thirdparty", "ckeditor", false, "helpers");
-        routerunner.component("thirdparty", "uri", false, "helpers");
-        routerunner.component("cms", "helpers", false, "helpers");
-    }, "helper.loaded");
-    routerunner.queue(function () {
-        routerunner.component("cms", "common", false, "commons");
-        routerunner.helper = $.extend({}, routerunner.components.helper);
-    }, "helpers.loaded");
-    routerunner.queue(function () {
-        routerunner.component("cms", "allframe", false, "allframes");
-        //routerunner.component("cms", "allframe", false, "allframes", routerunner.content_document);
-    }, "commons.loaded");
-    routerunner.queue(function () {
-        routerunner.component("cms", "pointers", false, "framework");
-        //routerunner.component("cms", "sidebar", false, "framework");
-        routerunner.component("cms", "panel", false, "framework");
-        routerunner.component("cms", "page", false, "framework");
-        routerunner.component("metronic", "assets", false, "framework");
-        if (routerunner.settings["LANG"] && routerunner.settings["scaffold"] && routerunner.settings["BASE"]) {
-            var i18n_script = routerunner.settings["scaffold"] + "/model/i18n." + routerunner.settings["LANG"] + ".json";
-            routerunner.helper.ajax(i18n_script, {}, {async: false, dataType: "json"}, function (i18n) {
-                routerunner.settings.localization = i18n;
-            });
-        }
-    }, "allframes.loaded");
-    routerunner.component("cms", "helper", false, "helper");
-
-    routerunner.queue(function () {
-        routerunner.common = routerunner.instance("common");
-        routerunner.page = routerunner.instance("page");
-        routerunner.pointers = routerunner.instance("pointers");
-        routerunner.panel = routerunner.instance("panel");
-
-        routerunner.action("loaded");
-        if (routerunner.iframe) {
-            routerunner.state("browse");
-        }
-    }, "framework.loaded");
-
     $(routerunner.iframe).on("load", function() {
 
         routerunner.content_window = routerunner.iframe.contentWindow;
         routerunner.content_document = routerunner.content_window.document;
 
         routerunner.settings = $.extend(routerunner.settings, routerunner.content_window.settings);
+
+
+
+        routerunner.queue(function () {
+            routerunner.component("cms", "thirdparty", false, "helpers");
+            routerunner.component("thirdparty", "ckeditor", false, "helpers");
+            routerunner.component("thirdparty", "uri", false, "helpers");
+            routerunner.component("cms", "helpers", false, "helpers");
+        }, "helper.loaded");
+        routerunner.queue(function () {
+            routerunner.component("cms", "common", false, "commons");
+            routerunner.helper = $.extend({}, routerunner.components.helper);
+        }, "helpers.loaded");
+        routerunner.queue(function () {
+            routerunner.component("cms", "allframe", false, "allframes");
+            //routerunner.component("cms", "allframe", false, "allframes", routerunner.content_document);
+        }, "commons.loaded");
+        routerunner.queue(function () {
+            routerunner.component("cms", "pointers", false, "framework");
+            //routerunner.component("cms", "sidebar", false, "framework");
+            routerunner.component("cms", "panel", false, "framework");
+            routerunner.component("cms", "page", false, "framework");
+            routerunner.component("metronic", "assets", false, "framework");
+            if (routerunner.settings["LANG"] && routerunner.settings["scaffold"] && routerunner.settings["BASE"]) {
+                var i18n_script = routerunner.settings["scaffold"] + "/model/i18n." + routerunner.settings["LANG"] + ".json";
+                routerunner.helper.ajax(i18n_script, {}, {async: false, dataType: "json"}, function (i18n) {
+                    routerunner.settings.localization = i18n;
+                });
+            }
+        }, "allframes.loaded");
+        routerunner.component("cms", "helper", false, "helper");
+
+        routerunner.queue(function () {
+            routerunner.common = routerunner.instance("common");
+            routerunner.page = routerunner.instance("page");
+            routerunner.pointers = routerunner.instance("pointers");
+            routerunner.panel = routerunner.instance("panel");
+
+            routerunner.action("loaded");
+            if (routerunner.iframe) {
+                routerunner.state("browse");
+            }
+        }, "framework.loaded");
+
+        
 
         var selectors = [];
         while (window.routerunner_models.length) {
