@@ -44,11 +44,17 @@ class Mail
 
 		if (isset($attachment) && is_array($attachment) && count($attachment)) {
 			//$mail->AddStringAttachment($string,$filename,$encoding,$type);
-			if (isset($attachment[0], $attachment[1], $attachment[2], $attachment[3])) {
-				$mail->AddStringAttachment($attachment[0], $attachment[1], $attachment[2], $attachment[3]);
-			} elseif (isset($attachment[0], $attachment[1])) {
-				$mail->AddStringAttachment($attachment[0], $attachment[1]);
+			if (isset($attachment['string'], $attachment['filename'], $attachment['encoding'], $attachment['type'])) {
+				$mail->AddStringAttachment($attachment['string'], $attachment['filename'], $attachment['encoding'], $attachment['type']);
+			} elseif (isset($attachment['string'], $attachment['filename'])) {
+				$mail->AddStringAttachment($attachment['string'], $attachment['filename']);
+			} else {
+				foreach ($attachment as $item) {
+					$mail->addAttachment($item);
+				}
 			}
+		} elseif (isset($attachment)) {
+			$mail->addAttachment($attachment);
 		}
 
 		$mail->IsHTML(true);                                         // Set email format to HTML
