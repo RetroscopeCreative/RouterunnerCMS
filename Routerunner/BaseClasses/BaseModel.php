@@ -816,7 +816,7 @@ SQL;
 				}
 			}
 
-			if ($strict && ($result = \db::query($SQL, $params))) {
+			if ($strict && !empty($SQL) && ($result = \db::query($SQL, $params))) {
 				// modify SQL params
 				if (!$leftJoin) {
 					$leftJoin = array();
