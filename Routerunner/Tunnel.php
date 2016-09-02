@@ -298,11 +298,15 @@ class db extends tunnel
 
 class context extends tunnel
 {
-	public static function get($name)
+	public static function get($name=false)
 	{
 		$runner = rr::instance();
-		$return = (isset($runner->context[$name])) ? $runner->context[$name] : '';
-		return $return;
+        if (!$name) {
+            return $runner->context;
+        } else {
+            $return = (isset($runner->context[$name])) ? $runner->context[$name] : '';
+            return $return;
+        }
 	}
 }
 
