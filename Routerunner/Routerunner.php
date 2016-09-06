@@ -405,7 +405,13 @@ class Routerunner
 	public static function form($formname, $runner, $repost_form_after_submit=false)
 	{
 		$repost = $repost_form_after_submit;
-		\Routerunner\Helper::loader($runner, trim($runner->route, '\\') . '.' . $formname . '.input', $output);
+        \Routerunner\Helper::loader($runner, trim($runner->route, '\\') . '.' . $formname . '.input', $output);
+        if (isset($runner->form_override)) {
+            $output = array_merge($output, $runner->form_override);
+            if (isset($runner->form_override['input'])) {
+                $runner->form_context[$formname]['input'] = $runner->form_override['input'];
+            }
+        }
 		$html = '';
 		if (isset($output['form'], $output['input'])) {
 			$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit);

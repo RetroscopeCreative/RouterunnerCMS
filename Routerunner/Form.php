@@ -138,7 +138,13 @@ class Form
 		$path = $scaffold_root . $this->path . DIRECTORY_SEPARATOR;
 		$input_root = $scaffold_root . DIRECTORY_SEPARATOR . 'input' . DIRECTORY_SEPARATOR;
 		$input_path = false;
-		if (file_exists($path . 'input.' . $this->formname . '.' . $field . '.php')) {
+        if (isset($field_params['view']) && file_exists($path . $field_params['view'])) {
+            $input_path = $path . $field_params['view'];
+
+        } elseif (isset($field_params['view']) && file_exists($scaffold_root . DIRECTORY_SEPARATOR . $field_params['view'])) {
+            $input_path = $scaffold_root . DIRECTORY_SEPARATOR . $field_params['view'];
+
+        } elseif (file_exists($path . 'input.' . $this->formname . '.' . $field . '.php')) {
 			$input_path = $path . 'input.' . $this->formname . '.' . $field . '.php';
 
 		} elseif (file_exists($path . 'input.' . $field . '.php')) {
