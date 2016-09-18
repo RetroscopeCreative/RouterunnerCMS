@@ -821,10 +821,16 @@ SQL;
 				if (!$leftJoin) {
 					$leftJoin = array();
 				}
-				array_unshift($leftJoin, '`' . $from . '` ON `' . $from . '`.`' . $primary_key . '` = models.table_id AND models.table_from = \'' . $from . '\'');
-				$model_class = trim($from, '`');
-				$primary_key = trim($primary_key, '`');
-				$from = '{PREFIX}models AS models';
+				if (strpos($from, '{PREFIX}models') !== false || $from == 'models') {
+                    $from = '`{PREFIX}models` AS models';
+                    $model_class = 'models';
+                    $primary_key = 'reference';
+                } else {
+                    array_unshift($leftJoin, '`' . $from . '` ON `' . $from . '`.`' . $primary_key . '` = models.table_id AND models.table_from = \'' . $from . '\'');
+                    $model_class = trim($from, '`');
+                    $primary_key = trim($primary_key, '`');
+                    $from = '{PREFIX}models AS models';
+                }
 
 				if ($orderBy === \Routerunner\Routerunner::BY_INDEX
 					|| $orderBy === \Routerunner\Routerunner::BY_INDEX_DESC || $by_index) {
