@@ -236,6 +236,9 @@ SQL;
 			&& $this->permission && !$this->activate_allowed()) {
 			$this->states["active"] = false;
 		}
+		if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
+            $this->states["active"] = true;
+        }
 	}
 
 	public function permissioning($reference=false, $runner_passed=false)
@@ -333,9 +336,9 @@ SQL;
 						) {
 							$this->permission = array('owner' => $permission['permission']);
 						}
-						if (($this->permission === false
-								|| (is_array($this->permission) && key($this->permission) == 'other'))
-							&& (int)$permission['group'] === (int)$gid
+						if (!is_null($permission['group']) && ($this->permission === false
+								|| (is_array($this->permission) && key($this->permission) == 'other')
+							&& (int)$permission['group'] === (int)$gid)
 						) {
 							$this->permission = array('group' => $permission['permission']);
 						}

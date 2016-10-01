@@ -225,6 +225,7 @@ class Bootstrap
 		} else {
 			$return = false;
 		}
+        self::$bootstrap = false;
 		return $return;
 	}
 
@@ -346,16 +347,16 @@ class Bootstrap
 				$second_suffix = ((strpos($second_root, DIRECTORY_SEPARATOR) !== false)
 					? substr($second_root, 0, strrpos($second_root, DIRECTORY_SEPARATOR) + 1) : '');
 			}
-			if (\Routerunner\Common::inc('bootstrap', $class.'.bootstrap', false, false, false, $suffix)) {
+			if (\Routerunner\Common::inc('bootstrap', $class.'.bootstrap', false, false, true, $suffix)) {
 				$ns_class = '\\' . $class . '\\bootstrap';
 				self::$bootstrap = new $ns_class();
-			} elseif (\Routerunner\Common::inc('bootstrap', $second_class.'.bootstrap', false, false, false, $second_suffix)) {
+			} elseif (\Routerunner\Common::inc('bootstrap', $second_class.'.bootstrap', false, false, true, $second_suffix)) {
 				$ns_class = '\\' . $second_class . '\\bootstrap';
 				self::$bootstrap = new $ns_class();
 			}
 			if (!self::$bootstrap) {
 				$class = 'default';
-				if (\Routerunner\Common::inc('bootstrap', $class.'.bootstrap', false, false, false, $suffix)) {
+				if (\Routerunner\Common::inc('bootstrap', $class.'.bootstrap', false, false, true, $suffix)) {
 					$ns_class = '\\' . $class . '\\bootstrap';
 					self::$bootstrap = new $ns_class();
 				}
