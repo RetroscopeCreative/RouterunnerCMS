@@ -87,6 +87,10 @@ ckeditor = function(_model, _input, _field) {
         var doc = (routerunner.content_document ? routerunner.content_document : window.document);
         var scroll_timer = false;
 
+        CKEDITOR.dtd.$removeEmpty['i'] = false;
+        CKEDITOR.dtd.$removeEmpty['span'] = false;
+        CKEDITOR.dtd.$removeEmpty['div'] = false;
+
         var ck_height = 100;
         _instance = CKEDITOR.inline(this.inline_input.get(0), params);
 
