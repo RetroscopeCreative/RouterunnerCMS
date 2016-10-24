@@ -20,9 +20,9 @@ $url .= '?' . http_build_query($_GET);
 <!-- BEGIN CONTAINER -->
 <div class="page-container row">
 	<!-- BEGIN PAGE CONTENT-->
-	<div class="routerunner-content">
-		<div class="routerunner-content-wrapper">
-			<iframe src="<?=$url?>&<?=$backend_uri?>=<?=$code?>" class="content-iframe" id="routerunner-content-iframe" style="border: 0;" frameborder="0"></iframe>
+	<div class="routerunner-content" style="position: relative; width: 100%; height: 100%;">
+		<div class="routerunner-content-wrapper" style="position: absolute; width: 100%; height: 100%;">
+			<iframe src="<?=$url?>&<?=$backend_uri?>=<?=$code?>" class="content-iframe" id="routerunner-content-iframe" style="border: 0; width: 100%; height: 100%;" frameborder="0"></iframe>
 		</div>
 	</div>
 	<!-- END PAGE CONTENT-->
