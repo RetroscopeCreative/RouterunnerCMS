@@ -8,7 +8,15 @@
 
 header('Content-Type: application/json');
 
-require '../../../Routerunner/Routerunner.php';
+$require = '../../../';
+try {
+    $require = \runner::config('SITEROOT') . \runner::config('BACKEND_ROOT');
+} catch (Exception $e) {
+
+}
+if (!class_exists('\Routerunner\Routerunner', false)) {
+    require $require . 'Routerunner/Routerunner.php';
+}
 use \Routerunner\Routerunner as runner;
 
 $post = array_merge($_GET, $_POST);
@@ -82,6 +90,9 @@ new runner(array(
 				}
 				$parent[] = $post["parent"];
 			}
+            if (!isset($model->backend_ref) && \runner::stack('frontend_create')) {
+                $model->backend_ref = \runner::stack('frontend_create');
+            }
 			$models_created[$model->reference] = array(
 				"class" => $model->class,
 				"route" => $model->route,

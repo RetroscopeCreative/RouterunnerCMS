@@ -398,8 +398,12 @@ class Routerunner
 		} elseif (!$echo) {
 			return $router->runner->html;
 		} else {
-			return '<!--Routerunner::Route('.$router->rid.')//-->'.PHP_EOL;
-		}
+            if (\runner::config('silent')) {
+                return $router->runner->html;
+            } else {
+                return '<!--Routerunner::Route(' . $router->rid . ')//-->' . PHP_EOL;
+            }
+        }
     }
 
 	public static function form($formname, $runner, $repost_form_after_submit=false)
