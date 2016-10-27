@@ -45,11 +45,17 @@ new runner(array(
 	if ($model_class = (isset($post['class']) ? $post['class'] :
 		(isset($post['model_class']) ? $post['model_class'] : false))) {
 		$route = '/model/' . $model_class;
+        $route_runner = (isset($post['runner_class']) ? $post['runner_class'] : $model_class);
+        $runner_inc = $model_class . '.runner.php';
 		if (file_exists($scaffold . $_route . DIRECTORY_SEPARATOR . $model_class . '.runner.php')) {
 			$route = $_route;
-		} elseif (file_exists($scaffold . $_route . DIRECTORY_SEPARATOR . $model_class .
-			DIRECTORY_SEPARATOR . $model_class . '.runner.php')) {
-			$route = $_route . DIRECTORY_SEPARATOR . $model_class;
+        } elseif (file_exists($scaffold . $_route . DIRECTORY_SEPARATOR . $route_runner . '.runner.php')) {
+            $route = $_route;
+            $runner_inc = $route_runner . '.runner.php';
+		} elseif (file_exists($scaffold . $_route . DIRECTORY_SEPARATOR . $route_runner .
+			DIRECTORY_SEPARATOR . $route_runner . '.runner.php')) {
+			$route = $_route . DIRECTORY_SEPARATOR . $route_runner;
+            $runner_inc = $route_runner . '.runner.php';
 		} elseif (file_exists($scaffold . $_route . DIRECTORY_SEPARATOR . $model_class .
 			DIRECTORY_SEPARATOR . $model_class . '.runner.php')) {
 			$route = $_route . DIRECTORY_SEPARATOR . $model_class;
@@ -64,7 +70,7 @@ new runner(array(
 
 		$model["create"] = $model["id"];
 		//unset($model['id'], $model['reference'], $model['route']);
-		if (file_exists($scaffold . $route . DIRECTORY_SEPARATOR . $model_class . '.runner.php')) {
+		if (file_exists($scaffold . $route . DIRECTORY_SEPARATOR . $runner_inc)) {
 			$router = false;
 			\runner::stack("model_create", array("route" => $route));
 			\runner::route($route, array("direct" => 0),
