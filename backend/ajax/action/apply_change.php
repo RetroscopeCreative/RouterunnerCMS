@@ -5,7 +5,18 @@
  * Date: 2014.10.20.
  * Time: 10:33
  */
-require '../../../Routerunner/Routerunner.php';
+
+header('Content-Type: application/json');
+
+$require = '../../../';
+try {
+    $require = \runner::config('SITEROOT') . \runner::config('BACKEND_ROOT');
+} catch (Exception $e) {
+
+}
+if (!class_exists('\Routerunner\Routerunner', false)) {
+    require $require . 'Routerunner/Routerunner.php';
+}
 use \Routerunner\Routerunner as runner;
 
 $post = array_merge($_GET, $_POST);
