@@ -87,6 +87,18 @@ class Common {
 	public static function get_cache($key)
     {
         if (\Routerunner\Routerunner::$cache && ($return = \Routerunner\Routerunner::$cache->get(self::get_cache_key($key)))) {
+            if ($tmp = unserialize($return)) {
+                $return = $tmp;
+                if (!is_object($return) && gettype($return) == 'object') {
+                    $return = unserialize(serialize($return));
+                } elseif (is_array($return)) {
+                    foreach ($return as $key => & $item) {
+                        if (!is_object($item) && gettype($item) == 'object') {
+                            $item = unserialize(serialize($item));
+                        }
+                    }
+                }
+            }
             return $return;
         }
         return false;
@@ -94,6 +106,9 @@ class Common {
 
     public static function set_cache($key, $value, $expire=3600)
     {
+        if (is_object($value) || is_array($value)) {
+            $value = serialize($value);
+        }
         if (\Routerunner\Routerunner::$cache && \Routerunner\Routerunner::$cache_type == 'Memcached') {
             \Routerunner\Routerunner::$cache->set(self::get_cache_key($key), $value, $expire);
         } elseif (\Routerunner\Routerunner::$cache && \Routerunner\Routerunner::$cache_type == 'Memcache' && strlen($key) < 240) {
