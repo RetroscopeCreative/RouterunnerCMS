@@ -279,6 +279,34 @@ class model extends tunnel
 		}
 		return $return;
 	}
+
+	public static function insert($class, $table_id, $parent, $prev=0, $table_from=false, $lang=null) {
+        if (\user::me()) {
+            if (!$table_from) {
+                $table_from = $class;
+            }
+
+            $SQL = 'INSERT INTO `{PREFIX}models` (model_class, table_from, table_id) VALUES (:model_class, :table_from, :table_id)';
+            if ($reference = \db::insert($SQL, array(
+                ':model_class' => $class,
+                ':table_from' => $table_from,
+                ':table_id' => $table_id,
+            ))) {
+
+                $SQL = 'CALL `{PREFIX}tree_insert`(:reference, :parent, :prev, :lang)';
+                if ($result = \db::query($SQL, array(
+                    ':reference' => $reference,
+                    ':parent' => $parent,
+                    ':prev' => $prev,
+                    ':lang' => $lang,
+                ))) {
+                    return $result[0]['inserted'];
+                }
+
+            }
+        }
+        return false;
+    }
 }
 
 class db extends tunnel
