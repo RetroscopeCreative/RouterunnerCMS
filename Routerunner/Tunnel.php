@@ -282,6 +282,9 @@ class model extends tunnel
 
 	public static function insert($class, $table_id, $parent, $prev=0, $table_from=false, $lang=null) {
         if (\user::me()) {
+
+            // check for rights
+
             if (!$table_from) {
                 $table_from = $class;
             }
@@ -304,6 +307,23 @@ class model extends tunnel
                 }
 
             }
+        }
+        return false;
+    }
+
+    public static function delete($reference) {
+        if (\user::me()) {
+
+            // check for rights
+
+            $SQL = 'CALL `{PREFIX}tree_remove`(:reference)';
+            if ($result = \db::query($SQL, array(':reference' => $reference))) {
+                $SQL = 'DELETE FROM `{PREFIX}models` WHERE reference = :reference';
+                \db::query($SQL, array(':reference' => $reference));
+
+                return $result[0]['removed'];
+            }
+
         }
         return false;
     }

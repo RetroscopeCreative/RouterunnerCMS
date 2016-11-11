@@ -245,6 +245,12 @@ class Form
 					$halt = true;
 				}
 				*/
+				if ($flashed['method'] != $form->params['method']) {
+                    $flashed['method'] = $form->params['method'];
+                }
+				if ($flashed['xmethod'] != $form->params['xmethod']) {
+                    $flashed['xmethod'] = $form->params['xmethod'];
+                }
 				$form->params = $flashed;
 			} else {
 				$errors[] = 'Form not exists or the page has been refreshed!';
