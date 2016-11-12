@@ -21,7 +21,7 @@ use \Routerunner\Routerunner as runner;
 
 $post = array_merge($_GET, $_POST);
 
-new runner(array(
+$return = new runner(array(
 	'mode' => 'backend',
 	'silent' => true,
 	'params' => $post,
@@ -126,6 +126,7 @@ new runner(array(
 				}
 				$return['model'] = $model;
 			}
+			\runner::now('created_router', $router);
 
 			echo json_encode($return, JSON_HEX_QUOT);
 		}

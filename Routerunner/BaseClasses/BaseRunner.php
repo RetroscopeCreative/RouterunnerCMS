@@ -180,6 +180,11 @@ class BaseRunner
 						, false, false, $this->router);
 					$this->view = $class;
 
+                    if ($this->event_load) {
+                        \Routerunner\Helper::loader($this, $this->event_load, $output);
+                        $this->event_load = false;
+                    }
+
 					if (isset($this->model) && $this->model === false) {
 						// todo: check view permission
 						$this->render();
