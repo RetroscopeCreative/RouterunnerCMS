@@ -465,6 +465,7 @@ SQL;
 		$offset = ((isset($context["offset"])) ? $context["offset"] : false);
 		$random = ((isset($context["random"])) ? $context["random"] : false);
 		$pk = ((isset($context["primary_key"])) ? $context["primary_key"] : false);
+		$allow_blank = ((isset($context["allow_blank"])) ? $context["allow_blank"] : false);
 
 		$params = array();
 
@@ -483,7 +484,7 @@ SQL;
 				$params = $where;
 			} else {
 				$SQL = self::SQL_creator($select, $from, $pk, $leftJoin,
-					$where, $params, $orderBy, $groupBy, $limit, $offset);
+					$where, $params, $orderBy, $groupBy, $limit, $offset, $allow_blank);
 			}
 
 			if (\runner::now("debug::model->load") === true) {
@@ -595,7 +596,12 @@ SQL;
 			if ($pk) {
 				$models = array();
 				foreach ($load as $row) {
-					$pkid = (isset($row[$pk]) ? $row[$pk] : hexdec(uniqid()));
+					$pkid = (isset($row[$pk]) ? $row[$pk] : false);
+                    if (!$pkid && isset($model->table_id) && $model->table_id < 0) {
+                        $pkid = $model->table_id;
+                    } elseif (!$pkid) {
+                        $pkid = hexdec(uniqid());
+                    }
 
 					if (isset($models[$pkid])) {
 						foreach ($row as $field => $value) {
@@ -670,7 +676,8 @@ SQL;
 	}
 
 	private static function SQL_creator($select, $from, $primary_key, $leftJoin=array(), $where=array(),
-										& $params=array(), $orderBy=false, $groupBy=false, $limit=false, $offset=false) {
+										& $params=array(), $orderBy=false, $groupBy=false, $limit=false, $offset=false,
+                                        $allow_blank=false) {
 		$ordering = $orderBy;
 		$parents = \runner::stack("parents");
 		if (!$parents) {
@@ -889,7 +896,9 @@ SQL;
 					$where = array();
 				}
 				$where['models.reference IN (' . implode(',', $tree) . ')'] = null;
-				$where['`' . $model_class . '`.`' . $primary_key . '` IS NOT NULL'] = null;
+                if (!$allow_blank) {
+                    $where['`' . $model_class . '`.`' . $primary_key . '` IS NOT NULL'] = null;
+                }
 			} elseif ($strict) {
 				$where['1 = 0'] = null;
 			}
