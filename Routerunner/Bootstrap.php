@@ -208,14 +208,14 @@ class Bootstrap
 		}
 
 
-		if ($breadcrumb) {
+		if ($breadcrumb && \Routerunner\Routerunner::$middleware) {
 			self::load_breadcrumb();
 		}
 	}
 
 	public static function getResource()
 	{
-		if (!self::$bootstrap) {
+		if (!self::$bootstrap && \Routerunner\Routerunner::$middleware) {
 			self::load_breadcrumb();
 		}
 		if (isset(self::$resources) && is_array(self::$resources) && count(self::$resources)

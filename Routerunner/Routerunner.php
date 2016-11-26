@@ -48,6 +48,7 @@ class Routerunner
 
 	public static $cache = false;
 	public static $cache_type = false;
+    public static $middleware = false;
 
 	//public $uid = false;
 	//public $gid = false;
@@ -157,8 +158,10 @@ class Routerunner
 			$arguments["skip_route"] = true;
 
 			\Routerunner\Routerunner::$slim->$method($resource, function () use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				$this->middleware($routerunner_object, $arguments);
 			}, $function, function () {
+                \Routerunner\Routerunner::$middleware = true;
 				if (\Routerunner\Routerunner::$slim->now('redirect_url')) {
 					\Routerunner\Routerunner::$slim->redirect(\Routerunner\Routerunner::$slim->now('redirect_url'));
 				}
@@ -170,9 +173,11 @@ class Routerunner
 			$arguments["skip_route"] = true;
 
 			\Routerunner\Routerunner::$slim->$method($resource, function () use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				$this->middleware($routerunner_object, $arguments);
 			}, $function);
 			\Routerunner\Routerunner::$slim->notFound(function () use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				\runner::config("notFound", true);
 				$this->middleware($routerunner_object, $arguments);
 			});
@@ -180,9 +185,11 @@ class Routerunner
 			\Routerunner\Routerunner::$slim->run();
 		} elseif (isset($arguments) && is_array($arguments) && isset($arguments['root'])) {
 			\Routerunner\Routerunner::$slim->$method($resource, function() use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				$this->middleware($routerunner_object, $arguments);
 			});
 			\Routerunner\Routerunner::$slim->notFound(function () use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				\runner::config("notFound", true);
 				$this->middleware($routerunner_object, $arguments);
 			});
@@ -191,23 +198,28 @@ class Routerunner
 			$function = $arguments;
 			$arguments = array("skip_redirect" => true, "skip_route" => true);
 			\Routerunner\Routerunner::$slim->$method($resource, function() use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				$this->middleware($routerunner_object, $arguments);
 			}, $function, function() {
 				if (\Routerunner\Routerunner::$slim->now('redirect_url')) {
+                    \Routerunner\Routerunner::$middleware = true;
 					$this->redirect(\Routerunner\Routerunner::$slim->now('redirect_url'));
 				}
 			});
 			\Routerunner\Routerunner::$slim->notFound(function () use ($routerunner_object, $arguments) {
-				\runner::config("notFound", true);
+                \Routerunner\Routerunner::$middleware = true;
+                \runner::config("notFound", true);
 				$this->middleware($routerunner_object, $arguments);
 			});
 			\Routerunner\Routerunner::$slim->run();
 		} else {
 			$arguments = array("skip_redirect" => true, "skip_route" => true);
 			\Routerunner\Routerunner::$slim->$method($resource, function() use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				$this->middleware($routerunner_object, $arguments);
 			});
 			\Routerunner\Routerunner::$slim->notFound(function () use ($routerunner_object, $arguments) {
+                \Routerunner\Routerunner::$middleware = true;
 				\runner::config("notFound", true);
 				$this->middleware($routerunner_object, $arguments);
 			});
