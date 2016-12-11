@@ -9,10 +9,9 @@
 header('Content-Type: application/json');
 
 $require = '../../../';
-try {
-    $require = \runner::config('SITEROOT') . \runner::config('BACKEND_ROOT');
-} catch (Exception $e) {
 
+if (class_exists('runner')) {
+    $require = \runner::config('SITEROOT') . \runner::config('BACKEND_ROOT');
 }
 if (!class_exists('\Routerunner\Routerunner', false)) {
     require $require . 'Routerunner/Routerunner.php';
