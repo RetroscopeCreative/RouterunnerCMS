@@ -581,7 +581,11 @@ SQL;
 				var_dump("debug::model->return", null);
 			}
 
-			return null;
+			if (!empty($context['allow_blank'])) {
+			    return $model;
+            } else {
+                return null;
+            }
 
 		}
 	}

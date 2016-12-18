@@ -29,6 +29,7 @@ class BaseRunner
 		array('model','params', 'extend'),
 		'external',
 		'model',
+        array('model','after'),
 		array('script', 'return'),
 		array('event','(:request:)?','load'),
 		array('event','(:request:)?','before'),
@@ -571,12 +572,15 @@ class BaseRunner
 		return null;
 	}
 
-	public function parent($property=null, $return='model')
+	public function parent($property=null, $return='model', $runner=false)
 	{
+	    if (!$runner) {
+	        $runner = $this;
+        }
 		$value = false;
-		if (isset($this->router, $this->router->parent) && is_object($this->router->parent)
-			&& is_a($this->router->parent, "Routerunner\\Router")) {
-			$parent_router = $this->router->parent;
+		if (isset($runner->router, $runner->router->parent) && is_object($runner->router->parent)
+			&& is_a($runner->router->parent, "Routerunner\\Router")) {
+			$parent_router = $runner->router->parent;
 			if ($return == 'model' && isset($parent_router->runner, $parent_router->runner->model)) {
 				if (isset($property, $parent_router->runner->model->$property)) {
 					$value = $parent_router->runner->model->$property;
@@ -601,6 +605,18 @@ class BaseRunner
 		}
 		return $value;
 	}
+
+    public function model_parent()
+    {
+        $runner = $this;
+        while ($runner && ($parent = $this->parent(null, 'runner', $runner)) && !isset($parent->runner->model)) {
+            $runner = $parent;
+        }
+        if (isset($runner->model)) {
+            return $runner->model;
+        }
+        return false;
+    }
 
 	public function plugins($script, $callback='false') {
 		$plugins_loaded = \runner::stack("plugins_loaded");

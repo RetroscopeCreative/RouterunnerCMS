@@ -35,7 +35,7 @@ class runner
 
 	public static function traverse($runner=false, $route=false, $parent=false)
     {
-        $debug = 1;
+        $children = false;
         if (!$route && $runner) {
             $route = $runner->path . $runner->route;
         }
@@ -45,12 +45,14 @@ class runner
         if ($parent) {
             if ($children = \Routerunner\Bootstrap::children($parent)) {
                 foreach ($children as $child) {
-                    if (file_exists(\runner::config('scaffold_root') . $route . DIRECTORY_SEPARATOR . $child['model_class'])) {
+                    if (file_exists(\runner::config('SITEROOT') . \runner::config('scaffold') . DIRECTORY_SEPARATOR .
+                        $route . DIRECTORY_SEPARATOR . $child['model_class'])) {
                         \runner::route($child['model_class'], array('direct' => $child['reference']));
                     }
                 }
             }
         }
+        return $children;
     }
 
 	public static function route($route=null, $context=array(), & $router=null,

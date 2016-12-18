@@ -194,7 +194,7 @@ class Helper
 
 			//todo: check for redeclared classes & skip errors?
 			if ((strpos($path, '.backend.') === false && strpos($path, '.model.') !== false
-					&& strpos($path, '.model.params.') === false)
+					&& strpos($path, '.model.params.') === false && strpos($path, '.model.after.') === false)
 				|| strpos($path, '.runner.') !== false || strpos($path, '.function.') !== false) {
 				$returned = (include_once $path);
 			} elseif (strpos($path, '.return.') !== false) {
