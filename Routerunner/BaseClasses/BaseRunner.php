@@ -275,6 +275,9 @@ class BaseRunner
 
 	public function render($list_index=null)
 	{
+	    if (\runner::now('skip_render')) {
+	        return '';
+        }
 		$html = '';
 		if ($this->event_load) {
 			\Routerunner\Helper::loader($this, $this->event_load, $output);
@@ -335,6 +338,9 @@ class BaseRunner
 
 	public function render_list(&$models=array())
 	{
+        if (\runner::now('skip_render')) {
+            return '';
+        }
 		if ($this->event_load) {
 			\Routerunner\Helper::loader($this, $this->event_load, $output);
 			$this->event_load = false;
@@ -442,6 +448,9 @@ class BaseRunner
 
 	public function render_null()
 	{
+        if (\runner::now('skip_render')) {
+            return '';
+        }
 		//$view = $this->path . $this->route . $this->versionroute . DIRECTORY_SEPARATOR . str_replace('.php', '.before.php', $this->view);
 		$file = str_replace('.php', '.before.php', $this->view);
 		$path = "";
