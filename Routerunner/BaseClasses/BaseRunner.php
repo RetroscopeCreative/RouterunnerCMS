@@ -618,11 +618,11 @@ class BaseRunner
     public function model_parent()
     {
         $runner = $this;
-        while ($runner && ($parent = $this->parent(null, 'runner', $runner)) && !isset($parent->runner->model)) {
+        while ($runner && ($parent = $this->parent(null, 'runner', $runner))) {
             $runner = $parent;
-        }
-        if (isset($runner->model)) {
-            return $runner->model;
+            if (isset($runner->model) && !empty($runner->model)) {
+                return $runner->model;
+            }
         }
         return false;
     }
