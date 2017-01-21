@@ -18,8 +18,9 @@ class CustomView extends \Slim\View
 	public function render($template)
 	{
 		$static = \Routerunner\Routerunner::$static;
-		$siteroot = $static->settings['SITEROOT'];
-		$templatePathname = $siteroot . $this->getTemplatePathname($template);
+		//$siteroot = $static->settings['SITEROOT'];
+		//$templatePathname = $siteroot . $this->getTemplatePathname($template);
+		$templatePathname = $this->getTemplatePathname($template);
 		if (!is_file($templatePathname)) {
 			throw new \RuntimeException("View cannot render `$template` because the template does not exist");
 		}
