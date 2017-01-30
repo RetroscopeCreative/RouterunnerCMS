@@ -356,6 +356,7 @@ class Route
         if (substr($this->pattern, -1) === '/') {
             $patternAsRegex .= '?';
         }
+        $patternAsRegex = '/?' . $patternAsRegex;
 
         //Cache URL params' names and values if this route matches the current HTTP request
         if (!preg_match('#^' . $patternAsRegex . '$#', $resourceUri, $paramValues)) {
