@@ -29,6 +29,7 @@ class BaseRunner
 		array('model','params', 'extend'),
 		'external',
 		'model',
+        array('model','after'),
 		array('script', 'return'),
 		array('event','(:request:)?','load'),
 		array('event','(:request:)?','before'),
@@ -274,6 +275,9 @@ class BaseRunner
 
 	public function render($list_index=null)
 	{
+	    if (\runner::now('skip_render')) {
+	        return '';
+        }
 		$html = '';
 		if ($this->event_load) {
 			\Routerunner\Helper::loader($this, $this->event_load, $output);
@@ -334,6 +338,9 @@ class BaseRunner
 
 	public function render_list(&$models=array())
 	{
+        if (\runner::now('skip_render')) {
+            return '';
+        }
 		if ($this->event_load) {
 			\Routerunner\Helper::loader($this, $this->event_load, $output);
 			$this->event_load = false;
@@ -441,6 +448,9 @@ class BaseRunner
 
 	public function render_null()
 	{
+        if (\runner::now('skip_render')) {
+            return '';
+        }
 		//$view = $this->path . $this->route . $this->versionroute . DIRECTORY_SEPARATOR . str_replace('.php', '.before.php', $this->view);
 		$file = str_replace('.php', '.before.php', $this->view);
 		$path = "";
@@ -571,12 +581,15 @@ class BaseRunner
 		return null;
 	}
 
-	public function parent($property=null, $return='model')
+	public function parent($property=null, $return='model', $runner=false)
 	{
+	    if (!$runner) {
+	        $runner = $this;
+        }
 		$value = false;
-		if (isset($this->router, $this->router->parent) && is_object($this->router->parent)
-			&& is_a($this->router->parent, "Routerunner\\Router")) {
-			$parent_router = $this->router->parent;
+		if (isset($runner->router, $runner->router->parent) && is_object($runner->router->parent)
+			&& is_a($runner->router->parent, "Routerunner\\Router")) {
+			$parent_router = $runner->router->parent;
 			if ($return == 'model' && isset($parent_router->runner, $parent_router->runner->model)) {
 				if (isset($property, $parent_router->runner->model->$property)) {
 					$value = $parent_router->runner->model->$property;
@@ -601,6 +614,18 @@ class BaseRunner
 		}
 		return $value;
 	}
+
+    public function model_parent()
+    {
+        $runner = $this;
+        while ($runner && ($parent = $this->parent(null, 'runner', $runner))) {
+            $runner = $parent;
+            if (isset($runner->model) && !empty($runner->model)) {
+                return $runner->model;
+            }
+        }
+        return false;
+    }
 
 	public function plugins($script, $callback='false') {
 		$plugins_loaded = \runner::stack("plugins_loaded");

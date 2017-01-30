@@ -16,6 +16,7 @@ class Router
 	public $route = '';
 	public $runner = null;
 	public $parent = null;
+	public $children = array();
 	public $scaffold_root = false;
 	public $scaffold_suffix = '';
 	public $cache_route = false;
@@ -42,7 +43,9 @@ class Router
 			$route = str_replace('@', '', $route);
 		}
 
-		$this->parent = \Routerunner\Routerunner::getParentInstance(false);
+		if ($this->parent = \Routerunner\Routerunner::getParentInstance(false)) {
+            $this->parent->children[] = $this;
+        }
 		if ($root && file_exists(realpath(\runner::config('SITEROOT') . $root))) {
 			$this->scaffold_root = realpath(\runner::config('SITEROOT') . $root);
 		} elseif (strpos($route, \Routerunner\Helper::$scaffold_class) !== false) {

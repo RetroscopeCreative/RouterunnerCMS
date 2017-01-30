@@ -33,6 +33,28 @@ class runner
 		return $returned;
 	}
 
+	public static function traverse($runner=false, $route=false, $parent=false)
+    {
+        $children = false;
+        if (!$route && $runner) {
+            $route = $runner->path . $runner->route;
+        }
+        if (!$parent && isset($runner->model) && is_object($runner->model)) {
+            $parent = $runner->model->reference;
+        }
+        if ($parent) {
+            if ($children = \Routerunner\Bootstrap::children($parent)) {
+                foreach ($children as $child) {
+                    if (file_exists(\runner::config('SITEROOT') . \runner::config('scaffold') . DIRECTORY_SEPARATOR .
+                        $route . DIRECTORY_SEPARATOR . $child['model_class'])) {
+                        \runner::route($child['model_class'], array('direct' => $child['reference']));
+                    }
+                }
+            }
+        }
+        return $children;
+    }
+
 	public static function route($route=null, $context=array(), & $router=null,
 								 $return=false, & $override=null, $root=false)
 	{

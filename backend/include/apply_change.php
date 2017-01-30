@@ -57,7 +57,10 @@ if ($change_get = \db::query($SQL, $params)) {
         $model = false;
 
         \runner::stack("model_create", array("class" => $model_class));
+        //$model = \model::load($context, $model_route, $router);
+        \runner::now('skip_render', true);
         \runner::redirect_route($model_route, \runner::config("scaffold"), true, $context, $router, $model);
+        \runner::now('skip_render', false);
         \runner::stack("model_create", false);
 
         if ($model && is_array($model)) {

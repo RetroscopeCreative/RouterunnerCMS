@@ -29,8 +29,13 @@ class Helper
 
 		\Routerunner\Helper::$document_root = $Routerunner->container['DOCUMENT_ROOT'];
 		\Routerunner\Helper::$scaffold_class = $Routerunner->container['settings']['scaffold'];
+		/*
 		\Routerunner\Helper::$scaffold_root = \Routerunner\Helper::$document_root . DIRECTORY_SEPARATOR .
 			\Routerunner\Helper::$scaffold_class;
+		*/
+        \Routerunner\Helper::$scaffold_root = realpath($Routerunner->container['settings']['SITEROOT'] .
+            $Routerunner->container['settings']['scaffold']);
+        $Routerunner->container['settings']['SCAFFOLD_ROOT'] = \Routerunner\Helper::$scaffold_root;
 	}
 
 	public static function getFiles(\Routerunner\BaseRunner $runner)
@@ -194,7 +199,7 @@ class Helper
 
 			//todo: check for redeclared classes & skip errors?
 			if ((strpos($path, '.backend.') === false && strpos($path, '.model.') !== false
-					&& strpos($path, '.model.params.') === false)
+					&& strpos($path, '.model.params.') === false && strpos($path, '.model.after.') === false)
 				|| strpos($path, '.runner.') !== false || strpos($path, '.function.') !== false) {
 				$returned = (include_once $path);
 			} elseif (strpos($path, '.return.') !== false) {
