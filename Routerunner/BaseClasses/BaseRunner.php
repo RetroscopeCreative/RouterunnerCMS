@@ -633,7 +633,11 @@ class BaseRunner
 			$plugins_loaded = array();
 		}
 		if (!isset($plugins_loaded[$script])) {
-			$plugin_dir = \runner::config("BASE") . \runner::config("ROUTERUNNER_BASE");
+		    if (preg_match('/http(s)?\:\/\//', \runner::config("ROUTERUNNER_BASE"))) {
+                $plugin_dir = \runner::config("ROUTERUNNER_BASE");
+            } else {
+                $plugin_dir = \runner::config("BASE") . \runner::config("ROUTERUNNER_BASE");
+            }
 			$plugins_loaded[$script] = true;
 			\runner::stack("plugins_loaded", $plugins_loaded);
 			\runner::stack_js(<<<HTML
