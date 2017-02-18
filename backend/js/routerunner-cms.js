@@ -292,7 +292,10 @@ routerunner.init = function() {
                 routerunner.instance("page").page_init();
                 routerunner.first_load = false;
                 routerunner.instance("panel").instance("action").init_new_button();
-                var url = routerunner.content_window.location.href.replace(routerunner.settings.BASE, '');
+                //var url = routerunner.content_window.location.href.replace(routerunner.settings.BASE, '');
+                var _loc = routerunner.content_window.location;
+                var url = _loc.protocol + '//' + _loc.host + _loc.pathname;
+                url = url.replace(routerunner.settings.BASE, '');
 
                 // todo: just load it once!!!
                 routerunner.instance("page").pageproperties.update(url);

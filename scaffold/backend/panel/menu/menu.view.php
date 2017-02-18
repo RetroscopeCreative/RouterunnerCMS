@@ -28,7 +28,7 @@ if ($badges) {
 			</a>
 			<ul class="dropdown-menu pull-left">
 				<li>
-					<a href="home" target="_blank">
+					<a href="<?php echo \runner::config('BASE'); ?>" target="_blank">
 						<i class="fa fa-globe"></i>
 						Visitor mode </a>
 				</li>
@@ -60,6 +60,9 @@ if ($badges) {
  						*/ ?>
 					</ul>
 				</li>
+                <?php
+                /*
+                ?>
 				<li class=" dropdown-submenu">
 					<a href="javascript:;">
 						<i class="fa fa-envelope"></i>

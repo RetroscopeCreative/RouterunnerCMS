@@ -62,6 +62,8 @@
 <!-- END THIRD PARTY SCRIPTS -->
 
 <?php
-\runner::route(str_replace("pages/", "", \runner::now("page")));
+if (\runner::now("page")) {
+    \runner::route(str_replace("pages/", "", \runner::now("page")));
+}
 ?>
 </body>

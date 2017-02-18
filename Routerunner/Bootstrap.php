@@ -86,7 +86,9 @@ class Bootstrap
 				if (isset(self::$params['url'])) {
 					$root = substr($root, 0, strrpos($root, '/'));
 					$plainUri = str_replace($root, '', self::$params['url']);
-					$plainUri = substr($plainUri, 0, strpos($plainUri, '?'));
+					if (strpos($plainUri, '?') !== false) {
+                        $plainUri = substr($plainUri, 0, strpos($plainUri, '?'));
+                    }
 					self::$rootUri = substr(self::$rootUri, 0, strrpos(self::$rootUri, '/'));
 					unset(self::$params['url']);
 				} else {

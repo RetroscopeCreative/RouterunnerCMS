@@ -39,6 +39,11 @@ action_panel = function(caller, selector) {
             return false;
         }).on("mousedown", "#action-mode-apply", function() {
             if (!$(this).is(":disabled")) {
+                if (document.activeElement) {
+                    $(document.activeElement).trigger('blur');
+                    $(document.activeElement).blur();
+                }
+
                 Metronic.blockUI({
                     target: 'body',
                     animate: true

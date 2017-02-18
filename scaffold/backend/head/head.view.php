@@ -53,7 +53,9 @@
 	<link href="<?php echo \runner::config("BACKEND_ROOT"); ?>backend/css/frame.css" rel="stylesheet" type="text/css">
 
 	<?php
-	\runner::route(str_replace("pages/", "", \runner::now("page")));
+    if (\runner::now("page")) {
+        \runner::route(str_replace("pages/", "", \runner::now("page")));
+    }
 	?>
 
 	<script>
