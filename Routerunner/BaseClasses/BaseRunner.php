@@ -535,8 +535,15 @@ class BaseRunner
 			if (!\runner::config('silent')) {
 				$formhtml .= '<!--Routerunner::Route(' . $html_path . ')//-->'.PHP_EOL;
 			}
-			$formhtml .= \Routerunner\Routerunner::$slim->render($this->path . $this->route . $this->versionroute
-				. DIRECTORY_SEPARATOR . $this->form[$formname]->view, array('runner' => $this));
+			$classname = trim($this->route, '/ ') . '.';
+			$class = trim($this->form[$formname]->view, '/ ');
+			if (strpos($class, $classname) === 0 && substr($class, -4) == '.php') {
+			    $class = substr($class, strlen($classname), -4);
+            }
+            if ($view = \Routerunner\Helper::prepareLoader($this->path . $this->route,
+                $class, $this->versionroute, $path, $file, true, false, $this->router)) {
+                $formhtml .= \Routerunner\Routerunner::$slim->render($view, array('runner' => $this));
+            }
 
 			$formhtml .= $this->plugins("form.min.js");
 			if ($this->i18n) {

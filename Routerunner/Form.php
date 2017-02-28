@@ -56,7 +56,12 @@ class Form
 			}
 			$repost_form_after_submit = $method;
 			$this->view = trim($runner->route, '\\') . '.' . $formname . '.' . $method . '.php';
-			if (!file_exists($runner->router->scaffold_root . DIRECTORY_SEPARATOR . $this->path . DIRECTORY_SEPARATOR . $this->view)) {
+			if (!file_exists(rtrim($runner->router->scaffold_root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR .
+                $this->path . DIRECTORY_SEPARATOR . $this->view) && file_exists(rtrim($runner->router->scaffold_root,
+                        DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'model' . $runner->route . DIRECTORY_SEPARATOR . $this->view)) {
+                $this->path = '/model' . $runner->route;
+            } elseif (!file_exists(rtrim($runner->router->scaffold_root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR .
+                $this->path . DIRECTORY_SEPARATOR . $this->view)) {
 				$method = 'form';
 				$this->view = trim($runner->route, '\\') . '.' . $formname . '.' . $method . '.php';
 			}
