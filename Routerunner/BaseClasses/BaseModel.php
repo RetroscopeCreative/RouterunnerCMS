@@ -1010,8 +1010,9 @@ SQL;
 				if (!isset($where) || !is_array($where)) {
 					$where = array();
 				}
-				$where["`" . $from . "`.`" . $primary_key . "` IN (SELECT models.table_id FROM {PREFIX}models AS models
-WHERE models.reference IN (" . implode(",", $visible_references) . "))"] = null;
+				$where["(`" . $from . "`.`" . $primary_key . "` IN (SELECT models.table_id FROM {PREFIX}models AS models
+WHERE models.reference IN (" . implode(",", $visible_references) . ")) OR 
+`" . $from . "`.`" . $primary_key . "` NOT IN (SELECT models.table_id FROM {PREFIX}models AS models WHERE models.table_from = '" . $from . "'))"] = null;
 			}
 
 			if (is_array($where) && count($where)) {
