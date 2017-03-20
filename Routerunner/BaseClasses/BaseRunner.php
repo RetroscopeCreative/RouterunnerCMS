@@ -535,8 +535,15 @@ class BaseRunner
 			if (!\runner::config('silent')) {
 				$formhtml .= '<!--Routerunner::Route(' . $html_path . ')//-->'.PHP_EOL;
 			}
-			$formhtml .= \Routerunner\Routerunner::$slim->render($this->path . $this->route . $this->versionroute
-				. DIRECTORY_SEPARATOR . $this->form[$formname]->view, array('runner' => $this));
+			$classname = trim($this->route, '/ ') . '.';
+			$class = trim($this->form[$formname]->view, '/ ');
+			if (strpos($class, $classname) === 0 && substr($class, -4) == '.php') {
+			    $class = substr($class, strlen($classname), -4);
+            }
+            if ($view = \Routerunner\Helper::prepareLoader($this->path . $this->route,
+                $class, $this->versionroute, $path, $file, true, false, $this->router)) {
+                $formhtml .= \Routerunner\Routerunner::$slim->render($view, array('runner' => $this));
+            }
 
 			$formhtml .= $this->plugins("form.min.js");
 			if ($this->i18n) {
@@ -633,7 +640,11 @@ class BaseRunner
 			$plugins_loaded = array();
 		}
 		if (!isset($plugins_loaded[$script])) {
-			$plugin_dir = \runner::config("BASE") . \runner::config("ROUTERUNNER_BASE");
+		    if (preg_match('/http(s)?\:\/\//', \runner::config("ROUTERUNNER_BASE"))) {
+                $plugin_dir = \runner::config("ROUTERUNNER_BASE");
+            } else {
+                $plugin_dir = \runner::config("BASE") . \runner::config("ROUTERUNNER_BASE");
+            }
 			$plugins_loaded[$script] = true;
 			\runner::stack("plugins_loaded", $plugins_loaded);
 			\runner::stack_js(<<<HTML
