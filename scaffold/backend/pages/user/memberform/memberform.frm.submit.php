@@ -51,7 +51,7 @@ if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $r
 			unset($return_params[":pwd"]);
 		}
 
-		if ($return_params[":licence"]) {
+		if (!empty($return_params[":licence"])) {
 			$return_params[":licence"] = strtotime($return_params[":licence"]);
 		}
 

@@ -390,6 +390,29 @@ class user extends tunnel
 	}
 }
 
+class session extends tunnel
+{
+    public static function open() {
+        if (!($session_id = \runner::stack('session_id'))) {
+            $token = \user::token();
+
+            $SQL = 'CALL `{PREFIX}session_open`(0, :label, :token)';
+            if ($session_result = \db::query($SQL, array(
+                ':label' => NULL,
+                ':token' => $token,
+            ))
+            ) {
+                $session_id = $session_result[0]['session_opened'];
+
+                \runner::stack("models_created", array(), true);
+
+                \runner::stack('session_id', $session_id, true);
+            }
+        }
+        return $session_id;
+    }
+}
+
 class bootstrap extends tunnel
 {
 	public static function get($name=null)
