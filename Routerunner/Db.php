@@ -27,6 +27,10 @@ class Db
 	private static $inited = false;
 	private static $log = false;
 	private static $detail = false;
+	public static $queries_by_query = false;
+	public static $queries_by_caller = false;
+
+	private static $catalog = array();
 
 	public static function initialize($settings)
 	{
@@ -144,17 +148,22 @@ class Db
 		}
 
 		$return = array(); // return empty array if execution fails
-		//try {
+
+		$stmt = false;
+		$key = md5(serialize(array_merge(array('SQL' => $SQL), $parameters)));
+
+		if (!empty(self::$catalog[$key])) {
+			$return = self::$catalog[$key];
+		} else {
 			$stmt = self::$db_conn->prepare($SQL);
 			if ($stmt->execute($parameters)) {
 				// execute & fetch the data
 				$stmt->setFetchMode(\PDO::FETCH_ASSOC);
 				$return = $stmt->fetchAll();
+
+				self::$catalog[$key] = $return;
 			}
-		//} catch (\PDOException $err) {
-		//	var_dump($SQL, $parameters);
-		//	$debug = true;
-		//}
+		}
 
 		if (count($return)) {
 			if ($flags & DB_MERGE_FIRSTCOL || $flags & DB_MERGE_SECONDCOL || $flags & DB_MERGE_THIRDCOL) {
@@ -177,9 +186,24 @@ class Db
 		}
 		$end = microtime(true) - self::$inited;
 
-		if (self::$log) {
-			fwrite(self::$log, $start . "\t" . $end . "\t" . $SQL . PHP_EOL);
-			fwrite(self::$detail, $start . "\t" . $end . PHP_EOL . "SQL:" . $SQL . PHP_EOL . "params:" . print_r($params, true) . PHP_EOL . "return:" . print_r($return, true) . PHP_EOL);
+		if (self::$log && !empty($stmt)) {
+			$backtrace = debug_backtrace();
+			$caller = $backtrace[0]['file'] . ':' . $backtrace[0]['line'];
+			$line = $caller . PHP_EOL;
+			if (!empty($backtrace[1]) && !empty($backtrace[1]['class']) && !empty($backtrace[1]['type']) && !empty($backtrace[1]['function'])) {
+				$line .= $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . PHP_EOL;
+			}
+			if (empty(self::$queries_by_caller[$caller])) {
+				self::$queries_by_caller[$caller] = array();
+			}
+			if (empty(self::$queries_by_query[$SQL])) {
+				self::$queries_by_query[$SQL] = array();
+			}
+			$detailed_log = $start . PHP_EOL . $line . "SQL:" . $SQL . PHP_EOL . $end . PHP_EOL . PHP_EOL . "params:" . print_r($params, true) . PHP_EOL . "return:" . print_r($return, true) . PHP_EOL . PHP_EOL . '------------------------------------------------------------------' . PHP_EOL;
+			self::$queries_by_caller[$caller][] = $detailed_log;
+			self::$queries_by_query[$SQL][] = $detailed_log;
+			fwrite(self::$log, $start . PHP_EOL . $line . $SQL . PHP_EOL . $end . PHP_EOL . PHP_EOL . '------------------------------------------------------------------' . PHP_EOL);
+			fwrite(self::$detail, $detailed_log);
 		}
 
 		return $return;
@@ -227,8 +251,23 @@ class Db
 		$end = microtime(true) - self::$inited;
 
 		if (self::$log) {
-			fwrite(self::$log, $start . "\t" . $end . "\t" . $SQL . PHP_EOL);
-			fwrite(self::$detail, $start . "\t" . $end . PHP_EOL . "SQL:" . $SQL . PHP_EOL . "params:" . print_r($params, true) . PHP_EOL . "return:" . print_r($return, true) . PHP_EOL);
+			$backtrace = debug_backtrace();
+			$caller = $backtrace[0]['file'] . ':' . $backtrace[0]['line'];
+			$line = $caller . PHP_EOL;
+			if (!empty($backtrace[1]) && !empty($backtrace[1]['class']) && !empty($backtrace[1]['type']) && !empty($backtrace[1]['function'])) {
+				$line .= $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . PHP_EOL;
+			}
+			if (empty(self::$queries_by_caller[$caller])) {
+				self::$queries_by_caller[$caller] = array();
+			}
+			if (empty(self::$queries_by_query[$SQL])) {
+				self::$queries_by_query[$SQL] = array();
+			}
+			$detailed_log = $start . PHP_EOL . $line . "SQL:" . $SQL . PHP_EOL . $end . PHP_EOL . PHP_EOL . "params:" . print_r($params, true) . PHP_EOL . "return:" . print_r($return, true) . PHP_EOL . PHP_EOL . '------------------------------------------------------------------' . PHP_EOL;
+			self::$queries_by_caller[$caller][] = $detailed_log;
+			self::$queries_by_query[$SQL][] = $detailed_log;
+			fwrite(self::$log, $start . PHP_EOL . $line . $SQL . PHP_EOL . $end . PHP_EOL . PHP_EOL . '------------------------------------------------------------------' . PHP_EOL);
+			fwrite(self::$detail, $detailed_log);
 		}
 
 		return $return;

@@ -213,32 +213,40 @@ SQL;
 
 	public function statement($session=false)
 	{
-		$SQL = 'SELECT `active`, `begin`, `end`, `params` FROM `{PREFIX}model_states` WHERE `model` = :reference';
-		if ($this->reference && ($result = \Routerunner\Db::query($SQL, array(':reference' => $this->reference)))) {
-			$this->states = $result[0];
-		}
-		if (\runner::config('mode') == 'backend' && $this->reference) {
-			$result = false;
-			$input = array(
-				"session" => ($session ? $session : \runner::stack("session_id")),
-				"reference" => $this->reference,
-				"draft" => true,
-				"state" => "visibility"
-			);
-			if (($changes = $this->changes($input, $result)) && isset($changes[$this->reference]["state"]) &&
-				is_array($changes[$this->reference]["state"])) {
-				$this->states = array_merge($this->states, $changes[$this->reference]["state"]);
+		$runner = \rr::instance();
+		if ($runner->model_context
+			&& (isset($runner->model_context['statement_skip']) && $runner->model_context['statement_skip'])) {
+			$this->states["active"] = true;
+		} else {
+			$SQL = 'SELECT `active`, `begin`, `end`, `params` FROM `{PREFIX}model_states` WHERE `model` = :reference';
+			if ($this->reference && ($result = \Routerunner\Db::query($SQL, array(':reference' => $this->reference)))) {
+				$this->states = $result[0];
+			}
+			if (\runner::config('mode') == 'backend' && $this->reference) {
+				$result = false;
+				$input = array(
+					"session" => ($session ? $session : \runner::stack("session_id")),
+					"reference" => $this->reference,
+					"draft" => true,
+					"state" => "visibility"
+				);
+				if (($changes = $this->changes($input, $result)) && isset($changes[$this->reference]["state"]) &&
+					is_array($changes[$this->reference]["state"])
+				) {
+					$this->states = array_merge($this->states, $changes[$this->reference]["state"]);
+				}
+			}
+			$this->states["active"] = filter_var($this->states["active"], FILTER_VALIDATE_BOOLEAN);
+			if ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
+					&& $this->route == \runner::stack("model_create")["route"])
+				&& $this->permission && !$this->activate_allowed()
+			) {
+				$this->states["active"] = false;
+			}
+			if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
+				$this->states["active"] = true;
 			}
 		}
-		$this->states["active"] = filter_var($this->states["active"], FILTER_VALIDATE_BOOLEAN);
-		if ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
-			&& $this->route == \runner::stack("model_create")["route"])
-			&& $this->permission && !$this->activate_allowed()) {
-			$this->states["active"] = false;
-		}
-		if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
-            $this->states["active"] = true;
-        }
 	}
 
 	public function permissioning($reference=false, $runner_passed=false)

@@ -16,6 +16,8 @@ class Helper
 	public static $static = null;
 	public static $model_created = false;
 
+	private static $langs = array();
+
 	private static $tmp_elem = null;
 
 	public function __construct(\Routerunner\Routerunner $Routerunner)
@@ -36,6 +38,12 @@ class Helper
         \Routerunner\Helper::$scaffold_root = realpath($Routerunner->container['settings']['SITEROOT'] .
             $Routerunner->container['settings']['scaffold']);
         $Routerunner->container['settings']['SCAFFOLD_ROOT'] = \Routerunner\Helper::$scaffold_root;
+
+		if ($result = \db::query('SELECT id, code FROM `{PREFIX}lang`')) {
+			foreach ($result as $item) {
+				self::$langs[$item['id']] = $item['code'];
+			}
+		}
 	}
 
 	public static function getFiles(\Routerunner\BaseRunner $runner)
@@ -419,15 +427,14 @@ class Helper
 			$pattern_value = Routerunner::get('lang');
 			if ($runner && isset($runner->path) && (strpos($runner->path, "/backend/") === 0)
 				&& ($backend_lang_id = \runner::config('backend_language'))) {
-				if (is_numeric($backend_lang_id)
-					&& ($pattern_result = \db::query('SELECT code FROM `{PREFIX}lang` WHERE id = ?', array($backend_lang_id)))) {
-					$pattern_value = $pattern_result[0]['code'];
+				if (is_numeric($backend_lang_id) && (!empty(self::$langs[$backend_lang_id]))) {
+					$pattern_value = self::$langs[$backend_lang_id];
 				} else {
 					$pattern_value = $backend_lang_id;
 				}
 			} elseif ((!isset($pattern_value) || !$pattern_value) && ($lang_id = \runner::config('language'))) {
-				if ($pattern_result = \db::query('SELECT code FROM `{PREFIX}lang` WHERE id = ?', array($lang_id))) {
-					$pattern_value = $pattern_result[0]['code'];
+				if (!empty(self::$langs[$lang_id])) {
+					$pattern_value = self::$langs[$lang_id];
 				}
 			}
 			if ($pattern_value) {
