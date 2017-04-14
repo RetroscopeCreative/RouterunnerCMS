@@ -72,9 +72,10 @@ class Router
 			$this->route = DIRECTORY_SEPARATOR . $route;
 		}
 
-		if (\Routerunner\Helper::includeRoute($this, 'runner', \runner::config("version"))) { // return valid Router with runner included
+		if (\Routerunner\Helper::includeRoute($this, 'runner', \runner::config("version"), $context)) { // return valid Router with runner included
 
 			if (!empty($this->runner->cache_key)) {
+				$debug = 1;
 				$this->cache_route = str_replace(
 					array('{$url}', '{$route}'),
 					array(\Routerunner\Bootstrap::$baseUri, $this->runner->path . $this->runner->route),
@@ -130,16 +131,24 @@ class Router
 	{
 		if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
 			&& \Routerunner\Routerunner::$cache_type == 'Memcached') {
-			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
-				$this->runner->html, $this->runner->cache_exp);
-			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
-				$this->runner->model, $this->runner->cache_exp);
+			if (!empty($this->runner->html)) {
+				\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
+					$this->runner->html, $this->runner->cache_exp);
+			}
+			if (!empty($this->runner->model)) {
+				\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
+					$this->runner->model, $this->runner->cache_exp);
+			}
 		} elseif (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
 			&& \Routerunner\Routerunner::$cache_type == 'Memcache' && strlen($this->cache_route) < 250) {
-			\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
-				$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
-			\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
-				$this->runner->model, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+			if (!empty($this->runner->html)) {
+				\Routerunner\Routerunner::$cache->set($this->cache_route . '|html',
+					$this->runner->html, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+			}
+			if (!empty($this->runner->model)) {
+				\Routerunner\Routerunner::$cache->set($this->cache_route . '|model',
+					$this->runner->model, MEMCACHE_COMPRESSED, $this->runner->cache_exp);
+			}
 		}
 	}
 

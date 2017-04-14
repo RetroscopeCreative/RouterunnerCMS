@@ -391,7 +391,7 @@ class Helper
 		return false;
     }
 
-	public static function includeRoute(\Routerunner\Router $router, $class='runner', $version=false) {
+	public static function includeRoute(\Routerunner\Router $router, $class='runner', $version=false, $context=null) {
 		$runner = new \Routerunner\BaseRunner($router);
 		$runner->version = $version;
 
@@ -401,7 +401,7 @@ class Helper
 			}
 			$ns = '\\'.str_replace(DIRECTORY_SEPARATOR, '\\', trim($router->route, DIRECTORY_SEPARATOR)).'\\runner';
 			$ns = str_replace('~', '', $ns); // home scaffold directory
-			$router->$class = new $ns($router);
+			$router->$class = new $ns($router, $context);
 			$router->$class->version = $version;
 			$router->route = $router->runner->route;
 			Routerunner::setInstance($router);
