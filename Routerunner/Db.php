@@ -129,7 +129,7 @@ class Db
 	 * -----------------------------------------------------------------------------
 	 * runs the query & returns the result array
 	 */
-	public static function query($SQL=null, $params=array(), $flags=0) {
+	public static function query($SQL=null, $params=array(), $flags=0, $force_query=false) {
 		$start = microtime(true) - self::$inited;
 
 		$SQL = str_replace("{PREFIX}", self::$db_prefix, $SQL);
@@ -152,7 +152,7 @@ class Db
 		$stmt = false;
 		$key = md5(serialize(array_merge(array('SQL' => $SQL), $parameters)));
 
-		if (!empty(self::$catalog[$key])) {
+		if (!empty(self::$catalog[$key]) && !$force_query) {
 			$return = self::$catalog[$key];
 		} else {
 			$stmt = self::$db_conn->prepare($SQL);
