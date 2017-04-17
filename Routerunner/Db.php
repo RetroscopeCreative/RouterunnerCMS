@@ -151,6 +151,7 @@ class Db
 
 		$stmt = false;
 		$key = md5(serialize(array_merge(array('SQL' => $SQL), $parameters)));
+		$force_query = true;
 
 		if (!empty(self::$catalog[$key]) && !$force_query) {
 			$return = self::$catalog[$key];
