@@ -308,6 +308,9 @@ class Routerunner
 
 	public static function cache_clear($key)
 	{
+		if (is_array($key)) {
+			$key = implode('|', $key);
+		}
 		$keys = array();
 		if (self::$cache && ($cached = self::$cache->get($key))) {
 			$keys[] = $key;
