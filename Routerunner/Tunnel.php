@@ -349,9 +349,9 @@ class model extends tunnel
 
 class db extends tunnel
 {
-	public static function query($SQL, $params=array(), $flags=0)
+	public static function query($SQL, $params=array(), $flags=0, $force_query=false)
 	{
-		return \Routerunner\Db::query($SQL, $params, $flags);
+		return \Routerunner\Db::query($SQL, $params, $flags, $force_query);
 	}
 	public static function insert($SQL, $params=array())
 	{

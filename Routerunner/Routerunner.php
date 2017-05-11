@@ -306,6 +306,35 @@ class Routerunner
 		}
 	}
 
+	public static function cache_clear($key)
+	{
+		if (is_array($key)) {
+			$key = implode('|', $key);
+		}
+		$keys = array();
+		if (self::$cache && ($cached = self::$cache->get($key))) {
+			$keys[] = $key;
+		} elseif (self::$cache && ($cached = self::$cache->get($key . '|html'))) {
+			$keys[] = $key . '|html';
+			$keys[] = $key . '|model';
+		}
+		if (!empty($keys)) {
+			if (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
+				&& \Routerunner\Routerunner::$cache_type == 'Memcached'
+			) {
+				foreach ($keys as $key) {
+					\Routerunner\Routerunner::$cache->delete($key);
+				}
+			} elseif (\runner::config('mode') != 'backend' && \Routerunner\Routerunner::$cache
+				&& \Routerunner\Routerunner::$cache_type == 'Memcache' && strlen($key) < 250
+			) {
+				foreach ($keys as $key) {
+					\Routerunner\Routerunner::$cache->delete($key);
+				}
+			}
+		}
+	}
+
 	public function __destruct()
 	{
 		self::$slim->halt(200);

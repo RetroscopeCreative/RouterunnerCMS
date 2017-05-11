@@ -11,6 +11,7 @@ class BaseModel
 {
 	public $class = __CLASS__;
 	public $reference = false;
+	public $routerunner_model = false;
 	public $route = false;
 	public $table_from = false;
 	public $table_id = false;
@@ -67,19 +68,33 @@ class BaseModel
 			}
 		}
 
+		$SQL = 'SELECT models.reference, models.model_class, models.table_from, models.table_id, models.table_condition, 
+COALESCE(tree.lang, state.lang, meta.lang) AS lang, COALESCE(state.active, 1) AS active, state.begin, state.end,  state.params,
+tree.model_tree_id, tree.parent_ref, tree.prev_ref, tree.parent_ref AS parent, tree.prev_ref AS prev,
+/*permission.permission_id, permission.label AS permission, permission.owner, permission.group, permission.other, permission.permission,
+rewrite.rewrite_id, rewrite.url, rewrite.resource_uri, rewrite.params, rewrite.primary,*/
+meta.model_meta_id, meta.title, meta.keywords, meta.description, meta.meta
+FROM `{PREFIX}models` AS models
+LEFT JOIN `{PREFIX}model_states` AS state ON state.model = models.reference
+LEFT JOIN `{PREFIX}model_trees` AS tree ON tree.reference = models.reference
+/*LEFT JOIN `{PREFIX}permissions` AS permission ON permission.reference = models.reference
+LEFT JOIN `{PREFIX}rewrites` AS rewrite ON rewrite.reference = models.reference*/
+LEFT JOIN `{PREFIX}model_metas` AS meta ON meta.reference = models.reference
+';
+
 		if (!is_null($from) && !is_null($id) && is_numeric($id)) {
-			$SQL = 'SELECT `models`.`reference` FROM `{PREFIX}models` AS `models` WHERE `models`.`model_class` = :class' .
-				PHP_EOL;
+			$SQL .= 'WHERE models.model_class = :class ';
 			$params = array(':class' => $this->class);
 			if ($this->class != $from) {
-				$SQL .= 'AND `models`.`table_from` = :from' . PHP_EOL;
+				$SQL .= 'AND models.table_from = :from ';
 				$params[':from'] = $from;
 			}
-			$SQL .= 'AND `models`.`table_id` = :id';
+			$SQL .= 'AND models.table_id = :id';
 			$params[':id'] = $id;
 
 			if ($result = \Routerunner\Db::query($SQL, $params)) {
 				$this->reference = $result[0]['reference'];
+				$this->routerunner_model = $result[0];
 			} elseif (substr(get_class($this), 0, 8) != 'backend\\') {
 				// create reference
 				$SQL = 'INSERT INTO `{PREFIX}models` (`model_class`, `table_from`, `table_id`) VALUES (?, ?, ?)';
@@ -92,12 +107,14 @@ class BaseModel
 				$this->reference = \Routerunner\Db::insert($SQL, $params);
 			}
 		} elseif ($this->reference) {
-			$SQL = 'SELECT `models`.`table_from`, `models`.`table_id` FROM `{PREFIX}models` AS `models` WHERE '.
-				'`models`.`reference` = :reference' . PHP_EOL;
+			$SQL .= 'WHERE models.reference = :reference';
 			$params = array(':reference' => $this->reference);
 			if ($result = \Routerunner\Db::query($SQL, $params)) {
-				$from = $result[0]["table_from"];
-				$id = $result[0]["table_id"];
+				$this->routerunner_model = $result[0];
+				$from = $this->routerunner_model["table_from"];
+				$id = $this->routerunner_model["table_id"];
+			} else {
+				$debug = 1;
 			}
 		}
 
@@ -213,32 +230,49 @@ SQL;
 
 	public function statement($session=false)
 	{
-		$SQL = 'SELECT `active`, `begin`, `end`, `params` FROM `{PREFIX}model_states` WHERE `model` = :reference';
-		if ($this->reference && ($result = \Routerunner\Db::query($SQL, array(':reference' => $this->reference)))) {
-			$this->states = $result[0];
-		}
-		if (\runner::config('mode') == 'backend' && $this->reference) {
-			$result = false;
-			$input = array(
-				"session" => ($session ? $session : \runner::stack("session_id")),
-				"reference" => $this->reference,
-				"draft" => true,
-				"state" => "visibility"
+		$runner = \rr::instance();
+		if ($runner->model_context
+			&& (isset($runner->model_context['statement_skip']) && $runner->model_context['statement_skip'])) {
+			$this->states["active"] = true;
+		} else {
+			/*
+			$SQL = 'SELECT `active`, `begin`, `end`, `params` FROM `{PREFIX}model_states` WHERE `model` = :reference';
+			if ($this->reference && ($result = \Routerunner\Db::query($SQL, array(':reference' => $this->reference)))) {
+				$this->states = $result[0];
+			}
+			*/
+			$debug = 1;
+			$this->states = array(
+				'active' => $this->routerunner_model['active'],
+				'begin' => $this->routerunner_model['begin'],
+				'end' => $this->routerunner_model['end'],
+				'params' => $this->routerunner_model['params'],
 			);
-			if (($changes = $this->changes($input, $result)) && isset($changes[$this->reference]["state"]) &&
-				is_array($changes[$this->reference]["state"])) {
-				$this->states = array_merge($this->states, $changes[$this->reference]["state"]);
+			if (\runner::config('mode') == 'backend' && $this->reference) {
+				$result = false;
+				$input = array(
+					"session" => ($session ? $session : \runner::stack("session_id")),
+					"reference" => $this->reference,
+					"draft" => true,
+					"state" => "visibility"
+				);
+				if (($changes = $this->changes($input, $result)) && isset($changes[$this->reference]["state"]) &&
+					is_array($changes[$this->reference]["state"])
+				) {
+					$this->states = array_merge($this->states, $changes[$this->reference]["state"]);
+				}
+			}
+			$this->states["active"] = filter_var($this->states["active"], FILTER_VALIDATE_BOOLEAN);
+			if ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
+					&& $this->route == \runner::stack("model_create")["route"])
+				&& $this->permission && !$this->activate_allowed()
+			) {
+				$this->states["active"] = false;
+			}
+			if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
+				$this->states["active"] = true;
 			}
 		}
-		$this->states["active"] = filter_var($this->states["active"], FILTER_VALIDATE_BOOLEAN);
-		if ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
-			&& $this->route == \runner::stack("model_create")["route"])
-			&& $this->permission && !$this->activate_allowed()) {
-			$this->states["active"] = false;
-		}
-		if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
-            $this->states["active"] = true;
-        }
 	}
 
 	public function permissioning($reference=false, $runner_passed=false)
@@ -431,7 +465,7 @@ SQL;
 		$from = ((isset($context["from"])) ? $context["from"] : $model->class);
 		$select = array();
 		$predefined = array('route', 'class', 'reference', 'table_from', 'table_id', 'permission', 'permissions',
-			'rewrite', 'url', 'override', 'states', 'owner', 'group', 'other', 'parent', 'prev');
+			'rewrite', 'url', 'override', 'states', 'owner', 'group', 'other', 'parent', 'prev', 'routerunner_model');
 
 		foreach (array_keys(get_object_vars($model)) as $var) {
 			if (!in_array($var, $predefined)) {

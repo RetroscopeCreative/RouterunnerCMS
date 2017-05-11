@@ -125,6 +125,30 @@ class runner
 		}
 	}
 
+	public static function cache($key, $value=null, $cache_exp=null) {
+		if (is_array($key)) {
+			$key = implode('|', $key);
+		}
+		if (is_null($cache_exp)) {
+			$cache_exp = 2592000;
+		}
+		if (is_null($value)) {
+			if (\Routerunner\Routerunner::$cache &&
+				($value = \Routerunner\Routerunner::$cache->get($key))) {
+				return $value;
+			}
+		} elseif ($value === false) {
+			\Routerunner\Routerunner::$cache->delete($key);
+		} else {
+			if (\Routerunner\Routerunner::$cache && \Routerunner\Routerunner::$cache_type == 'Memcached') {
+				\Routerunner\Routerunner::$cache->set($key, $value, $cache_exp);
+			} elseif (\Routerunner\Routerunner::$cache && \Routerunner\Routerunner::$cache_type == 'Memcache' &&
+				strlen($key) < 250) {
+				\Routerunner\Routerunner::$cache->set($key, $value, MEMCACHE_COMPRESSED, $cache_exp);
+			}
+		}
+	}
+
 	public static function redirect($url)
 	{
 		\Routerunner\Routerunner::$slim->now('redirect_url', $url);
