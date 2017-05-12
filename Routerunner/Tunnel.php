@@ -262,7 +262,7 @@ class model extends tunnel
 				} else {
 					$return = $runner->functions[$fn](model::$object, null, $arg, $args);
 				}
-			} else {
+			} elseif (!empty($fn) && isset($runner->functions[$fn])) {
 				$return = $runner->functions[$fn](model::$object, $args);
 			}
 		}
