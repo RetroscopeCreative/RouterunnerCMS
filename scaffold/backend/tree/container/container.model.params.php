@@ -36,14 +36,17 @@ $leftJoin = array(
 );
 
 $where = array();
-if (isset($runner->context['reference'])) {
+if (!empty($runner->context['reference'])) {
 	$where['models.reference = :reference'] = $runner->context['reference'];
 }
-if (isset($runner->context['model_class'])) {
+if (!empty($runner->context['model_class'])) {
 	$where['models.model_class = :modelclass'] = $runner->context['model_class'];
 }
-if (isset($runner->context['table_id'])) {
+if (!empty($runner->context['table_id'])) {
 	$where['models.table_id = :tableid'] = $runner->context['table_id'];
+}
+if (empty($where)) {
+	$where['1 = 0'] = null;
 }
 $primary_key = 'id';
 $force_view = true;

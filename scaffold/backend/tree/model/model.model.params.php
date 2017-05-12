@@ -35,13 +35,13 @@ $leftJoin = array(
 );
 
 $where = array();
-if (isset($runner->context['reference'])) {
+if (!empty($runner->context['reference'])) {
 	$where['{PREFIX}models.reference = :reference'] = $runner->context['reference'];
 }
-if (isset($runner->context['model_class'])) {
+if (!empty($runner->context['model_class'])) {
 	$where['{PREFIX}models.model_class = :modelclass'] = $runner->context['model_class'];
 }
-if (isset($runner->context['table_id'])) {
+if (!empty($runner->context['table_id'])) {
 	$where['{PREFIX}models.table_id = :tableid'] = $runner->context['table_id'];
 }
 $primary_key = 'id';
