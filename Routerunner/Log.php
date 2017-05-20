@@ -53,6 +53,7 @@ class Log
 		try {
 			$backtrace = debug_backtrace();
 		} catch (\Exception $e) { }
+		$backtrace = '';
 
 		$skip_shift = false;
 		if ($level === 1 && strpos($message, PHP_EOL) !== false) {
