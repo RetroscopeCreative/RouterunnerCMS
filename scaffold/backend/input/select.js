@@ -65,6 +65,9 @@ select = function(_model, _input, _field) {
     this.get_value = function (input, value) {
         var select = input;
         if (select && value) {
+            if (!$.isArray(value)) {
+                value = [value];
+            }
             $.each(value, function () {
                 var selected = this;
                 var found = false;
