@@ -773,9 +773,11 @@ HTML;
 							$parent_table_id = $tmp_parent_table_id;
 						}
 					}
-					$SQL = 'SELECT reference FROM {PREFIX}models WHERE model_class = :class AND table_id = :table_id';
-					if ($result = \db::query($SQL, array(':class' => $lvl, ':table_id' => $parent_table_id))) {
-						$parent = $result[0]['reference'];
+					if (is_numeric($parent_table_id)) {
+						$SQL = 'SELECT reference FROM {PREFIX}models WHERE model_class = :class AND table_id = :table_id';
+						if ($result = \db::query($SQL, array(':class' => $lvl, ':table_id' => $parent_table_id))) {
+							$parent = $result[0]['reference'];
+						}
 					}
 				}
 			}
