@@ -44,12 +44,22 @@ class runner
         }
         if ($parent) {
             if ($children = \Routerunner\Bootstrap::children($parent)) {
+				$current_route = $children[0]['model_class'];
+				$ids = array();
                 foreach ($children as $child) {
-                    if (file_exists(\runner::config('SITEROOT') . \runner::config('scaffold') . DIRECTORY_SEPARATOR .
-                        $route . DIRECTORY_SEPARATOR . $child['model_class'])) {
-                        \runner::route($child['model_class'], array('direct' => $child['reference']));
-                    }
+					$child_route = $child['model_class'];
+					if ($current_route != $child_route) {
+						\runner::route(\runner::config('SITEROOT') . \runner::config('scaffold') . DIRECTORY_SEPARATOR .
+							$route . DIRECTORY_SEPARATOR . $current_route, array("traverse" => $ids, "traverse_order" => $ids));
+						$ids = array();
+						$current_route = $child_route;
+					}
+					$ids[] = $child['table_id'];
                 }
+				if (!empty($ids)) {
+					\runner::route(\runner::config('SITEROOT') . \runner::config('scaffold') . DIRECTORY_SEPARATOR .
+						$route . DIRECTORY_SEPARATOR . $current_route, array("traverse" => $ids, "traverse_order" => $ids));
+				}
             }
         }
         return $children;
