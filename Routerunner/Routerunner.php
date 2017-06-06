@@ -110,6 +110,9 @@ class Routerunner
 
 		if (!function_exists("backend_mode")) {
 			require $site_root . 'runner-config.php';
+			if (!empty($runner_config)) {
+				$this->container['settings'] = array_merge($this->container['settings'], $runner_config);
+			}
 		}
 
 		Routerunner::$static = $this;
