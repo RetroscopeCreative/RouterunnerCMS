@@ -86,10 +86,22 @@ class Routerunner
 		}
 		self::$loaded = true;
 
+		if (!function_exists("backend_mode")) {
+			$site_root = rtrim((isset($_SERVER["DOCUMENT_ROOT"]) ? $_SERVER["DOCUMENT_ROOT"] :
+					$this->settings['DOCUMENT_ROOT']), '/\\') . DIRECTORY_SEPARATOR . $this->settings['SITEROOT'];
+			if (substr($site_root, -1) !== DIRECTORY_SEPARATOR) {
+				$site_root .= DIRECTORY_SEPARATOR;
+			}
+			require $site_root . 'runner-config.php';
+		}
+		if (empty($runner_config)) {
+			$runner_config = array();
+		}
+
 		if (isset($arguments) && is_array($arguments)) {
-			$this->container['settings'] = array_merge(static::getDefaultSettings(), $arguments);
+			$this->container['settings'] = array_merge(static::getDefaultSettings(), $runner_config, $arguments);
 		} else {
-			$this->container['settings'] = static::getDefaultSettings();
+			$this->container['settings'] = array_merge(static::getDefaultSettings(), $runner_config);
 		}
 		if (isset($_SESSION["routerunner-config"])) {
 			$this->container['settings'] = array_merge($_SESSION["routerunner-config"], $this->container['settings']);
@@ -106,14 +118,8 @@ class Routerunner
 				$site_root .= DIRECTORY_SEPARATOR;
 			}
 		}
-		$this->container['settings']['SITEROOT'] = $site_root;
 
-		if (!function_exists("backend_mode")) {
-			require $site_root . 'runner-config.php';
-			if (!empty($runner_config)) {
-				$this->container['settings'] = array_merge($this->container['settings'], $runner_config);
-			}
-		}
+		$this->container['settings']['SITEROOT'] = $site_root;
 
 		Routerunner::$static = $this;
 
