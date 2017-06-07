@@ -89,6 +89,9 @@ class Routerunner
 		if (!function_exists("backend_mode")) {
 			$site_root = rtrim((isset($_SERVER["DOCUMENT_ROOT"]) ? $_SERVER["DOCUMENT_ROOT"] :
 					$this->settings['DOCUMENT_ROOT']), '/\\') . DIRECTORY_SEPARATOR . $this->settings['SITEROOT'];
+			if (empty($site_root) || $site_root == '/') {
+				$site_root = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..');
+			}
 			if (substr($site_root, -1) !== DIRECTORY_SEPARATOR) {
 				$site_root .= DIRECTORY_SEPARATOR;
 			}
