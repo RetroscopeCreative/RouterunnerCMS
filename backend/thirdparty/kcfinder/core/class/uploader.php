@@ -166,7 +166,20 @@ class uploader {
         if (preg_match('/^([a-z]+)\:\/\/([^\/^\:]+)(\:(\d+))?\/((.+)\/?)?$/',
                 $this->config['uploadURL'], $patt)
         ) {
-            list($unused, $protocol, $domain, $unused, $port, $path) = $patt;
+        	$port = '';
+        	if (isset($patt[1])) { $protocol = $patt[1]; }
+        	if (isset($patt[2])) { $domain = $patt[2]; }
+        	if (isset($patt[3]) && is_numeric($patt[3])) {
+        		$port = $patt[3];
+        		if (isset($patt[4])) {
+        			$path = $patt[4];
+				}
+        	} elseif (isset($patt[3])) {
+        		$path = $patt[3];
+			} else {
+        		$path = '/';
+			}
+            //list($unused, $protocol, $domain, $unused, $port, $path) = $patt;
             $path = path::normalize($path);
             $this->config['uploadURL'] = "$protocol://$domain" . (strlen($port) ? ":$port" : "") . "/$path";
             $this->config['uploadDir'] = strlen($this->config['uploadDir'])
@@ -307,7 +320,20 @@ class uploader {
                     if (isset($udir)) $url .= "/$udir";
                     $url .= "/" . basename($target);
                     if (preg_match('/^([a-z]+)\:\/\/([^\/^\:]+)(\:(\d+))?\/(.+)$/', $url, $patt)) {
-                        list($unused, $protocol, $domain, $unused, $port, $path) = $patt;
+						$port = '';
+						if (isset($patt[1])) { $protocol = $patt[1]; }
+						if (isset($patt[2])) { $domain = $patt[2]; }
+						if (isset($patt[3]) && is_numeric($patt[3])) {
+							$port = $patt[3];
+							if (isset($patt[4])) {
+								$path = $patt[4];
+							}
+						} elseif (isset($patt[3])) {
+							$path = $patt[3];
+						} else {
+							$path = '/';
+						}
+                        //list($unused, $protocol, $domain, $unused, $port, $path) = $patt;
                         $base = "$protocol://$domain" . (strlen($port) ? ":$port" : "") . "/";
                         $url = $base . path::urlPathEncode($path);
                     } else
