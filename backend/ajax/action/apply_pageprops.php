@@ -79,7 +79,7 @@ new runner(array(
 
 								if ($field == "url") {
 									$value = \runner::get_rewrite_url($value,
-										$resource["resource_uri"], $resource["reference"]);
+										$resource["resource_uri"], $resource["reference"], true);
 
 									$SQL_GET = 'SELECT `rewrite_id` FROM `{PREFIX}rewrites` WHERE ';
 									$SQL_GET .= implode(" AND ", $condition);
@@ -122,7 +122,7 @@ new runner(array(
 										foreach ($urls as $url) {
 											if ($url) {
 												$params[":url"] = \runner::get_rewrite_url($url,
-													$resource["reference"], $resource["resource_uri"]);
+													$resource["reference"], $resource["resource_uri"], true);
 												\db::query($SQL_UPDATE, $params);
 											}
 										}

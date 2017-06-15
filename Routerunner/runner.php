@@ -164,7 +164,7 @@ class runner
 		\Routerunner\Routerunner::$slim->now('redirect_url', $url);
 	}
 
-	public static function toAscii($str, $replace=array(), $delimiter='-') {
+	public static function toAscii($str, $replace=array(), $delimiter='-', $slash_allowed=false) {
 		if( !empty($replace) ) {
 			$str = str_replace((array)$replace, ' ', $str);
 		}
@@ -172,14 +172,21 @@ class runner
 		$clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
 		$clean = preg_replace("/[^a-zA-Z0-9\/_|+ -\.]/", '', $clean);
 		$clean = strtolower(trim($clean, '-'));
-		$clean = preg_replace("/[\/_|+ -,!?.]+/", $delimiter, $clean);
+		$pattern = "/[\/_|+ -,!?.]+/";
+		if ($slash_allowed) {
+			$pattern = "/[_|+ -,!?.]+/";
+		}
+		$clean = preg_replace($pattern, $delimiter, $clean);
 		$clean = trim(preg_replace("/[--]+/", "-", $clean), "-");
+		if ($slash_allowed) {
+			$clean = trim($clean, "/");
+		}
 
 		return $clean;
 	}
 
-	public static function get_rewrite_url($url, $resource_uri=null, $reference=null) {
-		$url = self::toAscii($url);
+	public static function get_rewrite_url($url, $resource_uri=null, $reference=null, $slash_allowed=false) {
+		$url = self::toAscii($url, array(), '-', $slash_allowed);
 
 		$SQL = 'SELECT rewrite_id FROM `{PREFIX}rewrites` WHERE url = :url ';
 		$params = array(
