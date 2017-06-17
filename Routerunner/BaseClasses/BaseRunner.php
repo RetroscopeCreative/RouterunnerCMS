@@ -901,6 +901,9 @@ HTML;
 					$pqnode->attr('data-route', $this->router->runner->path . $this->router->runner->route);
 					$pqnode->attr('data-url', $model->url());
 					if ($model) {
+						if (empty($model->states['active'])) {
+							$backend_class .= 'routerunner-inactive-model ';
+						}
 						foreach ($model as $data => $value) {
 							if (is_array($value)) {
 								$value = json_encode($value, JSON_HEX_APOS);

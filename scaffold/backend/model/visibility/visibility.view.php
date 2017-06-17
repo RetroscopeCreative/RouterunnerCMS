@@ -71,7 +71,8 @@ $data = ' data-reference="' . $reference . '"';
 		</div>
 		<?php
 		if ($allowed) {
-			$active = (!is_null(model::state("active", $model)) ? model::state("active", $model) : true);
+			$active = (!is_null(model::state("active", $model)) ? model::state("active", $model) :
+                (isset($model_data['states']['active']) ? $model_data['states']['active'] : true));
 			$begin = (model::state("begin", $model) ? filter_var(model::state("begin", $model), FILTER_VALIDATE_INT) : null);
 			$end = (model::state("end", $model) ? filter_var(model::state("end", $model), FILTER_VALIDATE_INT) : null);
 			?>

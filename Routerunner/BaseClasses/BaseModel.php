@@ -268,6 +268,11 @@ SQL;
 				&& $this->permission && !$this->activate_allowed()
 			) {
 				$this->states["active"] = false;
+			} elseif ((\runner::stack("model_create") && isset($this->route, \runner::stack("model_create")["route"])
+					&& $this->route == \runner::stack("model_create")["route"])
+				&& (!empty(\runner::config('default.states.inactive')))
+			) {
+				$this->states["active"] = false;
 			}
 			if (is_array($this->permission) && current($this->permission) & PERM_ACTIVE) {
 				$this->states["active"] = true;

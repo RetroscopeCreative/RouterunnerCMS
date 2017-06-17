@@ -107,6 +107,9 @@ $return = new runner(array(
 				"parent" => $parent,
 				"permission" => $model->permission,
 			);
+			if (!empty(\runner::config('default.states.inactive'))) {
+				$models_created[$model->reference]['states']['active'] = false;
+			}
 			\runner::stack("models_created", $models_created, true);
 
 			$return['success'] = true;

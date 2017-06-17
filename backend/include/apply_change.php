@@ -144,7 +144,7 @@ SQL;
                                                 $args = (is_array($value) ? $value :  array($value));
                                             }
                                             if (function_exists($fn)) {
-                                                $value = call_user_func_array($fn, $args);
+                                                $value = call_user_func($fn, $args);
                                             }
                                         }
 
@@ -158,7 +158,11 @@ SQL;
                                         if (isset($field_context["type"]) && $field_context["type"] == "checkbox") {
                                             $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                                             $value = ($value ? "1" : "0");
-                                        }
+                                        } elseif (isset($field_context["type"]) && $field_context["type"] == "date") {
+                                        	if (empty($value)) {
+                                        		$value = NULL;
+											}
+										}
 
                                         $SQL_UPDATE = 'UPDATE `' . $model->table_from . '` SET `' . $field .
                                             '` = :value WHERE `' . $pk . '` = :id';
@@ -532,7 +536,8 @@ SQL;
                                     $response["apply"] = $result_apply[0];
 
                                     $model->permissioning($changes["to"]["parent"], $router->runner);
-                                    if ($model->permission && !$model->activate_allowed()) {
+                                    if (!empty(\runner::config('default.states.inactive')) ||
+										($model->permission && !$model->activate_allowed())) {
                                         $SQL_STATE_INSERT = "INSERT INTO `{PREFIX}model_states` (`model`, `active`)
 																	VALUES (?, ?)";
                                         \db::insert($SQL_STATE_INSERT, array($model->reference, 0));
