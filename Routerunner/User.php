@@ -140,28 +140,25 @@ class User
 			self::$custom = array();
 			self::$alias = 0;
 			self::close_token(self::$token);
+			$flash_var = ((\runner::config('User.UserFlashVar'))
+				? \runner::config('User.UserFlashVar') : 'UserFlashVar');
+			if (isset($_SESSION['routerunner-logout-' . $flash_var])
+				&& $_SESSION['routerunner-logout-' . $flash_var] === true) {
+				$cookie = ((\runner::config('User.TokenCookie'))
+					? \runner::config('User.TokenCookie') : 'TokenCookie');
+				\Routerunner\Routerunner::$slim->setCookie($cookie, null, -1, '/');
 
-			if ($logout) {
 				$flash_var = ((\runner::config('User.UserFlashVar'))
 					? \runner::config('User.UserFlashVar') : 'UserFlashVar');
-				if (isset($_SESSION['routerunner-logout-' . $flash_var])
-					&& $_SESSION['routerunner-logout-' . $flash_var] === true) {
-					$cookie = ((\runner::config('User.TokenCookie'))
-						? \runner::config('User.TokenCookie') : 'TokenCookie');
-					\Routerunner\Routerunner::$slim->setCookie($cookie, null, -1, '/');
-
-					$flash_var = ((\runner::config('User.UserFlashVar'))
-						? \runner::config('User.UserFlashVar') : 'UserFlashVar');
-					\runner::now($flash_var, false);
-					\runner::stack($flash_var, false);
-					\runner::flash($flash_var, false);
-					unset($_SESSION['slim.flash'][$flash_var]);
-					setcookie($cookie, null, -1, '/');
-					unset($_COOKIE[$cookie]);
-					unset($_SESSION['routerunner-logout-' . $flash_var]);
-				} else {
-					$_SESSION['routerunner-logout-' . $flash_var] = true;
-				}
+				\runner::now($flash_var, false);
+				\runner::stack($flash_var, false, true);
+				\runner::flash($flash_var, false);
+				unset($_SESSION['slim.flash'][$flash_var]);
+				setcookie($cookie, null, -1, '/');
+				unset($_COOKIE[$cookie]);
+				unset($_SESSION['routerunner-logout-' . $flash_var]);
+			} elseif ($logout) {
+				$_SESSION['routerunner-logout-' . $flash_var] = true;
 			}
 		} elseif (isset($user) && !is_null($user) && is_array($user)) {
 			self::set(); // clear user if exists

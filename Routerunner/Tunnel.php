@@ -445,6 +445,12 @@ class bootstrap extends tunnel
 			return \Routerunner\Bootstrap::bootstrap();
 		}
 	}
+	public static function set($data=array())
+	{
+		foreach ($data as $name => $value) {
+			\Routerunner\Bootstrap::$bootstrap->$name = $value;
+		}
+	}
 }
 
 class rr extends tunnel

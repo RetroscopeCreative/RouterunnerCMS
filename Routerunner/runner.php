@@ -126,10 +126,10 @@ class runner
 			}
 		} elseif (is_null($value) && isset(self::$stack[$name])) {
 			return self::$stack[$name];
-		} elseif (is_null($value) && ($value = \runner::flash($name, null, 'stack', false))) {
-			return $value;
 		} elseif (is_null($value) && isset($_SESSION["flash"][$name])) {
 			return $_SESSION["flash"][$name];
+		} elseif (is_null($value) && ($value = \runner::flash($name, null, 'stack', false))) {
+			return $value;
 		} else {
 			return false;
 		}
