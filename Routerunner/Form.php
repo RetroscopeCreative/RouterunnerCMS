@@ -84,10 +84,10 @@ class Form
 				'input-id' => '_routerunner_form_id',
 				'value' => $this->fid,
 			);
-			$this->fields['_routerunner_form_nonce'] = array(
+			$this->fields['_routerunner_form_nonce' . "_$formname"] = array(
 				'type' => 'hidden',
-				'field' => '_routerunner_form_nonce',
-				'input-id' => '_routerunner_form_nonce',
+				'field' => '_routerunner_form_nonce' . "_$formname",
+				'input-id' => '_routerunner_form_nonce' . "_$formname",
 				'value' => $this->nonce,
 			);
 
@@ -109,12 +109,39 @@ class Form
 			}
 
 			foreach ($this->fields as $field_name => & $field_param) {
-				if ((!isset($field_param['value']) || !$field_param['value']) && isset($runner->model->$field_name))
-					$field_param['value'] = $runner->model->$field_name;
-				if ((!isset($field_param['value']) || !$field_param['value']) && isset($runner->context[$field_name]))
-					$field_param['value'] = $runner->context[$field_name];
-				if ((!isset($field_param['value']) || !$field_param['value']) && isset($request_params[$field_name]))
-					$field_param['value'] = $request_params[$field_name];
+				if ((!isset($field_param['value']) || !$field_param['value']) && isset($runner->model->$field_name)) {
+					if (!\Routerunner\Common::isAssoc($field_param) && is_array($runner->model->$field_name)) {
+						foreach ($field_param as $index => & $field_param_item) {
+							if (isset($runner->model->$field_name[$index])) {
+								$field_param_item['value'] = $runner->model->$field_name[$index];
+							}
+						}
+					} else {
+						$field_param['value'] = $runner->model->$field_name;
+					}
+				}
+				if ((!isset($field_param['value']) || !$field_param['value']) && isset($runner->context[$field_name])) {
+					if (!\Routerunner\Common::isAssoc($field_param) && is_array($runner->context[$field_name])) {
+						foreach ($field_param as $index => & $field_param_item) {
+							if (isset($runner->context[$field_name][$index])) {
+								$field_param_item['value'] = $runner->context[$field_name][$index];
+							}
+						}
+					} else {
+						$field_param['value'] = $runner->context[$field_name];
+					}
+				}
+				if ((!isset($field_param['value']) || !$field_param['value']) && isset($request_params[$field_name])) {
+					if (!\Routerunner\Common::isAssoc($field_param) && is_array($request_params[$field_name])) {
+						foreach ($field_param as $index => & $field_param_item) {
+							if (isset($request_params[$field_name][$index])) {
+								$field_param_item['value'] = $request_params[$field_name][$index];
+							}
+						}
+					} else {
+						$field_param['value'] = $request_params[$field_name];
+					}
+				}
 			}
 
 			$runner->form[$formname] = $this;
@@ -129,13 +156,36 @@ class Form
 		return $runner->form($this->formname);
 	}
 
-	public function field($field, $value=null, $overwrite=array())
+	public function get_field($field)
+	{
+		if (!isset($this->fields[$field])) {
+			return false;
+		}
+		return $this->fields[$field];
+	}
+
+	public function field($field, $value=null, $overwrite=array(), $index=false)
 	{
 		if (!isset($this->fields[$field])) {
 			return '';
 		}
-		$field_params = $this->fields[$field];
+		if ($index !== false && isset($this->fields[$field][$index])) {
+			$field_params = $this->fields[$field][$index];
+		} else {
+			$field_params = $this->fields[$field];
+		}
 		$fieldname = (isset($overwrite['name']) ? $overwrite['name'] : $field);
+		if (!empty($this->params['requestkey']) && strpos($field, '_routerunner_form') === false) {
+			if (!empty($field_params['field'])) {
+				if (preg_match('/^([\w\d_\-]*)(\[\d{0,}\])?$/',  $field_params['field'], $matches) && count($matches) > 2) {
+					$fieldname = $this->params['requestkey'] . '[' . $matches[1] . ']' . $matches[2];
+				} else {
+					$fieldname = $this->params['requestkey'] . '[' . $field_params['field'] . ']';
+				}
+			} else {
+				$fieldname = $this->params['requestkey'] . '[' . $fieldname . ']';
+			}
+		}
 		$field_params = array_merge($field_params, $overwrite);
 
 		$scaffold_root = (isset($this->runner->router->scaffold_root)
@@ -216,16 +266,21 @@ class Form
 		return $frm;
 	}
 
-	public static function submit($forms, & $errors=array(), & $return_SQL=false, & $return_params=false,
+	public static function submit(& $forms, & $errors=array(), & $return_SQL=false, & $return_params=false,
 								  & $values=array())
 	{
+		$request_params = \Routerunner\Bootstrap::$params;
+
 		if (!is_array($forms)) {
 			$forms = array($forms);
 		}
 		foreach ($forms as $frm_name => $form) {
 			$flashed = \Routerunner\Routerunner::$slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
 
-			$params = \Routerunner\Bootstrap::$params;
+			$params = $request_params;
+			if (isset($form->params['requestkey']) && isset($params[$form->params['requestkey']])) {
+				$params = $params[$form->params['requestkey']];
+			}
 
 			$halt = false;
 			if (isset($flashed, $flashed['fields'])) {
@@ -233,7 +288,7 @@ class Form
 				$fields = $flashed['fields'];
 				$form_fields = array_keys($form->fields);
 				if (($_routerunner_form_id_index = array_search($form->id_field, $form_fields)) &&
-					($_routerunner_form_nonce_index = array_search('_routerunner_form_nonce', $form_fields))) {
+					($_routerunner_form_nonce_index = array_search('_routerunner_form_nonce' . "_$frm_name", $form_fields))) {
 					unset($form_fields[$_routerunner_form_id_index], $form_fields[$_routerunner_form_nonce_index]);
 				}
 
@@ -266,16 +321,16 @@ class Form
 			if (!empty($form->fields[$form->id_field]['value'])) {
 				$fid = $form->fields[$form->id_field]['value'];
 			}
-			if ($fid && !empty($form->fields['_routerunner_form_nonce']['value'])) {
+			if ($fid && !empty($form->fields['_routerunner_form_nonce' . "_$frm_name"]['value'])) {
 				if (!isset($_SESSION['nonce-' . $fid]) ||
-					!\Routerunner\Crypt::checker($form->fields['_routerunner_form_nonce']['value'], $_SESSION['nonce-' . $fid])) {
+					!\Routerunner\Crypt::checker($form->fields['_routerunner_form_nonce' . "_$frm_name"]['value'], $_SESSION['nonce-' . $fid])) {
 					$errors[] = 'Error in form submit or data has been sent already!';
 					$halt = true;
 				}
 			}
 			if (!$halt) {
 				unset($form->fields[$form->id_field]);
-				unset($form->fields['_routerunner_form_nonce']);
+				unset($form->fields['_routerunner_form_nonce' . "_$frm_name"]);
 				unset($_SESSION['nonce-' . $fid]);
 			}
 
@@ -302,82 +357,109 @@ class Form
 						$form->fields[$field] = array("field" => $field, "value" => $value);
 					}
 				}
-				foreach ($form->fields as $field => $field_param)
+				foreach ($form->fields as $field => $field_params)
 				{
+					if (\Routerunner\Common::isAssoc($field_params)) {
+						$field_params = array($field_params);
+					}
+					$count = count($field_params);
 					$field_succeed = true;
 
-					$values[$field] = null;
-					if (!isset($params[$field]) && isset($field_param['value'])) {
-						$params[$field] = $field_param['value'];
-					}
+					foreach ($field_params as $index => $field_param) {
+						$field_value = null;
 
-					$regexps = (isset($field_param['regexp'])) ? $field_param['regexp'] : false;
-					if ($regexps && !is_array($regexps)) {
-						$regexps = array($regexps);
-					} elseif (!$regexps) {
-						$regexps = array();
-					}
-					if (!isset($params[$field]) || !$params[$field]) {
-						if (isset($field_param['default_on_fail'], $field_param['default'])
-							&& $field_param['default_on_fail']) {
-							$params[$field] = $field_param['default'];
-						} elseif (isset($field_param['errormsg'])) {
-							$errors[$field] = sprintf($error_row, $field_param['errormsg']);
-							if (isset($field_param['mandatory']) && $field_param['mandatory']["value"] === true) {
+						if (!isset($params[$field]) && isset($field_param['value'])) {
+							$params[$field] = $field_param['value'];
+						}
+
+						$regexps = (isset($field_param['regexp'])) ? $field_param['regexp'] : false;
+						if ($regexps && !is_array($regexps)) {
+							$regexps = array($regexps);
+						} elseif (!$regexps) {
+							$regexps = array();
+						}
+						if (!isset($params[$field]) || !$params[$field]) {
+							if (isset($field_param['default_on_fail'], $field_param['default'])
+								&& $field_param['default_on_fail']) {
+								$params[$field] = $field_param['default'];
+							} elseif (isset($field_param['errormsg'])) {
+								$errors[$field] = sprintf($error_row, $field_param['errormsg']);
+								if (isset($field_param['mandatory']) && $field_param['mandatory']["value"] === true) {
+									if (isset($field_param['mandatory']['msg']) && !isset($errors[$field])) {
+										$errors[$field] = sprintf($error_row, $field_param['mandatory']['msg']);
+									}
+									$field_succeed = false;
+									$regexps = array();
+								}
+							} elseif (isset($field_param['mandatory']) && $field_param['mandatory']["value"] === true) {
 								if (isset($field_param['mandatory']['msg']) && !isset($errors[$field])) {
 									$errors[$field] = sprintf($error_row, $field_param['mandatory']['msg']);
 								}
 								$field_succeed = false;
 								$regexps = array();
 							}
-						} elseif (isset($field_param['mandatory']) && $field_param['mandatory']["value"] === true) {
-							if (isset($field_param['mandatory']['msg']) && !isset($errors[$field])) {
-								$errors[$field] = sprintf($error_row, $field_param['mandatory']['msg']);
-							}
-							$field_succeed = false;
-							$regexps = array();
 						}
-					}
-					foreach ($regexps as $regexp) {
-						$isOk = false;
-						if (is_array($regexp["value"])) {
-							foreach ($regexp["value"] as $regexp_key => $regexp_value) {
-								$pattern = "~" . trim($regexp_value, "/~ ") . "~";
+						foreach ($regexps as $regexp) {
+							$isOk = false;
+							if (is_array($regexp["value"])) {
+								foreach ($regexp["value"] as $regexp_key => $regexp_value) {
+									$pattern = "~" . trim($regexp_value, "/~ ") . "~";
+									if (isset($regexp['options'])) {
+										$pattern .= (is_array($regexp["options"]) && isset($regexp["options"][$regexp_key])
+											? $regexp["options"][$regexp_key] : $regexp["options"]);
+									}
+									if (preg_match($pattern, $params[$field])) {
+										$isOk = true;
+									}
+								}
+							} else {
+								$pattern = "~" . trim($regexp["value"], "~/ ") . "~";
 								if (isset($regexp['options'])) {
-									$pattern .= (is_array($regexp["options"]) && isset($regexp["options"][$regexp_key])
-										? $regexp["options"][$regexp_key] : $regexp["options"]);
+									$pattern .= $regexp['options'];
 								}
-								if (preg_match($pattern, $params[$field])) {
-									$isOk = true;
+								$isOk = preg_match($pattern, $params[$field]);
+							}
+							if (isset($params[$field]) && !$isOk) {
+								if (isset($regexp['msg']) && !isset($errors[$field])) {
+									$errors[$field] = sprintf($error_row, $regexp['msg']);
 								}
+								$field_succeed = false;
+							}
+						}
+
+						if ($field_succeed) {
+							$debug = 1;
+
+
+							if (isset($params[$field]) && isset($field_param["field"])) {
+								if (isset($field_param['function']) && function_exists($field_param['function'])) {
+									$fn = $field_param['function'];
+									$submit_params[$field] = $fn($params[$field]);
+								} else {
+									$submit_params[$field] = $params[$field];
+								}
+								$field_value = $submit_params[$field];
 							}
 						} else {
-							$pattern = "~" . trim($regexp["value"], "~/ ") . "~";
-							if (isset($regexp['options'])) {
-								$pattern .= $regexp['options'];
-							}
-							$isOk = preg_match($pattern, $params[$field]);
+							$succeed = false;
 						}
-						if (isset($params[$field]) && !$isOk) {
-							if (isset($regexp['msg']) && !isset($errors[$field])) {
-								$errors[$field] = sprintf($error_row, $regexp['msg']);
-							}
-							$field_succeed = false;
-						}
-					}
 
-					if ($field_succeed) {
-						if (isset($params[$field]) && isset($field_param["field"])) {
-							if (isset($field_param['function']) && function_exists($field_param['function'])) {
-								$fn = $field_param['function'];
-								$submit_params[$field] = $fn($params[$field]);
+						if ($count === 1) {
+							$values[$field] = $field_value;
+							$field_params[$index]['value'] = $values[$field];
+							if (isset($forms[$frm_name]->fields[$field][$index])) {
+								$forms[$frm_name]->fields[$field][$index]['value'] = $values[$field];
 							} else {
-								$submit_params[$field] = $params[$field];
+								$forms[$frm_name]->fields[$field]['value'] = $values[$field];
 							}
-							$values[$field] = $submit_params[$field];
+						} else {
+							if (!isset($values[$field])) {
+								$values[$field] = array();
+							}
+							$values[$field][$index] = (isset($field_value[$index]) ? $field_value[$index] : null);
+							$forms[$frm_name]->fields[$field][$index]['value'] = $values[$field][$index];
+							$field_params[$index]['value'] = $values[$field][$index];
 						}
-					} else {
-						$succeed = false;
 					}
 				}
 			}
@@ -407,7 +489,7 @@ class Form
 							if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
 								&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
 								$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
-								$fields[] = \Routerunner\Common::dbField($_field);
+								$fields[] = \Routerunner\Common::dbField($_field, '`', '`', '.');
 
 								$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
 								$sql_params[$param_key] = $submit_value;
@@ -430,7 +512,7 @@ class Form
 							if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
 								&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
 								$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
-								$row = \Routerunner\Common::dbField($_field) . ' = ';
+								$row = \Routerunner\Common::dbField($_field, '`', '`', '.') . ' = ';
 								$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
 								$row .= $param_key;
 								$sql_params[$param_key] = $submit_value;
@@ -512,7 +594,7 @@ class Form
 								if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
 									&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
 									$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
-									$row = \Routerunner\Common::dbField($_field) . ' = ';
+									$row = \Routerunner\Common::dbField($_field, '`', '`', '.') . ' = ';
 									$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
 									$row .= $param_key;
 									$sql_params[$param_key] = $submit_value;
@@ -533,8 +615,19 @@ class Form
 					}
 				}
 				if ($return_SQL || $return_params) {
-					$return_SQL = $sql;
-					$return_params = $sql_params;
+					if (count($forms) === 1) {
+						$return_SQL = $sql;
+						$return_params = $sql_params;
+					} else {
+						if (!is_array($return_SQL)) {
+							$return_SQL = array();
+						}
+						if (!is_array($return_params)) {
+							$return_params = array();
+						}
+						$return_SQL[$frm_name] = $sql;
+						$return_params[$frm_name] = $sql_params;
+					}
 				} else {
 					\Routerunner\Db::begin_transaction();
 					if ($method === 'post') {

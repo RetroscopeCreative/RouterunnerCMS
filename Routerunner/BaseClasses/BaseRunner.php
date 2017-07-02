@@ -553,7 +553,7 @@ class BaseRunner
 		}
 	}
 
-	public function field($field, $overwrite=array(), $formname=null)
+	public function field($field, $overwrite=array(), $formname=null, $index=false)
 	{
 		if (is_null($formname) && isset($this->currentform) && isset($this->form[$this->currentform])) {
 			$formname = $this->currentform;
@@ -565,11 +565,29 @@ class BaseRunner
 			if (isset($this->model, $this->model->$field)) {
 				$value = $this->model->$field;
 			}
-			return $this->form[$formname]->field($field, $value, $overwrite);
+			return $this->form[$formname]->field($field, $value, $overwrite, $index);
 		}
 	}
 
-	public function field_value($field, $formname=null)
+	public function field_length($field, $formname=null)
+	{
+		if (is_null($formname) && isset($this->currentform) && isset($this->form[$this->currentform])) {
+			$formname = $this->currentform;
+		}
+		$formname = (is_null($formname) && count(array_keys($this->form)))
+			? array_shift(array_keys($this->form)) : $formname;
+		if (!is_null($formname) && isset($this->form[$formname], $this->form_context[$formname]['input'][$field])) {
+			$arr = $this->form_context[$formname]['input'][$field];
+			if (array_keys($arr) !== range(0, count($arr) - 1)) {
+				return 1;
+			} else {
+				return count($this->form_context[$formname]['input'][$field]);
+			}
+		}
+		return 0;
+	}
+
+	public function field_value($field, $formname=null, $index=false)
 	{
 		if (is_null($formname) && isset($this->currentform) && isset($this->form[$this->currentform])) {
 			$formname = $this->currentform;
@@ -578,8 +596,12 @@ class BaseRunner
 			? array_shift(array_keys($this->form)) : $formname;
 		if (!is_null($formname) && isset($this->form[$formname], $this->form_context[$formname]['input'][$field])) {
 			$value = null;
-			if (isset($this->model, $this->model->$field)) {
+			if ($index !== false && isset($this->model, $this->model->$field[$index])) {
+				$value = $this->model->$field[$index];
+			} elseif (isset($this->model, $this->model->$field)) {
 				$value = $this->model->$field;
+			} elseif ($index !== false && isset($this->form_context[$formname]['input'][$field][$index]['value'])) {
+				$value = $this->form_context[$formname]['input'][$field][$index]['value'];
 			} elseif (isset($this->form_context[$formname]['input'][$field]['value'])) {
 				$value = $this->form_context[$formname]['input'][$field]['value'];
 			}

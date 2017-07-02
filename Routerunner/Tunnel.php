@@ -109,16 +109,22 @@ class form extends tunnel
 	static $method;
 	static $xmethod;
 
-	public static function input($field, $overwrite=array(), $formname=null)
+	public static function inputs_length($field, $formname=null)
 	{
 		$instance = rr::instance();
-		return $instance->field($field, $overwrite, $formname);
+		return $instance->field_length($field, $formname);
 	}
 
-	public static function field_value($field, $formname=null)
+	public static function input($field, $overwrite=array(), $formname=null, $index=false)
 	{
 		$instance = rr::instance();
-		return $instance->field_value($field, $formname);
+		return $instance->field($field, $overwrite, $formname, $index);
+	}
+
+	public static function field_value($field, $formname=null, $index=false)
+	{
+		$instance = rr::instance();
+		return $instance->field_value($field, $formname, $index);
 	}
 }
 

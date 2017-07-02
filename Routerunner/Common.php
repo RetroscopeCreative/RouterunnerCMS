@@ -20,6 +20,7 @@ class Common {
 		if ($cut) {
 			$input = trim(substr($input, strrpos($input, $cut)), $cut);
 		}
+		$input = str_replace('[]', '', $input);
 		if (substr($input, 0, strlen($prefix)) !== $prefix && strpos($input, $exclude) === false)
 			$input = $prefix . $input;
 		if (substr($input, -1*strlen($suffix)) !== $suffix && strpos($input, $exclude) === false)
