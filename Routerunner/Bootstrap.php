@@ -241,18 +241,23 @@ class Bootstrap
 		\Routerunner\Routerunner::$static->request = strtolower(self::$method);
 	}
 
-	public static function getTree($reference)
+	public static function getTree($reference, $need_siblings=false)
 	{
 		$current_index = $reference;
 		$tree = array(
 			'parents' => self::parent($reference),
 			'children' => self::children($reference),
-			'siblings' => self::siblings($reference, false, $current_index),
+			'siblings' => array(),
 			'current' => null,
 			'language' => self::lang($reference),
 		);
+		if ($need_siblings) {
+			$tree['siblings'] = self::siblings($reference, false, $current_index);
+		}
 		if (!is_null($current_index) && isset($tree['siblings'][$current_index])) {
 			$tree['current'] = $tree['siblings'][$current_index];
+		} else {
+			$tree['current'] = self::current($reference);
 		}
 		return $tree;
 	}
@@ -331,6 +336,21 @@ class Bootstrap
 			return $siblings;
 		}
 		return array();
+	}
+	public static function current($reference)
+	{
+		$return = array();
+		$SQL = 'SELECT reference, model_class, table_id FROM `{PREFIX}models` WHERE reference = :reference;';
+		if ($result = \Routerunner\Db::query($SQL, array(
+			':reference' => $reference
+		))) {
+			$return = array(
+				'tree_id' => null,
+				'ind' => 0,
+			);
+			$return = array_merge($return, $result[0]);
+		}
+		return $return;
 	}
 
 	private static function load_breadcrumb()
