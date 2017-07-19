@@ -116,13 +116,23 @@ model = function(caller, elem, ready_fn) {
 
     this.bind_event = function() {
         var self = this;
-        $(this.inline_elem).on("click", function (evt) {
-            self.select();
-            if (self.state() != "browse") {
-                evt.stopImmediatePropagation();
-                evt.stopPropagation();
-                return false;
+        var fn = function(evt) {
+			self.select();
+			if (self.state() != "browse") {
+				evt.stopImmediatePropagation();
+				evt.stopPropagation();
+				return false;
+			}
+        };
+        var used_evt = false;
+        $(this.inline_elem).on("click mouseup", function (evt) {
+            if (!used_evt) {
+                used_evt = evt.type;
             }
+            if (used_evt == evt.type) {
+				fn(evt);
+			}
+			return false;
         });
     };
 
