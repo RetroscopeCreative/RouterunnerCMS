@@ -132,7 +132,9 @@ model = function(caller, elem, ready_fn) {
             if (used_evt == evt.type) {
 				fn(evt);
 			}
-			return false;
+			if (evt.type != 'click') {
+				return false;
+			}
         });
     };
 
