@@ -99,7 +99,11 @@ class Bootstrap
 					}
 				}
 			} else {
-				$plainUri = self::$request->getResourceUri();
+				if (!empty(\runner::config('REDIRECTED')) && !empty($_SERVER['REDIRECT_URL'])) {
+					$plainUri = $_SERVER['REDIRECT_URL'];
+				} else {
+					$plainUri = self::$request->getResourceUri();
+				}
 			}
 
 			if (preg_match('/\.(jp(e)?g|png|gif|svg|css|js(on)?|woff(2)?|ttf|pdf|xml)$/i', $plainUri)) {
