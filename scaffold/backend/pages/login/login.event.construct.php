@@ -37,9 +37,9 @@ if (\bootstrap::get("url") == "forgotten") {
 					$user['pwd'] = $pwd;
 
 					$input = $user["email"] . ";" . $pwd;
-					$unique_salt = "4pp3t1z3r";
-					$unique_logarithm = "09";
-					$unique_method = "CRYPT_BLOWFISH";
+					$unique_salt = \runner::config('pwd_salt');
+					$unique_logarithm = \runner::config('pwd_logarithm');
+					$unique_method = \runner::config('pwd_method');
 
 					$pwd_to_store = \Routerunner\Crypt::crypter($input, null, null, 0, $unique_salt, $unique_logarithm, $unique_method);
 
