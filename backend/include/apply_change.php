@@ -144,7 +144,7 @@ SQL;
                                                 $args = (is_array($value) ? $value :  array($value));
                                             }
                                             if (function_exists($fn)) {
-                                                $value = call_user_func($fn, $args);
+                                                $value = call_user_func_array($fn, $args);
                                             }
                                         }
 

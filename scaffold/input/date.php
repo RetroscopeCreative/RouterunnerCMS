@@ -7,10 +7,9 @@
  */
 $value = (isset($field_data["default"]) ? $field_data["default"] : "");
 if (isset($runner->context["model"]) && is_array($runner->context["model"])
-	&&  isset($runner->context["model"][0], $runner->context["model"][0]->$field_name)) {
+	&&  isset($runner->context["model"][0])) {
 	$value = $runner->context["model"][0]->$field_name;
-} elseif (isset($runner->context["model"]) && is_object($runner->context["model"])
-	&& isset($runner->context["model"]->$field_name)) {
+} elseif (isset($runner->context["model"]) && is_object($runner->context["model"])) {
 	$value = $runner->context["model"]->$field_name;
 }
 $strvalue = "";

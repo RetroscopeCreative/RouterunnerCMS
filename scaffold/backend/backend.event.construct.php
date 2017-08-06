@@ -17,7 +17,8 @@ $_custom=array();
 $_scope=null;
 $_auth=null;
 
-if (!user::me($email, $name, $group, $_custom, $_scope, $_auth)) {
+if ((!user::me($email, $name, $group, $_custom, $_scope, $_auth)) || (empty($group) || (string) $group !== "1")) {
+	\user::logout();
 	switch ($bootstrap->url) {
 		case "forgotten":
 			//\runner::now("page", "pages/forgotten");
