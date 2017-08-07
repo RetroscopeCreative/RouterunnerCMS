@@ -274,6 +274,7 @@ class Form
 		if (!is_array($forms)) {
 			$forms = array($forms);
 		}
+		$succeed = true;
 		foreach ($forms as $frm_name => $form) {
 			$flashed = \Routerunner\Routerunner::$slim->flash($form->path . DIRECTORY_SEPARATOR . $form->formname);
 
@@ -326,6 +327,7 @@ class Form
 					!\Routerunner\Crypt::checker($form->fields['_routerunner_form_nonce' . "_$frm_name"]['value'], $_SESSION['nonce-' . $fid])) {
 					$errors[] = 'Error in form submit or data has been sent already!';
 					$halt = true;
+					$succeed = false;
 				}
 			}
 			if (!$halt) {
@@ -334,12 +336,10 @@ class Form
 				unset($_SESSION['nonce-' . $fid]);
 			}
 
-			$succeed = false;
 			if (!$halt) {
 				$error_row = (isset($form->params['error_format']))
 					? $form->params['error_format'] : '<p class="err">%s</p>'.PHP_EOL;
 
-				$succeed = true;
 				$submit_params = array();
 				if (isset($form->unset) && is_array($form->unset)) {
 					foreach ($form->unset as $field) {
@@ -428,9 +428,6 @@ class Form
 						}
 
 						if ($field_succeed) {
-							$debug = 1;
-
-
 							if (isset($params[$field]) && isset($field_param["field"])) {
 								if (isset($field_param['function']) && function_exists($field_param['function'])) {
 									$fn = $field_param['function'];
