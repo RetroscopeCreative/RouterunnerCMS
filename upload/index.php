@@ -21,7 +21,7 @@ new runner(array(
 	'bootstrap' => false,
 ), function() use ($files) {
 
-	//require_once($_SESSION["runner_config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["runner_config"]["SITEROOT"] . $_SESSION["runner_config"]["BACKEND_ROOT"] . 'backend/thirdparty/' . 'DiacriticsRemovePHP/diacriticsRemove.php');
+	//require_once($_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["routerunner-config"]["SITEROOT"] . $_SESSION["routerunner-config"]["BACKEND_ROOT"] . 'backend/thirdparty/' . 'DiacriticsRemovePHP/diacriticsRemove.php');
 	if (!empty($files)) {
 		$tempFile = $files['file']['tmp_name'];
 		$targetPath = dirname(__FILE__) . DIRECTORY_SEPARATOR;

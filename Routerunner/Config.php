@@ -71,6 +71,6 @@ class Config
 		self::$defaults = array_merge(self::$defaults, $custom);
 	}
 }
-if (isset($_SESSION["runner_config"]) && is_array($_SESSION["runner_config"])) {
-	\Routerunner\Config::custom_config($_SESSION["runner_config"]);
+if (isset($_SESSION["routerunner-config"]) && is_array($_SESSION["routerunner-config"])) {
+	\Routerunner\Config::custom_config($_SESSION["routerunner-config"]);
 }

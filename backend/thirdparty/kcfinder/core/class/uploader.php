@@ -192,7 +192,7 @@ class uploader {
         } elseif ($this->config['uploadURL'] == "/") {
             $this->config['uploadDir'] = strlen($this->config['uploadDir'])
                 ? path::normalize($this->config['uploadDir'])
-                : path::normalize(realpath($_SESSION["runner_config"]['DOCUMENT_ROOT']));
+                : path::normalize(realpath($_SESSION["routerunner-config"]['DOCUMENT_ROOT']));
             $this->typeDir = "{$this->config['uploadDir']}/{$this->type}";
             $this->typeURL = "/{$this->type}";
 

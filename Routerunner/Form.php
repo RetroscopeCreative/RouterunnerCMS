@@ -69,9 +69,38 @@ class Form
 			$flash = $params['form'];
 			$flash['fields'] = array_keys($params['input']);
 
-			if ($method == 'form') {
+			if ($method == 'form' && empty($params['form']['skip_nonce'])) {
+				// generating and store nonce in session
 				$this->nonce = uniqid(rand(0, 1000000));
 				$_SESSION["nonce-" . $this->fid] = \Routerunner\Crypt::crypter($this->nonce);
+
+				// store nonces in the current pageview to be able to delete them later
+				if (!isset($_SESSION["nonce-counter"])) {
+					$_SESSION["nonce-counter"] = array();
+				}
+				$nonce_counter = \runner::now('nonce_key');
+				if (is_null($nonce_counter)) {
+					$nonce_counter = 0;
+					$nonce_keys = array_keys($_SESSION["nonce-counter"]);
+					if (!empty($nonce_keys)) {
+						$nonce_counter = intval(array_pop($nonce_keys)) + 1;
+					}
+					\runner::now('nonce_key', $nonce_counter);
+				}
+				if (!isset($_SESSION["nonce-counter"][$nonce_counter])) {
+					$_SESSION["nonce-counter"][$nonce_counter] = array();
+				}
+				$_SESSION["nonce-counter"][$nonce_counter][] = "nonce-" . $this->fid;
+
+				// delete the previous nonces of the last pageview (back(-2))
+				if ($nonce_counter > 1 && isset($_SESSION['nonce-counter'][$nonce_counter-2])) {
+					$debug = 1;
+					foreach ($_SESSION['nonce-counter'][$nonce_counter - 2] as $nonce_key_to_delete) {
+						unset($_SESSION[$nonce_key_to_delete]);
+					}
+					unset($_SESSION['nonce-counter'][$nonce_counter-2]);
+				}
+
 				\Routerunner\Routerunner::$slim->flash($this->path . DIRECTORY_SEPARATOR . $formname, $flash);
 			}
 
