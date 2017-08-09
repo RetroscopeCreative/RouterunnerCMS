@@ -8,7 +8,7 @@
 
 session_start();
 
-require $_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["routerunner-config"]["SITEROOT"] . $_SESSION["routerunner-config"]["BACKEND_ROOT"] . 'Routerunner/Routerunner.php';
+require $_SESSION["routerunner-config"]["SITEROOT"] . $_SESSION["routerunner-config"]["BACKEND_ROOT"] . 'Routerunner/Routerunner.php';
 use \Routerunner\Routerunner as runner;
 
 $post = array_merge($_GET, $_POST);
