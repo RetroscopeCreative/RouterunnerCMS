@@ -27,7 +27,7 @@ new runner(array(
 		"error" => array(),
 	);
 
-	require_once($_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["routerunner-config"]["SITEROOT"] . $_SESSION["routerunner-config"]["BACKEND_ROOT"] . 'backend/thirdparty/ImageWorkshop/src' . '/PHPImageWorkshop/ImageWorkshop.php');
+	require_once($_SESSION["routerunner-config"]["SITEROOT"] . $_SESSION["routerunner-config"]["BACKEND_ROOT"] . 'backend/thirdparty/ImageWorkshop/src' . '/PHPImageWorkshop/ImageWorkshop.php');
 	foreach ($post["value"] as $field => $src) {
 		$crops = array();
 
@@ -99,8 +99,7 @@ new runner(array(
 
 		if (isset($value["src"])) {
 			// crop image
-			$src = $_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
-				$_SESSION["routerunner-config"]["SITEROOT"] . $value["src"];
+			$src = $_SESSION["routerunner-config"]["SITEROOT"] . $value["src"];
 			$filename = substr($value["src"], strrpos($value["src"], DIRECTORY_SEPARATOR) + 1);
 
 			$mimetype = false;
@@ -182,8 +181,7 @@ new runner(array(
 
 					$crop_path = $_SESSION["routerunner-config"]["MEDIA_ROOT"] .
 						$crop_field . DIRECTORY_SEPARATOR . $path_route;
-					$crop_dirPath = $_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .
-						$_SESSION["routerunner-config"]["SITEROOT"] . $crop_path;
+					$crop_dirPath = $_SESSION["routerunner-config"]["SITEROOT"] . $crop_path;
 					$createFolders = true;
 					$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
 					$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
@@ -217,7 +215,7 @@ new runner(array(
 			}
 			*/
 			$path = $_SESSION["routerunner-config"]["MEDIA_ROOT"] . $image_field . DIRECTORY_SEPARATOR . $path_route;
-			$dirPath = $_SESSION["routerunner-config"]['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $_SESSION["routerunner-config"]["SITEROOT"] . $path;
+			$dirPath = $_SESSION["routerunner-config"]["SITEROOT"] . $path;
 			$createFolders = true;
 			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
 			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
