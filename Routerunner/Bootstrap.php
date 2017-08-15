@@ -248,15 +248,16 @@ class Bootstrap
 	public static function getTree($reference, $need_siblings=false)
 	{
 		$current_index = $reference;
+		$lang = self::lang($reference);
 		$tree = array(
 			'parents' => self::parent($reference),
-			'children' => self::children($reference),
+			'children' => self::children($reference, $lang),
 			'siblings' => array(),
 			'current' => null,
-			'language' => self::lang($reference),
+			'language' => $lang,
 		);
 		if ($need_siblings) {
-			$tree['siblings'] = self::siblings($reference, false, $current_index);
+			$tree['siblings'] = self::siblings($reference, $lang, $current_index);
 		}
 		if (!is_null($current_index) && isset($tree['siblings'][$current_index])) {
 			$tree['current'] = $tree['siblings'][$current_index];
@@ -308,6 +309,9 @@ class Bootstrap
 		if (empty($session_id)) {
 			$session_id = 0;
 		}
+		if (empty($lang) || $lang == "1") {
+			$lang = false;
+		}
 		if ($children = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,
 			':lang' => ($lang ? $lang : NULL),
@@ -322,6 +326,9 @@ class Bootstrap
 		$session_id = \runner::stack('session_id');
 		if (empty($session_id)) {
 			$session_id = 0;
+		}
+		if (empty($lang) || $lang == "1") {
+			$lang = false;
 		}
 		if ($siblings = \Routerunner\Db::query($SQL, array(
 			':reference' => $reference,

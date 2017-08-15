@@ -89,8 +89,15 @@ LEFT JOIN `{PREFIX}model_metas` AS meta ON meta.reference = models.reference
 				$SQL .= 'AND models.table_from = :from ';
 				$params[':from'] = $from;
 			}
-			$SQL .= 'AND models.table_id = :id';
+			if (($lang_param = \runner::config('language')) && $lang_param != "1") {
+				$SQL .= 'AND (COALESCE(tree.lang, ' . $lang_param . ') = :lang OR tree.lang = 0) ';
+				$params[':lang'] = $lang_param;
+			}
+			$SQL .= 'AND models.table_id = :id ';
 			$params[':id'] = $id;
+			if (($lang_param = \runner::config('language')) && $lang_param != "1") {
+				$SQL .= 'ORDER BY CASE WHEN tree.lang IS NOT NULL AND tree.lang = :lang THEN 0 ELSE 1 END ';
+			}
 
 			if ($result = \Routerunner\Db::query($SQL, $params)) {
 				$this->reference = $result[0]['reference'];
