@@ -317,6 +317,11 @@ class Bootstrap
 			':lang' => ($lang ? $lang : NULL),
 			':session' => $session_id))) {
 			return $children;
+		} elseif ($children = \Routerunner\Db::query($SQL, array(
+			':reference' => $reference,
+			':lang' => NULL,
+			':session' => $session_id))) {
+			return $children;
 		}
 		return array();
 	}
