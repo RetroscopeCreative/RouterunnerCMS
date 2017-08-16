@@ -74,7 +74,8 @@ class Form
 			$flash = $params['form'];
 			$flash['fields'] = array_keys($params['input']);
 
-			if ($method == 'form' && (empty($params['form']['skip_nonce']) || empty($skip_nonce))) {
+			if ($method == 'form' && (!empty($params['form']['skip_nonce']) || !empty($skip_nonce))) {
+			} else if ($method == 'form') {
 				// generating and store nonce in session
 				$this->nonce = uniqid(rand(0, 1000000));
 				$_SESSION["nonce-" . $this->fid] = \Routerunner\Crypt::crypter($this->nonce);
