@@ -24,19 +24,15 @@ class Form
 	public static $forms = array();
 	public static $id = false;
 
-	public function __construct($runner, $formname, $params, & $repost_form_after_submit=false)
+	public function __construct($runner, $formname, $params, & $repost_form_after_submit=false, $skip_nonce=false)
 	{
 		$this->runner = $runner;
-		$this->fid = str_replace('.', '_', uniqid('', true));
 		$this->path = $runner->path . $runner->route;
 		$this->formname = $formname;
 		$this->id_field .= str_replace('/', '_', $this->path . '/' . $this->formname);
 
 		if (\Routerunner\Routerunner::$slim->request) {
 			$request_params = \Routerunner\Routerunner::$slim->request->params();
-			if (!empty($request_params[$this->id_field])) {
-				$this->fid = $request_params[$this->id_field];
-			}
 
 			$form_method = (($repost_form_after_submit && ($repost_form_after_submit === 'put'
 					|| $repost_form_after_submit === 'get' || $repost_form_after_submit === 'post'
@@ -54,7 +50,16 @@ class Form
 				default:
 					$method = 'form';
 			}
+			if ($method == 'form') {
+				$this->fid = str_replace('.', '_', uniqid('', true));
+			} elseif (!empty($request_params[$this->id_field])) {
+				$this->fid = $request_params[$this->id_field];
+			} else {
+				$this->fid = str_replace('.', '_', uniqid('', true));
+			}
+
 			$repost_form_after_submit = $method;
+
 			$this->view = trim($runner->route, '\\') . '.' . $formname . '.' . $method . '.php';
 			if (!file_exists(rtrim($runner->router->scaffold_root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR .
                 $this->path . DIRECTORY_SEPARATOR . $this->view) && file_exists(rtrim($runner->router->scaffold_root,
@@ -69,7 +74,7 @@ class Form
 			$flash = $params['form'];
 			$flash['fields'] = array_keys($params['input']);
 
-			if ($method == 'form' && empty($params['form']['skip_nonce'])) {
+			if ($method == 'form' && (empty($params['form']['skip_nonce']) || empty($skip_nonce))) {
 				// generating and store nonce in session
 				$this->nonce = uniqid(rand(0, 1000000));
 				$_SESSION["nonce-" . $this->fid] = \Routerunner\Crypt::crypter($this->nonce);

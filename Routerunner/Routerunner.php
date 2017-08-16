@@ -459,7 +459,7 @@ class Routerunner
         }
     }
 
-	public static function form($formname, $runner, $repost_form_after_submit=false)
+	public static function form($formname, $runner, $repost_form_after_submit=false, $skip_nonce=false)
 	{
 		$repost = $repost_form_after_submit;
         \Routerunner\Helper::loader($runner, trim($runner->route, '\\') . '.' . $formname . '.input', $output);
@@ -471,7 +471,7 @@ class Routerunner
         }
 		$html = '';
 		if (isset($output['form'], $output['input'])) {
-			$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit);
+			$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit, $skip_nonce);
 			$html = $form->render($runner);
 			$form_addon = $form->field($form->id_field) . $form->field('_routerunner_form_nonce' . "_$formname");
 			if (strpos($html, '</form>') !== false) {
@@ -485,7 +485,7 @@ class Routerunner
 			}
 			if ($repost && $repost_form_after_submit == 'submit') {
 				$repost_form_after_submit = 'get';
-				$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit);
+				$form = new \Routerunner\Form($runner, $formname, $output, $repost_form_after_submit, $skip_nonce);
 				$html .= $form->render($runner);
 			}
 		}
