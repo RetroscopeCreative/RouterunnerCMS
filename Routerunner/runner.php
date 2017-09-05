@@ -136,6 +136,9 @@ class runner
 	}
 
 	public static function cache($key, $value=null, $cache_exp=null) {
+		if (!\Routerunner\Routerunner::$cache) {
+			return false;
+		}
 		if (is_array($key)) {
 			$key = implode('|', $key);
 		}
