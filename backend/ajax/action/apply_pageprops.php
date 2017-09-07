@@ -122,7 +122,7 @@ new runner(array(
 										foreach ($urls as $url) {
 											if ($url) {
 												$params[":url"] = \runner::get_rewrite_url($url,
-													$resource["reference"], $resource["resource_uri"], true);
+													$resource["resource_uri"], $resource["reference"], true);
 												\db::query($SQL_UPDATE, $params);
 											}
 										}
