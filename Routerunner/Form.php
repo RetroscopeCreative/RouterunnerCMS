@@ -517,21 +517,23 @@ class Form
 						$fields = array();
 						foreach ($submit_params as $field => $submit_value)
 						{
-							$field_param = $form->fields[$field];
-							if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
-								&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
-								$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
-								$fields[] = \Routerunner\Common::dbField($_field, '`', '`', '.');
+							if (!empty($form->fields[$field])) {
+								$field_param = $form->fields[$field];
+								if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
+									&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
+									$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
+									$fields[] = \Routerunner\Common::dbField($_field, '`', '`', '.');
 
-								$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
-								$sql_params[$param_key] = $submit_value;
-								/*
-								if (isset($submit_params[$field])) {
-									$sql_params[$param_key] = $submit_params[$field];
-								} else {
-									$sql_params[$param_key] = $params[$field];
+									$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
+									$sql_params[$param_key] = $submit_value;
+									/*
+									if (isset($submit_params[$field])) {
+										$sql_params[$param_key] = $submit_params[$field];
+									} else {
+										$sql_params[$param_key] = $params[$field];
+									}
+									*/
 								}
-								*/
 							}
 						}
 						$sql .= implode(', ', $fields) . ') VALUES (' . implode(', ', array_keys($sql_params)) . ')';
@@ -540,22 +542,24 @@ class Form
 						$fields = array();
 						foreach ($submit_params as $field => $submit_value)
 						{
-							$field_param = $form->fields[$field];
-							if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
-								&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
-								$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
-								$row = \Routerunner\Common::dbField($_field, '`', '`', '.') . ' = ';
-								$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
-								$row .= $param_key;
-								$sql_params[$param_key] = $submit_value;
-								/*
-								if (isset($submit_params[$field])) {
-									$sql_params[$param_key] = $submit_params[$field];
-								} else {
-									$sql_params[$param_key] = $params[$field];
+							if (!empty($form->fields[$field])) {
+								$field_param = $form->fields[$field];
+								if (isset($params[$field]) && (!isset($field_param['fixed']) || $field_param['fixed'] !== true)
+									&& (!isset($field_param['field']) || $field_param['field'] !== false)) {
+									$_field = (isset($field_param['field'])) ? $field_param['field'] : $field;
+									$row = \Routerunner\Common::dbField($_field, '`', '`', '.') . ' = ';
+									$param_key = \Routerunner\Common::dbField($_field, ':', '', '.', '` .', '.');
+									$row .= $param_key;
+									$sql_params[$param_key] = $submit_value;
+									/*
+									if (isset($submit_params[$field])) {
+										$sql_params[$param_key] = $submit_params[$field];
+									} else {
+										$sql_params[$param_key] = $params[$field];
+									}
+									*/
+									$fields[] = $row;
 								}
-								*/
-								$fields[] = $row;
 							}
 						}
 						$sql .= implode(', ', $fields) . ' WHERE ';
