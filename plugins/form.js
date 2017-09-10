@@ -318,6 +318,9 @@ routerunner_form = function(form, params) {
                         self.submitted = false;
                         return false;
                     }
+                    if ($(self.form).find(".error.forced-error").length) {
+						self.submitted = false;
+                    }
                 }
             });
         }
