@@ -162,6 +162,13 @@ class runner
 		}
 	}
 
+	public static function cache_flush() {
+		if (!\Routerunner\Routerunner::$cache) {
+			return false;
+		}
+		\Routerunner\Routerunner::$cache->flush();
+	}
+
 	public static function redirect($url)
 	{
 		\Routerunner\Routerunner::$slim->now('redirect_url', $url);
