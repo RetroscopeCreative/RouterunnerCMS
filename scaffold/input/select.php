@@ -36,16 +36,16 @@ if (isset($field_data["help"]["panel"])) {
 				}
 			}
 		}
+		$is_sequential = (array_keys($options) === range(0, count($options) - 1));
 		if (isset($field_data["default"])) {
 			if (!isset($options[key($field_data["default"])])) {
 				$options[key($field_data["default"])] = current($field_data["default"]);
-				ksort($options);
+				ksort($options, SORT_NUMERIC);
 			}
 			if (!$value) {
 				$value = key($field_data["default"]);
 			}
 		}
-		$is_sequential = (array_keys($options) === range(0, count($options) - 1));
 		foreach ($options as $option => $label) {
 			if ($is_sequential) {
 				$option = $label;
