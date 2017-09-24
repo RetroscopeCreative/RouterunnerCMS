@@ -99,12 +99,13 @@ class Form
 				$_SESSION["nonce-counter"][$nonce_counter][] = "nonce-" . $this->fid;
 
 				// delete the previous nonces of the last pageview (back(-2))
-				if ($nonce_counter > 1 && isset($_SESSION['nonce-counter'][$nonce_counter-2])) {
+				$history = 5;
+				if ($nonce_counter > $history && isset($_SESSION['nonce-counter'][$nonce_counter-($history+1)])) {
 					$debug = 1;
-					foreach ($_SESSION['nonce-counter'][$nonce_counter - 2] as $nonce_key_to_delete) {
+					foreach ($_SESSION['nonce-counter'][$nonce_counter - ($history+1)] as $nonce_key_to_delete) {
 						unset($_SESSION[$nonce_key_to_delete]);
 					}
-					unset($_SESSION['nonce-counter'][$nonce_counter-2]);
+					unset($_SESSION['nonce-counter'][$nonce_counter-($history+1)]);
 				}
 
 				\Routerunner\Routerunner::$slim->flash($this->path . DIRECTORY_SEPARATOR . $formname, $flash);
