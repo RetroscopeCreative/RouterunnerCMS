@@ -151,7 +151,7 @@ class Mail
 			foreach ($header["AddAddress"] as $address) {
 				$skip = false;
 				$mail->ClearAddresses();
-				if (isset($address[0], $address[1])) {
+				if (is_array($address) && isset($address[0], $address[1])) {
 					$mail->AddAddress($address[0], $address[1]);
 					$address = $address[0];
 				} elseif (isset($address)) {

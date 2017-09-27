@@ -111,8 +111,13 @@ VALUES (:date, :exception, :message, :file, :line, :trace, 0)
 SQL;
 			\db::insert($SQL, $log);
 
-			if ($level < 5) {
+			if (\runner::config('log.email')) {
+				\mail::mailer('/mail/error', $log);
+			}
+
+			if (\runner::config('log.enabled') && $level < 5) {
 				$traced = print_r($backtrace, true);
+
 				echo <<<HTML
 <h1>{$log[':exception']} raised!</h1>
 <h3>Message: {$message}</h3>
