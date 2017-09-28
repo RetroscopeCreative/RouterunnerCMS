@@ -70,7 +70,7 @@ class User
 	public static function me(& $email=null, & $name=null, & $group=null, & $custom=array(), & $scope=null, & $auth=null, & $alias=0)
 	{
 		$return = false;
-		if (self::$me) {
+		if (self::$me && self::token()) {
 			$return = self::$me;
 			$email = self::$email;
 			$name = self::$name;
@@ -201,6 +201,7 @@ class User
 		} elseif (!self::$token && self::get_cookie_token()) {
 			self::renew_token(self::$token, true);
 		}
+		return self::$token;
 	}
 
 	private static function get_user()
