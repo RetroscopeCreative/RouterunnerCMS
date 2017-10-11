@@ -513,7 +513,7 @@ class Form
 					$from = \Routerunner\Common::dbField($from);
 
 					$sql_params = array();
-					if ($method === 'post') {
+					if ($method === 'post' && !empty($submit_params)) {
 						$sql = 'INSERT INTO ' . $from . ' (';
 						$fields = array();
 						foreach ($submit_params as $field => $submit_value)
@@ -538,7 +538,7 @@ class Form
 							}
 						}
 						$sql .= implode(', ', $fields) . ') VALUES (' . implode(', ', array_keys($sql_params)) . ')';
-					} elseif ($method == 'put') {
+					} elseif ($method == 'put' && !empty($submit_params)) {
 						$sql = 'UPDATE ' . $from . ' SET ';
 						$fields = array();
 						foreach ($submit_params as $field => $submit_value)
