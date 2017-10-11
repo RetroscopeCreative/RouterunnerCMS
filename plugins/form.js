@@ -158,6 +158,12 @@ routerunner_input = function(input, params, form, input_name) {
                         $(self.error_wrapper).data("error-object")[self.input_name].remove();
                     }
                     clear_error = true;
+                } else if (self.error_wrapper) {
+                    if ($(self.error_wrapper).data("error-object")
+                        && $(self.error_wrapper).data("error-object")[self.input_name]) {
+                        $(self.error_wrapper).data("error-object")[self.input_name].remove();
+                    }
+                    clear_error = true;
                 }
                 if (clear_error) {
                     if (self.params.error.addClass) {
