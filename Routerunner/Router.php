@@ -74,14 +74,19 @@ class Router
 
 		if (\Routerunner\Helper::includeRoute($this, 'runner', \runner::config("version"), $context)) { // return valid Router with runner included
 
+			$cache_array = array(
+				\Routerunner\Bootstrap::$baseUri,
+				serialize(\Routerunner\Bootstrap::$params),
+				$this->runner->path . $this->runner->route,
+			);
 			if (!empty($this->runner->cache_key)) {
 				$debug = 1;
 				$this->cache_route = str_replace(
-					array('{$url}', '{$route}'),
-					array(\Routerunner\Bootstrap::$baseUri, $this->runner->path . $this->runner->route),
+					array('{$url}', '{$params}', '{$route}'),
+					$cache_array,
 					$this->runner->cache_key);
 			} else {
-				$this->cache_route = \Routerunner\Bootstrap::$baseUri .'|'. $this->runner->path . $this->runner->route;
+				$this->cache_route = implode('|', $cache_array);
 			}
 
 			if ($override) {
@@ -97,7 +102,7 @@ class Router
 			}
 			\Routerunner\Routerunner::getParentInstance();
 
-			if ($this->runner->cache_exp >= 0) {
+			if ($this->runner->cache_exp >= 0 && ($this->runner->cache_for_all || !\Routerunner\User::me())) {
 				$this->set_cache();
 			}
 		} else {
@@ -116,7 +121,7 @@ class Router
 
 	public function get_cache(& $model=false)
 	{
-		if (\Routerunner\Routerunner::$cache &&
+		if (\Routerunner\Routerunner::$cache && ($this->runner->cache_for_all || !\Routerunner\User::me()) &&
 			($html = \Routerunner\Routerunner::$cache->get($this->cache_route . '|html'))) {
 			$html = ((\runner::config('silent')) ? '' : '<!--Cached start-->') . $html . ((\runner::config('silent')) ? '' : '<!--Cached end-->');
 			if ($_model = \Routerunner\Routerunner::$cache->get($this->cache_route . '|model')) {

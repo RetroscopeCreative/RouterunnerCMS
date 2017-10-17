@@ -65,6 +65,7 @@ class BaseRunner
 	public $unique = false;
 	public $permission = false;
 
+	public $cache_for_all = false;
 	public $cache_exp = -1;
 
 	public $html = '';
