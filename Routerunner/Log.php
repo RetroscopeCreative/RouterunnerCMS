@@ -103,6 +103,21 @@ class Log
 				}
 				$log[':trace'] = print_r($log[':trace'], true);
 			}
+			if (empty($log[':trace'])) {
+				$log[':trace'] = '';
+			}
+			if ($uid = !empty(\Routerunner\User::me())) {
+				$log[':trace'] .= "<br /><br /><br />USER: {$uid}<br /><br />";
+			}
+			if (!empty($_GET)) {
+				$log[':trace'] .= "<br /><br /><br />GET:<br />" . print_r($_GET, true);
+			}
+			if (!empty($_POST)) {
+				$log[':trace'] .= "<br /><br /><br />POST:<br />" . print_r($_POST, true);
+			}
+			if (!empty($_SESSION)) {
+				$log[':trace'] .= "<br /><br /><br />SESSION:<br />" . print_r($_SESSION, true);
+			}
 
 			$SQL = <<<SQL
 INSERT INTO `{PREFIX}log` (`date`, `exception`, `message`, `file`, `line`, `trace`, `solved`)
