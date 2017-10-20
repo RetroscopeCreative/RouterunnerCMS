@@ -106,7 +106,7 @@ class Log
 			if (empty($log[':trace'])) {
 				$log[':trace'] = '';
 			}
-			if ($uid = !empty(\Routerunner\User::me())) {
+			if ($uid = \Routerunner\User::me()) {
 				$log[':trace'] .= "<br /><br /><br />USER: {$uid}<br /><br />";
 			}
 			if (!empty($_GET)) {
