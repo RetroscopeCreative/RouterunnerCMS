@@ -117,7 +117,7 @@ class Form
 			$this->fields[$this->id_field] = array(
 				'type' => 'hidden',
 				'field' => $this->id_field,
-				'input-id' => '_routerunner_form_id',
+				'input-id' => '_routerunner_form_id_' . uniqid(),
 				'value' => $this->fid,
 			);
 			$this->fields['_routerunner_form_nonce' . "_$formname"] = array(
