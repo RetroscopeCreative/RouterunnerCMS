@@ -221,6 +221,9 @@ class BaseRunner
 						&& isset($this->files['view']) && is_array($this->files['view'])
 						&& in_array(trim($this->route, '/\\') . '.view.null.', $this->files['view'])) {
 						$this->render_null();
+					} elseif (!isset($this->model) && isset($this->files['view']) && is_array($this->files['view'])
+						&& in_array(trim($this->route, '/\\') . '.view.null.', $this->files['view'])) {
+						$this->render_null();
 					} elseif (!isset($this->model) && (isset($this->model_context['force_view'])
 							&& $this->model_context['force_view'] === true)) {
 						$this->render();
