@@ -497,6 +497,8 @@ class Form
 				}
 			}
 
+			$sql = '';
+			$sql_params = array();
 			if ($succeed) {
 				$method = (isset($form->params['xmethod'])) ? $form->params['xmethod'] : $form->params['method'];
 				if (isset($form->params[$method.'_sql'])) {
@@ -512,7 +514,6 @@ class Form
 					$from = (isset($form->params['from'])) ? $form->params['from'] : $form->class;
 					$from = \Routerunner\Common::dbField($from);
 
-					$sql_params = array();
 					if ($method === 'post' && !empty($submit_params)) {
 						$sql = 'INSERT INTO ' . $from . ' (';
 						$fields = array();
