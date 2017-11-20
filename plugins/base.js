@@ -320,7 +320,7 @@ routerunner_base = function(caller) {
                 script_elem.setAttribute("href", script);
                 document.getElementsByTagName("head")[0].appendChild(script_elem);
             }
-            $(script_elem).load(function(){
+            $(script_elem).on('load', function(){
                 if (typeof ready == "function") {
                     ready();
                 }
