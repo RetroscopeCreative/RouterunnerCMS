@@ -76,8 +76,7 @@ class Db
 						self::$db_conn = $db_connect; // store database connection
 						break;
 					} catch (\PDOException $err) {
-						var_dump($err);
-						$debug = true;
+						echo $err->getMessage();
 					}
 			}
 		}
