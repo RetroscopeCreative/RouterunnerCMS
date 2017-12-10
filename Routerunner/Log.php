@@ -62,7 +62,7 @@ class Log
 			$skip_shift = true;
 		}
 		if (is_array($message)) {
-			$message = print_r($message, true);
+			$message = json_encode($message, JSON_PRETTY_PRINT);
 		}
 
 		$log = array(
@@ -101,7 +101,25 @@ class Log
 					}
 					$log[':trace'][] = $item;
 				}
-				$log[':trace'] = print_r($log[':trace'], true);
+				$log[':trace'] = json_encode($log[':trace'], JSON_PRETTY_PRINT);
+			}
+			if (empty($log[':trace'])) {
+				$log[':trace'] = '';
+			}
+			if ($uid = \Routerunner\User::me()) {
+				$log[':trace'] .= "<br /><br /><br />USER: {$uid}<br /><br />";
+			}
+			if (!empty($_GET)) {
+				$log[':trace'] .= "<br /><br /><br />GET:<br />" . json_encode($_GET, JSON_PRETTY_PRINT);
+			}
+			if (!empty($_POST)) {
+				$log[':trace'] .= "<br /><br /><br />POST:<br />" . json_encode($_POST, JSON_PRETTY_PRINT);
+			}
+			if (!empty($_SESSION)) {
+				$log[':trace'] .= "<br /><br /><br />SESSION:<br />" . json_encode($_SESSION, JSON_PRETTY_PRINT);
+			}
+			if (!empty($_SERVER)) {
+				$log[':trace'] .= "<br /><br /><br />SERVER:<br />" . json_encode($_SERVER, JSON_PRETTY_PRINT);
 			}
 
 			$SQL = <<<SQL
@@ -116,7 +134,7 @@ SQL;
 			}
 
 			if (\runner::config('log.enabled') && $level < 5) {
-				$traced = print_r($backtrace, true);
+				$traced = json_encode($backtrace, JSON_PRETTY_PRINT);
 
 				echo <<<HTML
 <h1>{$log[':exception']} raised!</h1>

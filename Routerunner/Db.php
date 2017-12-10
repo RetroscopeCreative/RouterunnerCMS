@@ -36,8 +36,8 @@ class Db
 	{
 		if (isset($settings['DB_DEBUG']) && $settings['DB_DEBUG']) {
 			self::$inited = microtime(true);
-			self::$log = fopen('log-' . self::$inited . '.log', 'a+');
-			self::$detail = fopen('detail-' . self::$inited . '.log', 'a+');
+			self::$log = fopen($settings['DB_DEBUG'] . 'log-' . self::$inited . '.log', 'a+');
+			self::$detail = fopen($settings['DB_DEBUG'] . 'detail-' . self::$inited . '.log', 'a+');
 		}
 
 		self::$host = $settings['DB_HOST'];
