@@ -61,7 +61,6 @@ if ($badges) {
 					</ul>
 				</li>
                 <?php
-                /*
                 ?>
 				<li class=" dropdown-submenu">
 					<a href="javascript:;">
