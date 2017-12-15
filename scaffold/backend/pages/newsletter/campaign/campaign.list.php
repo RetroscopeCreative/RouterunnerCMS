@@ -16,5 +16,5 @@
 	<div class="col-md-1"><?php echo \model::property("opened"); ?></div>
 	<div class="col-md-1"><?php echo \model::property("clicked"); ?></div>
 	<div class="col-md-1"><a href="admin/newsletter/campaign/?id=<?php echo \model::property("id"); ?>" class="btn btn-primary">Modify</a></div>
-	<div class="col-md-1"><a href="admin/newsletter/send/?id=<?php echo \model::property("id"); ?>" class="btn btn-success">Send</a></div>
+	<div class="col-md-1"><a href="admin/newsletter/send/?cid=<?php echo \model::property("id"); ?>" class="btn btn-success">Send</a></div>
 </div>

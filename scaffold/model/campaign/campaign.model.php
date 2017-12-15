@@ -15,6 +15,7 @@ class campaign extends \Routerunner\BaseModel {
 	public $active;
 	public $subject;
 	public $mail_html;
+	public $mail_text;
 	public $sent;
 	public $to_send;
 	public $opened;

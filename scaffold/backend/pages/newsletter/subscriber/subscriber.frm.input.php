@@ -9,7 +9,7 @@
 
 $form = array(
 	'method' => 'post',
-	'xmethod' => (isset($_GET["id"]) ? 'put' : 'post'),
+	'xmethod' => (!empty($_GET["id"]) ? 'put' : 'post'),
 	'name' => 'e_subscriber',
 	'error_format' => '<p class="err">%s</p>'.PHP_EOL,
 	'from' => 'e_subscriber',
@@ -17,11 +17,12 @@ $form = array(
 		array('e_subscriber.id = :id', array(':id'=>'id'), 'AND'),
 	),
 );
-
+/*
 $nonce = uniqid(rand(0, 1000000));
 if (!isset($_POST["nonce"])) {
 	$_SESSION["nonce"] = \Routerunner\Crypt::crypter($nonce);
 }
+*/
 
 $value = array(
 	"label" => "",
@@ -29,7 +30,7 @@ $value = array(
 	"link" => "",
 	"category" => "",
 );
-if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
+if (!empty($_GET["id"]) && is_numeric($_GET["id"])) {
 	$SQL = "SELECT label, email, link, category FROM `e_subscriber` WHERE id = ?";
 	if ($result = \db::query($SQL, array($_GET["id"]))) {
 		$value = array_merge($value, $result[0]);
@@ -40,13 +41,15 @@ $input = array(
 	'id' => array(
 		'type' => 'hidden',
 		'field' => 'id',
-		'value' => (isset($_GET["id"]) ? $_GET["id"] : "")
+		'value' => (!empty($_GET["id"]) ? $_GET["id"] : "")
 	),
+	/*
 	'nonce' => array(
 		'type' => 'hidden',
 		'field' => 'nonce',
 		'value' => $nonce
 	),
+	*/
 	'date' => array(
 		'type' => 'hidden',
 		'field' => 'date',
@@ -98,3 +101,6 @@ $input = array(
 		'value' => 'Mentés'
 	),
 );
+if (empty($_GET["id"])) {
+	$unset = array('id');
+}

@@ -9,19 +9,17 @@
 $return_SQL = true;
 if ($succeed = \Routerunner\Form::submit($runner->form, $errors, $return_SQL, $return_params)) {
 	$saved = false;
-	if (isset($return_params[":nonce"], $_SESSION["nonce"]) && \Routerunner\Crypt::checker($return_params[":nonce"], $_SESSION["nonce"])) {
-		unset($_SESSION["nonce"]);
-		if (strpos($return_SQL, "INSERT") === 0) {
-			if ($id = \db::insert($return_SQL, $return_params)) {
-				$saved = true;
-				$SQL = "UPDATE e_cron SET start = :time WHERE id = :id";
-				\db::query($SQL, array(":time" => time(), ":id" => $id));
-			}
-		} else {
-			\db::query($return_SQL, $return_params);
+	if (strpos($return_SQL, "INSERT") === 0) {
+		if ($id = \db::insert($return_SQL, $return_params)) {
 			$saved = true;
+			$SQL = "UPDATE e_cron SET start = :time WHERE id = :id";
+			\db::query($SQL, array(":time" => time(), ":id" => $id));
 		}
+	} else {
+		\db::query($return_SQL, $return_params);
+		$saved = true;
 	}
+
 	if ($saved) {
 		$url = \bootstrap::get("url");
 		echo <<<HTML

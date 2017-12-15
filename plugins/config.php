@@ -6,4 +6,4 @@
  * Time: 19:40
  */
  
-$rootpath = "/var/www/RouterunnerDemo/"; // path to document root
+$rootpath = "/var/www/html/online-editor.menu-card-maker.com/"; // path to document root

@@ -9,7 +9,7 @@
 $debug = 1;
 
 $method = 'post';
-if (isset($_GET["id"])) {
+if (!empty($_GET["id"])) {
 	$SQL = "SELECT id FROM e_cron WHERE start IS NOT NULL AND finish IS NULL AND id = :id";
 	if (\db::query($SQL, array(":id" => $_GET["id"]))) {
 		$method = 'put';
@@ -26,11 +26,12 @@ $form = array(
 		array('e_cron.id = :id', array(':id'=>'id'), 'AND'),
 	),
 );
-
+/*
 $nonce = uniqid(rand(0, 1000000));
 if (!isset($_POST["nonce"])) {
 	$_SESSION["nonce"] = \Routerunner\Crypt::crypter($nonce);
 }
+*/
 
 $value = array(
 	"campaign" => "",
@@ -59,7 +60,7 @@ $input = array(
 	'id' => array(
 		'type' => 'hidden',
 		'field' => 'id',
-		'value' => (isset($_GET["id"]) ? $_GET["id"] : "")
+		'value' => (!empty($_GET["id"]) ? $_GET["id"] : "")
 	),
 	'campaign' => array(
 		'type' => 'hidden',

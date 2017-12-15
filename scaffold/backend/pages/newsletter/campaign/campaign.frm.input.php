@@ -9,7 +9,7 @@
 $debug = 1;
 $form = array(
 	'method' => 'post',
-	'xmethod' => ((isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) ? 'put' : 'post'),
+	'xmethod' => ((!empty($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) ? 'put' : 'post'),
 	'name' => 'e_campaign',
 	'error_format' => '<p class="err">%s</p>'.PHP_EOL,
 	'from' => 'e_campaign',
@@ -17,11 +17,12 @@ $form = array(
 		array('e_campaign.id = :id', array(':id'=>'id'), 'AND'),
 	),
 );
-
+/*
 $nonce = uniqid(rand(0, 1000000));
 if (!isset($_POST["nonce"])) {
 	$_SESSION["nonce"] = \Routerunner\Crypt::crypter($nonce);
 }
+*/
 
 $value = array(
 	"label" => "",
@@ -31,7 +32,7 @@ $value = array(
 	"subject" => "",
 	"mail_html" => "",
 );
-if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
+if (!empty($_GET["id"]) && is_numeric($_GET["id"])) {
 	$SQL = "SELECT label, category, active, mail_route, subject, mail_html, mail_text FROM `e_campaign` WHERE id = ?";
 	if ($result = \db::query($SQL, array($_GET["id"]))) {
 		$value = array_merge($value, $result[0]);
@@ -45,13 +46,15 @@ $input = array(
 	'id' => array(
 		'type' => 'hidden',
 		'field' => 'id',
-		'value' => (isset($_GET["id"]) ? $_GET["id"] : "")
+		'value' => (!empty($_GET["id"]) ? $_GET["id"] : "")
 	),
+	/*
 	'nonce' => array(
 		'type' => 'hidden',
 		'field' => 'nonce',
 		'value' => $nonce
 	),
+	*/
 	'label' => array(
 		'type' => 'text',
 		'field' => 'label',
@@ -134,3 +137,6 @@ $input = array(
 $unset = array(
 	"submit"
 );
+if (empty($_GET["id"])) {
+	$unset[] = 'id';
+}
