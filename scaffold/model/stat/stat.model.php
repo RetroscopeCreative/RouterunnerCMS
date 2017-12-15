@@ -9,6 +9,7 @@
 namespace model;
 
 class stat extends \Routerunner\BaseModel {
+	public $stat_id;
 	public $activity_date;
 	public $activity;
 	public $clicked;
