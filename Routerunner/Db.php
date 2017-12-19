@@ -139,6 +139,9 @@ class Db
 			// bind valid params
 			foreach ($params as $bind => $param) {
 				if (strpos($SQL, $bind) !== false) {
+					if (is_array($param)) {
+						$param = json_encode($param);
+					}
 					$parameters[$bind] = $param;
 				}
 			}
