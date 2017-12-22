@@ -191,6 +191,9 @@ SQL;
 							&& preg_match("~^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$~i", trim($address["email"]))
 						) {
 							$address["email"] = trim($address["email"]);
+							if (empty($address['name'])) {
+								$address['name'] = substr($address['email'], 0, strpos($address['email'], '@'));
+							}
 
 							$domain = substr($address["email"], strpos($address["email"], "@"));
 							$send_ok = true;
