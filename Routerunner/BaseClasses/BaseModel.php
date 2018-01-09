@@ -820,6 +820,9 @@ SQL;
 						$strict = true;
 						$skip_state = true;
 					}
+				} elseif (!empty($where_reference) && empty($where) && !empty($from)) {
+					$where_reference['models.table_from = :table_from'] = null;
+					$params[':table_from'] = $from;
 				}
 
 				if ($orderBy === \Routerunner\Routerunner::BY_TREE || $orderBy === \Routerunner\Routerunner::BY_TREE_DESC) {
