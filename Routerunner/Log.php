@@ -115,9 +115,11 @@ class Log
 			if (!empty($_POST)) {
 				$log[':trace'] .= "<br /><br /><br />POST:<br />" . json_encode($_POST, JSON_PRETTY_PRINT);
 			}
+			/*
 			if (!empty($_SESSION)) {
 				$log[':trace'] .= "<br /><br /><br />SESSION:<br />" . json_encode($_SESSION, JSON_PRETTY_PRINT);
 			}
+			*/
 			if (!empty($_SERVER)) {
 				$log[':trace'] .= "<br /><br /><br />SERVER:<br />" . json_encode($_SERVER, JSON_PRETTY_PRINT);
 			}
