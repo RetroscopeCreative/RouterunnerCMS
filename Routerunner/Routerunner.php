@@ -448,10 +448,10 @@ class Routerunner
 			} else {
 				echo '<!--Routerunner::Route(' . $router->rid . ')//-->' . PHP_EOL . $router->runner->html;
 			}
-		} elseif (!$echo) {
+		} elseif (!$echo && isset($router->runner->html)) {
 			return $router->runner->html;
 		} else {
-            if (\runner::config('silent')) {
+            if (\runner::config('silent') && isset($router->runner->html)) {
                 return $router->runner->html;
             } else {
                 return '<!--Routerunner::Route(' . $router->rid . ')//-->' . PHP_EOL;
