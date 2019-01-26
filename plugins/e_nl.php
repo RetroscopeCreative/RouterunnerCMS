@@ -99,14 +99,28 @@ if ($e) {
 					@imagedestroy($im);
 				} catch (Exception $e) {}
 			} elseif ($method == "click") {
-				$url = stripslashes($click_url);
+				$url = urldecode(str_replace('-percent-', '%', $click_url));
+				if (preg_match('/^(http(s)?:\/)[\w]+/', $url, $matches)) {
+					$url = str_replace($matches[1], $matches[1] . '/', $url);
+				}
+				unset($_GET['p']);
+				if (!empty($_GET)) {
+					$url .= '?' . http_build_query($_GET);
+				}
 				if (!preg_match('~^http(s)?:\/\/~', $url)) {
 					$url = \runner::config("BASE") . $url;
 				}
 				header("Location: " . $url);
 			}
 		} elseif ($click_url) {
-			$url = stripslashes($click_url);
+			$url = urldecode(str_replace('-percent-', '%', $click_url));
+			if (preg_match('/^(http(s)?:\/)[\w]+/', $url, $matches)) {
+				$url = str_replace($matches[1], $matches[1] . '/', $url);
+			}
+			unset($_GET['p']);
+			if (!empty($_GET)) {
+				$url .= '?' . http_build_query($_GET);
+			}
 			if (!preg_match('~^http(s)?:\/\/~', $url)) {
 				$url = \runner::config("BASE") . $url;
 			}

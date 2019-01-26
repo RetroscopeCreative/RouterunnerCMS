@@ -37,7 +37,12 @@ class User
 			$flash_var = ((\runner::config('User.UserFlashVar'))
 				? \runner::config('User.UserFlashVar') : 'UserFlashVar');
 			$fn = "flash";
-			if (\runner::now($flash_var)) {
+
+			$flash = false;
+			if (isset($_SESSION['routerunner-logout-' . $flash_var])
+				&& $_SESSION['routerunner-logout-' . $flash_var] === true) {
+				self::set();
+			} elseif (\runner::now($flash_var)) {
 				$flash = \runner::now($flash_var);
 				$fn = "now";
 			} elseif (\runner::stack($flash_var)) {
@@ -61,7 +66,10 @@ class User
 					$cookie_expire = ((\runner::config('User.TokenCookieExpire'))
 						? \runner::config('User.TokenCookieExpire') : 30 * 24 * 60 * 60);
 					$expire = time() + $cookie_expire;
-					\Routerunner\Routerunner::$slim->setCookie($cookie, self::$tmp_token, $expire);
+					$domain = \runner::config('User.TokenCookieDomain');
+
+					setcookie($cookie, self::$tmp_token, $expire, '/', $domain);
+					//\Routerunner\Routerunner::$slim->setCookie($cookie, self::$tmp_token, $expire, '/', $domain);
 				}
 			}
 		}
@@ -146,7 +154,9 @@ class User
 				&& $_SESSION['routerunner-logout-' . $flash_var] === true) {
 				$cookie = ((\runner::config('User.TokenCookie'))
 					? \runner::config('User.TokenCookie') : 'TokenCookie');
-				\Routerunner\Routerunner::$slim->setCookie($cookie, null, -1, '/');
+				$domain = \runner::config('User.TokenCookieDomain');
+				//\Routerunner\Routerunner::$slim->setCookie($cookie, null, -1, '/', $domain);
+				setcookie($cookie, null, -1, '/', $domain);
 
 				$flash_var = ((\runner::config('User.UserFlashVar'))
 					? \runner::config('User.UserFlashVar') : 'UserFlashVar');
@@ -159,6 +169,21 @@ class User
 				unset($_SESSION['routerunner-logout-' . $flash_var]);
 			} elseif ($logout) {
 				$_SESSION['routerunner-logout-' . $flash_var] = true;
+
+				$cookie = ((\runner::config('User.TokenCookie'))
+					? \runner::config('User.TokenCookie') : 'TokenCookie');
+				$domain = \runner::config('User.TokenCookieDomain');
+				//\Routerunner\Routerunner::$slim->setCookie($cookie, null, -1, '/', $domain);
+				setcookie($cookie, null, -1, '/', $domain);
+
+				$flash_var = ((\runner::config('User.UserFlashVar'))
+					? \runner::config('User.UserFlashVar') : 'UserFlashVar');
+				\runner::now($flash_var, false);
+				\runner::stack($flash_var, false, true);
+				\runner::flash($flash_var, false);
+				unset($_SESSION['slim.flash'][$flash_var]);
+				setcookie($cookie, null, -1, '/');
+				unset($_COOKIE[$cookie]);
 			}
 		} elseif (isset($user) && !is_null($user) && is_array($user)) {
 			self::set(); // clear user if exists
@@ -292,7 +317,7 @@ SQL;
 		if (self::$me && self::$token && $token === self::$token && self::$expire - time() < ($expire_add / 2)) {
 			$SQL = 'UPDATE {PREFIX}token SET expire = :expire ';
 			if ($open) {
-				$SQL .= ', open = :open';
+				$SQL .= ', open = :open ';
 			}
 			$SQL .= 'WHERE token = :token AND user = :me';
 
@@ -343,6 +368,7 @@ SQL;
 	}
 
 	private static function create_token($uid=false, $open=false, $user=false) {
+		$token = false;
 		if (self::$me || $user) {
 			$uid = (($uid !== false) ? $uid : str_replace('.', '-', uniqid('', true)));
 			$open = (($open !== false) ? $open : $_SERVER['REQUEST_TIME']);
@@ -387,9 +413,12 @@ SQL;
 
 	private static function get_cookie_token()
 	{
+		$token = false;
 		$cookie = ((\runner::config('User.TokenCookie'))
 			? \runner::config('User.TokenCookie') : 'TokenCookie');
-		$tmp_token = \Routerunner\Routerunner::$slim->getCookie($cookie);
+
+		$tmp_token = (isset($_COOKIE[$cookie]) ? $_COOKIE[$cookie] : '');
+		//$tmp_token = \Routerunner\Routerunner::$slim->getCookie($cookie);
 
 		$tmp = explode('-', $tmp_token);
 		if (is_array($tmp) && count($tmp) === 4) {
@@ -417,12 +446,14 @@ SQL;
 				if ($return = self::get_user()) {
 					self::$token_id = dechex($result[0]['token_id']);
 					self::$token = $token;
-					self::$expire = $result[0]['expire'];
+					//self::$expire = $result[0]['expire'];
+					self::$expire = time() - 1;
 
 					self::set_session_token();
 				}
 			}
 		}
+		return $token;
 	}
 
 	private static function get_session_token()

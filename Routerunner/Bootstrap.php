@@ -247,6 +247,15 @@ class Bootstrap
 
 	public static function getTree($reference, $need_siblings=false)
 	{
+	    if (empty($reference)) {
+	        return array(
+                'parents' => array(),
+                'children' => array(),
+                'siblings' => array(),
+                'current' => null,
+                'language' => null,
+            );
+        }
 		$current_index = $reference;
 		$lang = self::lang($reference);
 		$tree = array(

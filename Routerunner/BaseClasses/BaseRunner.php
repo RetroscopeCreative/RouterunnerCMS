@@ -189,8 +189,9 @@ class BaseRunner
 					if (isset($this->model) && $this->model === false) {
 						// todo: check view permission
 						$this->render();
-					} elseif (isset($this->model) && count($this->model) == 1 && ($this->section[0] != 'list'
-							|| (isset($this->model_context['force_view'])
+					} elseif (isset($this->model) &&
+                        ((is_array($this->model) && count($this->model) == 1) || !is_array($this->model)) &&
+                        ($this->section[0] != 'list' || (isset($this->model_context['force_view'])
 								&& $this->model_context['force_view'] === true))) {
 						if (is_array($this->model)) {
 							$this->model = array_shift($this->model);

@@ -165,7 +165,22 @@ class Helper
 		$model_root = $router->scaffold_root . DIRECTORY_SEPARATOR . "model" . DIRECTORY_SEPARATOR .
 			$model_class . DIRECTORY_SEPARATOR;
 
-		if (file_exists($path.$versionroute.$file)) {
+		if (($model_params = \model::property('params')) &&
+			((!is_array($model_params) && ($json_params = json_decode($model_params, true))) || (is_array($model_params) && $json_params = $model_params)) &&
+			!empty($json_params['view']) && file_exists($path.$versionroute.$model_class.'.'.$json_params['view'].substr($file, strlen($model_class)))) {
+			if ($scaffolded) {
+				return str_replace($router->scaffold_root, '', $path) . $versionroute . $model_class . '.' . $json_params['view'] . substr($file, strlen($model_class));
+			} else {
+				return $path . $versionroute . $model_class . '.' . $json_params['view'] . substr($file, strlen($model_class));
+			}
+		} elseif (!empty($router->runner->context['view']) && ($view_ext = $router->runner->context['view']) &&
+			file_exists($path.$versionroute.$model_class.'.'.$view_ext.substr($file, strlen($model_class)))) {
+			if ($scaffolded) {
+				return str_replace($router->scaffold_root, '', $path).$versionroute.$model_class.'.'.$view_ext.substr($file, strlen($model_class));
+			} else {
+				return $path.$versionroute.$model_class.'.'.$view_ext.substr($file, strlen($model_class));
+			}
+		} elseif (file_exists($path.$versionroute.$file)) {
 			if ($scaffolded) {
 				return str_replace($router->scaffold_root, '', $path) . $versionroute . $file;
 			} else {
@@ -415,7 +430,7 @@ class Helper
 	public static function loadParser($pattern, \Routerunner\BaseRunner $runner=null, & $pattern_value=false)
 	{
 		if (strpos($pattern, ':view|list:') !== false) {
-			$pattern_value = (!isset($runner->model) || (count($runner->model) <= 1)) ? 'view' : 'list';
+			$pattern_value = (isset($runner->model) && is_array($runner->model) && count($runner->model) > 1) ? 'list' : 'view';
 			if (isset($runner->model_context['force_list']) && $runner->model_context['force_list'] === true) {
 				$pattern_value = 'list';
 			} elseif (isset($runner->model_context['force_view']) && $runner->model_context['force_view'] === true) {

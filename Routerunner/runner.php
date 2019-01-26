@@ -78,9 +78,11 @@ class runner
 	public static function return_route($route=null, $context=array(), & $router=null, & $model=null, $root=null)
 	{
 		$html = \Routerunner\Routerunner::route($route, $router, $context, $model, $root, false);
-		$model = $router->runner->model;
-		if ($model && is_array($model) && count($model) == 1) {
-			$model = array_shift($model);
+		if (!empty($router->runner->model)) {
+			$model = $router->runner->model;
+			if ($model && is_array($model) && count($model) == 1) {
+				$model = array_shift($model);
+			}
 		}
 		return $html;
 	}

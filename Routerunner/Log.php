@@ -32,19 +32,21 @@ class Log
 	const INFO      = 7;
 	const DEBUG     = 8;
 
-	protected $levels = array(
-		self::EMERGENCY => 'EMERGENCY',
-		self::ALERT     => 'ALERT',
-		self::CRITICAL  => 'CRITICAL',
-		self::ERROR     => 'ERROR',
-		self::WARN      => 'WARNING',
-		self::NOTICE    => 'NOTICE',
-		self::INFO      => 'INFO',
-		self::DEBUG     => 'DEBUG'
-	);
+	public static $levels = array();
 
 	public function __construct()
 	{
+	    self::$levels = array(
+            self::EMERGENCY => 'EMERGENCY',
+            self::ALERT     => 'ALERT',
+            self::CRITICAL  => 'CRITICAL',
+            self::ERROR     => 'ERROR',
+            self::WARN      => 'WARNING',
+            self::NOTICE    => 'NOTICE',
+            self::INFO      => 'INFO',
+            self::DEBUG     => 'DEBUG'
+        );
+
 	}
 
 	public function write($message, $level = null)
@@ -73,72 +75,80 @@ class Log
 			':line' => '',
 			':trace' => array(),
 		);
-		$log[':exception'] = $this->levels[$level];
+		$log[':exception'] = self::$levels[$level];
 
 		if (is_array($backtrace) && ($skip_shift || count($backtrace) > 2)) {
-			if (!$skip_shift) {
-				array_shift($backtrace);
-				array_shift($backtrace);
-				$current = array_shift($backtrace);
-				$log[':file'] = $current['file'];
-				$log[':line'] = $current['line'];
-			} elseif (($in_pos = strrpos($message, ' in ')) !== false) {
-				$log[':file']  = substr($message, $in_pos+4, strpos($message, ':', $in_pos+4)-($in_pos+4));
-				$log[':line'] = substr($message, strpos($message, ':', $in_pos+4)+1);
-			}
-			/*
-			if (isset($current['function'])) {
-				$log['exception'] = strtoupper($current['function']);
-			}
-			*/
-			if (!is_null($level)) {
-				$log[':exception'] .= ' (level=' . $level . ')';
-			}
-			if ($backtrace) {
-				foreach ($backtrace as $item) {
-					if (isset($item['object'])) {
-						$item['object'] = get_class($item['object']);
-					}
-					$log[':trace'][] = $item;
-				}
-				$log[':trace'] = json_encode($log[':trace'], JSON_PRETTY_PRINT);
-			}
-			if (empty($log[':trace'])) {
-				$log[':trace'] = '';
-			}
-			if ($uid = \Routerunner\User::me()) {
-				$log[':trace'] .= "<br /><br /><br />USER: {$uid}<br /><br />";
-			}
-			if (!empty($_GET)) {
-				$log[':trace'] .= "<br /><br /><br />GET:<br />" . json_encode($_GET, JSON_PRETTY_PRINT);
-			}
-			if (!empty($_POST)) {
-				$log[':trace'] .= "<br /><br /><br />POST:<br />" . json_encode($_POST, JSON_PRETTY_PRINT);
-			}
-			/*
-			if (!empty($_SESSION)) {
-				$log[':trace'] .= "<br /><br /><br />SESSION:<br />" . json_encode($_SESSION, JSON_PRETTY_PRINT);
-			}
-			*/
-			if (!empty($_SERVER)) {
-				$log[':trace'] .= "<br /><br /><br />SERVER:<br />" . json_encode($_SERVER, JSON_PRETTY_PRINT);
-			}
+            if (!$skip_shift) {
+                array_shift($backtrace);
+                array_shift($backtrace);
+                $current = array_shift($backtrace);
+                $log[':file'] = $current['file'];
+                $log[':line'] = $current['line'];
+            } elseif (($in_pos = strrpos($message, ' in ')) !== false) {
+                $log[':file'] = substr($message, $in_pos + 4, strpos($message, ':', $in_pos + 4) - ($in_pos + 4));
+                $log[':line'] = substr($message, strpos($message, ':', $in_pos + 4) + 1);
+            }
+        }
+        /*
+        if (isset($current['function'])) {
+            $log['exception'] = strtoupper($current['function']);
+        }
+        */
+        if (!is_null($level)) {
+            $log[':exception'] .= ' (level=' . $level . ')';
+        }
+        if ($backtrace) {
+            foreach ($backtrace as $item) {
+                if (isset($item['object'])) {
+                    $item['object'] = get_class($item['object']);
+                }
+                $log[':trace'][] = $item;
+            }
+            $log[':trace'] = json_encode($log[':trace'], JSON_PRETTY_PRINT);
+        }
+        if (empty($log[':trace'])) {
+            $log[':trace'] = '';
+        }
+        if ($uid = \Routerunner\User::me()) {
+            $log[':trace'] .= "<br /><br /><br />USER: {$uid}<br /><br />";
+        }
+        if (!empty($_GET)) {
+            $log[':trace'] .= "<br /><br /><br />GET:<br />" . json_encode($_GET, JSON_PRETTY_PRINT);
+        }
+        if (!empty($_POST)) {
+            $log[':trace'] .= "<br /><br /><br />POST:<br />" . json_encode($_POST, JSON_PRETTY_PRINT);
+        }
+        /*
+        if (!empty($_SESSION)) {
+            $log[':trace'] .= "<br /><br /><br />SESSION:<br />" . json_encode($_SESSION, JSON_PRETTY_PRINT);
+        }
+        */
+        if (!empty($_SERVER)) {
+            $log[':trace'] .= "<br /><br /><br />SERVER:<br />" . json_encode($_SERVER, JSON_PRETTY_PRINT);
+        }
 
-			$SQL = <<<SQL
+        $SQL = <<<SQL
 INSERT INTO `{PREFIX}log` (`date`, `exception`, `message`, `file`, `line`, `trace`, `solved`)
 VALUES (:date, :exception, :message, :file, :line, :trace, 0)
 
 SQL;
-			\db::insert($SQL, $log);
+        if (empty($log[':line']) || !is_numeric($log[':line'])) {
+            $log[':line'] = 0;
+        }
+        $mail = $log;
+        if (strlen($log[':message']) > 255) {
+            $log[':message'] = substr($log[':message'], 0, 252) . '...';
+        }
+        \db::insert($SQL, $log);
 
-			if (\runner::config('log.email')) {
-				\mail::mailer('/mail/error', $log);
-			}
+        if (\runner::config('log.email')) {
+            \mail::mailer('/mail/error', $mail);
+        }
 
-			if (\runner::config('log.enabled') && $level < 5) {
-				$traced = json_encode($backtrace, JSON_PRETTY_PRINT);
+        if (\runner::config('log.enabled') && $level < 5) {
+            $traced = json_encode($backtrace, JSON_PRETTY_PRINT);
 
-				echo <<<HTML
+            echo <<<HTML
 <h1>{$log[':exception']} raised!</h1>
 <h3>Message: {$message}</h3>
 <h5>File: {$log[':file']}:{$log[':line']}</h5>
@@ -146,8 +156,7 @@ SQL;
 {$traced}
 
 HTML;
-				die();
-			}
-		}
+            die();
+        }
 	}
 }

@@ -101,7 +101,7 @@ class minifier {
             )
         ) {
             file_put_contents($cacheFile, $source);
-            touch($cacheFile, $mtime);
+            //touch($cacheFile, $mtime);
         }
 
         // OUTPUT SOURCE CODE

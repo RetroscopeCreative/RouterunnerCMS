@@ -709,7 +709,10 @@ class SMTP
             $this->edebug('SERVER -> CLIENT: ' . $reply);
         }
 
-        if (!in_array($code, (array)$expect)) {
+        $_expect = (array)$expect;
+        //$_expect[] = 250;
+
+        if (!in_array($code, $_expect)) {
             $this->last_reply = null;
             $this->error = array(
                 "error" => "$command command failed",

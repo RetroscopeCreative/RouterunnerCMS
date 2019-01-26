@@ -106,7 +106,7 @@ SQL;
 						$test_addresses[] = $cron["test_address"];
 					}
 					foreach ($test_addresses as $index => $test_address) {
-						$addresses[] = array(
+						$addresses[$test_address] = array(
 							"label" => "test " . $index,
 							"name" => "test " . $index,
 							"email" => $test_address,
@@ -114,6 +114,21 @@ SQL;
 							"category" => "test " . $index,
 							"subscribe_date" => strftime("%Y-%m-%d %H:%M:%S", time()),
 						);
+					}
+					$test_emails = "'" . implode("','", array_keys($addresses)) . "'";
+					$SQL_test_addresses = <<<SQL
+SELECT s.id, s.label, s.label AS name, s.email, s.link, s.category, FROM_UNIXTIME(s.date) AS subscribe_date
+FROM e_subscriber AS s WHERE
+s.email IN ({$test_emails})
+ORDER BY s.date
+
+SQL;
+					if ($result_test_addresses = \db::query($SQL_test_addresses)) {
+						foreach ($result_test_addresses as $result_test_address) {
+							if (isset($addresses[$result_test_address['email']])) {
+								$addresses[$test_address] = $result_test_address;
+							}
+						}
 					}
 					$close_cron = true;
 				} elseif (!is_null($cron["category"]) && $cron["category"]) {
@@ -173,9 +188,9 @@ SQL;
 					$nodes = pq("a");
 					foreach ($nodes as $node) {
 						if (substr(pq($node)->attr("href"), 0, 1) != "#" &&
-							substr(pq($node)->attr("href"), 0, 5) != "https" &&
+							//substr(pq($node)->attr("href"), 0, 5) != "https" &&
 							!pq($node)->hasClass("unsubscribe")) {
-							pq($node)->attr("href", "[click]" . str_replace("/", "\/", addslashes(pq($node)->attr("href"))));
+							pq($node)->attr("href", "[click]" . str_replace('%', '-percent-', urlencode(pq($node)->attr("href"))));
 						}
 					}
 					if (count(pq("body")->elements)) {
