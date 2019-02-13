@@ -107,6 +107,7 @@ if ($e) {
 				if (!empty($_GET)) {
 					$url .= '?' . http_build_query($_GET);
 				}
+                $url = ltrim($url, '/');
 				if (!preg_match('~^http(s)?:\/\/~', $url)) {
 					$url = \runner::config("BASE") . $url;
 				}
@@ -121,6 +122,7 @@ if ($e) {
 			if (!empty($_GET)) {
 				$url .= '?' . http_build_query($_GET);
 			}
+            $url = ltrim($url, '/');
 			if (!preg_match('~^http(s)?:\/\/~', $url)) {
 				$url = \runner::config("BASE") . $url;
 			}

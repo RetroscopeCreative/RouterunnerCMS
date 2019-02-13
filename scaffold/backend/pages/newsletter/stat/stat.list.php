@@ -22,7 +22,7 @@ switch (\model::property("activity")) {
 
 <div class="row client-row <?php echo $bg; ?>">
 	<div class="col-md-2"><?php echo strftime("%Y-%m-%d %H:%M:%S", \model::property("activity_date")); ?><br><strong><?php echo \model::property("activity"); ?></strong></div>
-	<div class="col-md-2"><?php echo stripslashes(\model::property("clicked")); ?></div>
+	<div class="col-md-2"><?php echo stripslashes(urldecode(str_replace('-percent-', '%', \model::property("clicked")))); ?></div>
 	<div class="col-md-2"><?php echo \model::property("name"); ?><br><strong><?php echo \model::property("email"); ?></strong></div>
 	<div class="col-md-2"><?php echo \model::property("category"); ?></div>
 	<div class="col-md-2"><?php echo strftime("%Y-%m-%d %H:%M:%S", \model::property("send_date")); ?><br><strong><?php echo (\model::property("unsubscribe_date") ? strftime("%Y-%m-%d %H:%M:%S", \model::property("unsubscribe_date")) : ""); ?></strong></div>
