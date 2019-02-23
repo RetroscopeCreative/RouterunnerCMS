@@ -474,71 +474,89 @@ SQL;
 	}
 
 	public static function load($context, $model, & $pager=array()) {
-		$from = ((isset($context["from"])) ? $context["from"] : $model->class);
-		$select = array();
-		$predefined = array('route', 'class', 'reference', 'table_from', 'table_id', 'permission', 'permissions',
-			'rewrite', 'url', 'override', 'states', 'owner', 'group', 'other', 'parent', 'prev', 'routerunner_model');
+	    if (!empty($context['routerunner_SQL'])) {
+	        $routerunner_SQL = $context['routerunner_SQL'];
+	        if (!empty($context['routerunner_where'])) {
+	            if (is_array($context['routerunner_where'])) {
+                    $routerunner_SQL .= "(" . implode(" AND ", $context['routerunner_where']) . ")";
+                } elseif (is_string($context['routerunner_where'])) {
+	                $routerunner_SQL .= $context['routerunner_where'];
+                }
+            }
+	        $routerunner_params = array();
+            if (!empty($context['routerunner_params'])) {
+                $routerunner_params = $context['routerunner_params'];
+            }
+            $load  = \Routerunner\Db::query($routerunner_SQL, $routerunner_params);
+        }
 
-		foreach (array_keys(get_object_vars($model)) as $var) {
-			if (!in_array($var, $predefined)) {
-				$select[$var] = '`' . $var . '`';
-			}
-		}
-		if (isset($context["select"]) && is_array($context["select"])) {
-			foreach ($context["select"] as $var => $field) {
-				if (isset($select[$var]))
-					$select[$var] = $field;
-			}
-		}
-		$leftJoin = ((isset($context["leftJoin"])) ? $context["leftJoin"] : false);
-		$where = ((isset($context["where"])) ? $context["where"] : false);
-		$session = false;
-		$change_id = false;
-		if (isset($where["session"])) {
-			$session = $where["session"];
-			unset($where["session"]);
-		}
-		if (isset($where["change_id"])) {
-			$change_id = $where["change_id"];
-			unset($where["change_id"]);
-		}
-		if (isset($where["silent"])) {
-			unset($where["silent"]);
-		}
-		$orderBy = ((isset($context["orderBy"])) ? $context["orderBy"] : current($select));
-		$groupBy = (isset($context["groupBy"])) ? $context["groupBy"] : false;
-		$limit = ((isset($context["limit"])) ? $context["limit"] : false);
-		$offset = ((isset($context["offset"])) ? $context["offset"] : false);
-		$random = ((isset($context["random"])) ? $context["random"] : false);
-		$pk = ((isset($context["primary_key"])) ? $context["primary_key"] : false);
-		$allow_blank = ((isset($context["allow_blank"])) ? $context["allow_blank"] : false);
+        if (empty($load)) {
+            $from = ((isset($context["from"])) ? $context["from"] : $model->class);
+            $select = array();
+            $predefined = array('route', 'class', 'reference', 'table_from', 'table_id', 'permission', 'permissions',
+                'rewrite', 'url', 'override', 'states', 'owner', 'group', 'other', 'parent', 'prev', 'routerunner_model');
 
-		$params = array();
+            foreach (array_keys(get_object_vars($model)) as $var) {
+                if (!in_array($var, $predefined)) {
+                    $select[$var] = '`' . $var . '`';
+                }
+            }
+            if (isset($context["select"]) && is_array($context["select"])) {
+                foreach ($context["select"] as $var => $field) {
+                    if (isset($select[$var]))
+                        $select[$var] = $field;
+                }
+            }
+            $leftJoin = ((isset($context["leftJoin"])) ? $context["leftJoin"] : false);
+            $where = ((isset($context["where"])) ? $context["where"] : false);
+            $session = false;
+            $change_id = false;
+            if (isset($where["session"])) {
+                $session = $where["session"];
+                unset($where["session"]);
+            }
+            if (isset($where["change_id"])) {
+                $change_id = $where["change_id"];
+                unset($where["change_id"]);
+            }
+            if (isset($where["silent"])) {
+                unset($where["silent"]);
+            }
+            $orderBy = ((isset($context["orderBy"])) ? $context["orderBy"] : current($select));
+            $groupBy = (isset($context["groupBy"])) ? $context["groupBy"] : false;
+            $limit = ((isset($context["limit"])) ? $context["limit"] : false);
+            $offset = ((isset($context["offset"])) ? $context["offset"] : false);
+            $random = ((isset($context["random"])) ? $context["random"] : false);
+            $pk = ((isset($context["primary_key"])) ? $context["primary_key"] : false);
+            $allow_blank = ((isset($context["allow_blank"])) ? $context["allow_blank"] : false);
 
-		if (\runner::stack("model_create") && isset($model->route, \runner::stack("model_create")["route"])
-			&& $model->route == \runner::stack("model_create")["route"]) {
-			$load = array();
-		} else {
-			if (isset($where['sections'])) {
-				unset($where['sections']);
-			}
+            $params = array();
 
-			if (isset($context["SQL"], $context["SQLhash"])
-				&& \Routerunner\Crypt::checker($context["SQL"], $context["SQLhash"], "SQLchecked")
-			) {
-				$SQL = $context["SQL"];
-				$params = $where;
-			} else {
-				$SQL = self::SQL_creator($select, $from, $pk, $leftJoin,
-					$where, $params, $orderBy, $groupBy, $limit, $offset, $allow_blank);
-			}
+            if (\runner::stack("model_create") && isset($model->route, \runner::stack("model_create")["route"])
+                && $model->route == \runner::stack("model_create")["route"]) {
+                $load = array();
+            } else {
+                if (isset($where['sections'])) {
+                    unset($where['sections']);
+                }
 
-			if (\runner::now("debug::model->load") === true) {
-				\runner::now("debug::model->load", false);
-				echo "debug::model->load" . PHP_EOL . $SQL . PHP_EOL . print_r($params, true);
-			}
-			$load = \Routerunner\Db::query($SQL, $params);
-		}
+                if (isset($context["SQL"], $context["SQLhash"])
+                    && \Routerunner\Crypt::checker($context["SQL"], $context["SQLhash"], "SQLchecked")
+                ) {
+                    $SQL = $context["SQL"];
+                    $params = $where;
+                } else {
+                    $SQL = self::SQL_creator($select, $from, $pk, $leftJoin,
+                        $where, $params, $orderBy, $groupBy, $limit, $offset, $allow_blank);
+                }
+
+                if (\runner::now("debug::model->load") === true) {
+                    \runner::now("debug::model->load", false);
+                    echo "debug::model->load" . PHP_EOL . $SQL . PHP_EOL . print_r($params, true);
+                }
+                $load = \Routerunner\Db::query($SQL, $params);
+            }
+        }
 
 		if ((!is_array($load) || !count($load)) && (isset($context['blank']) && $context['blank'] === true)) {
 			foreach ($select as $field => & $value) {
