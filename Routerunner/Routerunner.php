@@ -63,6 +63,16 @@ class Routerunner
 	 */
 	public function __construct($arguments=null, $function=null)
 	{
+        if (!empty($_SESSION['routerunner-profiler'])) {
+            $routerunner_microtime = microtime(true);
+            file_put_contents($_SESSION['routerunner-profiler'], $routerunner_microtime - $_SESSION['routerunner-profiler-time'] . PHP_EOL . print_r(array(
+                    'begin' => $routerunner_microtime,
+                    'arguments' => $arguments,
+                    'function' => $function,
+                ), true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+            $_SESSION['routerunner-profiler-time'] = $routerunner_microtime;
+        }
+
 		if (ini_get('xdebug.max_nesting_level')) {
 			ini_set('xdebug.max_nesting_level', 200);
 		}
@@ -164,7 +174,17 @@ class Routerunner
 			exit();
 		}
 
-		if (isset($arguments) && isset($function) && !is_string($function) && is_callable($function)
+        if (!empty($_SESSION['routerunner-profiler'])) {
+            $routerunner_microtime = microtime(true);
+            file_put_contents($_SESSION['routerunner-profiler'], $routerunner_microtime - $_SESSION['routerunner-profiler-time'] . PHP_EOL . print_r(array(
+                    'before run' => $routerunner_microtime,
+                    'arguments' => $arguments,
+                    'function' => $function,
+                ), true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+            $_SESSION['routerunner-profiler-time'] = $routerunner_microtime;
+        }
+
+        if (isset($arguments) && isset($function) && !is_string($function) && is_callable($function)
 			&& \Routerunner\Routerunner::$slim->now('redirect_url')) {
 			$arguments["skip_redirect"] = true;
 			$arguments["skip_route"] = true;
@@ -236,6 +256,16 @@ class Routerunner
 				$this->middleware($routerunner_object, $arguments);
 			});
 		}
+
+        if (!empty($_SESSION['routerunner-profiler'])) {
+            $routerunner_microtime = microtime(true);
+            file_put_contents($_SESSION['routerunner-profiler'], $routerunner_microtime - $_SESSION['routerunner-profiler-time'] . PHP_EOL . print_r(array(
+                    'end' => $routerunner_microtime,
+                    'arguments' => $arguments,
+                    'function' => $function,
+                ), true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+            $_SESSION['routerunner-profiler-time'] = $routerunner_microtime;
+        }
 	}
 
 	public function middleware($routerunner_object, $arguments=array()) {

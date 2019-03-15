@@ -23,7 +23,17 @@ class Router
 
     public function __construct($route=null, $context=array(), $override=null, $root=false)
     {
-		$route = str_replace('/', DIRECTORY_SEPARATOR, $route);
+        if (!empty($_SESSION['routerunner-profiler'])) {
+            $routerunner_microtime = microtime(true);
+            file_put_contents($_SESSION['routerunner-profiler'], $routerunner_microtime - $_SESSION['routerunner-profiler-time'] . PHP_EOL . print_r(array(
+                'begin' => $routerunner_microtime,
+                'route' => $route,
+                'context' => $context,
+            ), true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+            $_SESSION['routerunner-profiler-time'] = $routerunner_microtime;
+        }
+
+        $route = str_replace('/', DIRECTORY_SEPARATOR, $route);
 		$this->rid = uniqid('', true);
 
 		if (substr($route, 0, 1) == '~' || substr($route, 0, 2) == '/~') {
@@ -103,6 +113,15 @@ class Router
 		} else {
 			// exception: route not found
 		}
+        if (!empty($_SESSION['routerunner-profiler'])) {
+            $routerunner_microtime = microtime(true);
+            file_put_contents($_SESSION['routerunner-profiler'], $routerunner_microtime - $_SESSION['routerunner-profiler-time'] . PHP_EOL . print_r(array(
+                    'end' => $routerunner_microtime,
+                    'route' => $route,
+                    'context' => $context,
+                ), true) . PHP_EOL . PHP_EOL, FILE_APPEND);
+            $_SESSION['routerunner-profiler-time'] = $routerunner_microtime;
+        }
     }
 
 	public function get_route()

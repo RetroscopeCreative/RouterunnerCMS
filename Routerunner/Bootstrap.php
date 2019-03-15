@@ -51,6 +51,9 @@ class Bootstrap
 		'siblings' => array(),
 	);
 
+	static $_tree = array();
+	static $_pointers = array();
+
 	static $history = array();
 
 	static $resourceDelimiter = '/';
@@ -311,8 +314,51 @@ class Bootstrap
 		}
 		return array();
 	}
+	private static function search_tree(& $tree=array(), $prev=0, $ind=0) {
+        foreach ($tree as $index => $item) {
+            if ($item['prev_ref'] == $prev) {
+                $found = array(
+                    'tree_id' => $item['tree_id'],
+                    'reference' => $item['reference'],
+                    'ind' => $ind,
+                    'model_class' => $item['model_class'],
+                    'table_id' => $item['table_id'],
+                );
+                unset($tree[$index]);
+                return $found;
+            }
+        }
+        return false;
+    }
+	private static function get_tree($reference) {
+        $current_tree = array();
+	    if ($result = \db::query('SELECT model_trees.model_tree_id AS tree_id, models.reference, 
+                          models.model_class, models.table_id, model_trees.prev_ref, model_trees.lang 
+                        FROM `{PREFIX}model_trees` AS model_trees
+                          LEFT JOIN `{PREFIX}models` AS models ON models.reference = model_trees.reference
+                          WHERE model_trees.parent_ref = :reference', array(':reference' => $reference))) {
+	        if ($current_item = self::search_tree($result, 0, 0)) {
+	            $current_tree[] = $current_item;
+	            while ($_item = self::search_tree($result, $current_item['reference'], count($current_tree))) {
+                    $current_item = $_item;
+                    $current_tree[] = $_item;
+                }
+            }
+        }
+        return $current_tree;
+    }
 	public static function children($reference, $lang=false)
 	{
+        if (empty(self::$_pointers[$reference])) {
+            $tree = self::get_tree($reference);
+            self::$_pointers[$reference] = $tree;
+        }
+        if (!empty(self::$_pointers[$reference])) {
+            return self::$_pointers[$reference];
+        } else {
+            return array();
+        }
+        /*
 		$SQL = 'CALL `{PREFIX}tree_children`(:reference, :lang, NULL, NULL, :session)';
 		$session_id = \runner::stack('session_id');
 		if (empty($session_id)) {
@@ -333,9 +379,23 @@ class Bootstrap
 			return $children;
 		}
 		return array();
+        */
 	}
 	public static function siblings($reference, $lang=false, & $find=null)
 	{
+        foreach (self::$_pointers as $parent => $pointer) {
+            foreach ($pointer as $item) {
+                if ($item['reference'] == $reference) {
+                    return $pointer;
+                }
+            }
+        }
+        if ($result = \db::query('SELECT parent_ref FROM `{PREFIX}model_trees` AS model_trees 
+                                        WHERE reference = :reference', array(':reference' => $reference))) {
+            return self::children($result[0]['parent_ref']);
+        }
+        return array();
+        /*
 		$SQL = 'CALL `{PREFIX}tree_siblings`(:reference, :lang, NULL, NULL, :session)';
 		$session_id = \runner::stack('session_id');
 		if (empty($session_id)) {
@@ -361,6 +421,7 @@ class Bootstrap
 			return $siblings;
 		}
 		return array();
+        */
 	}
 	public static function current($reference)
 	{
