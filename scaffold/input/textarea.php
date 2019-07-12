@@ -18,9 +18,13 @@ $help = '';
 if (isset($field_data["help"]["panel"])) {
 	$help = '<span class="help-block">' . $field_data["help"]["panel"] . '</span>';
 }
+$row = ' rows="4"';
+if (isset($field_data["row"]) && is_numeric($field_data["row"])) {
+    $row = ' rows="' . $field_data["row"] . '"';
+}
 ?>
 <div class="form-group form-md-line-input">
 	<label for="property-<?=$field_name?>"><?=$field_name?></label>
-	<textarea name="<?=$field_name?>" id="property-<?=$field_name?>" class="input form-control"><?=$value?></textarea>
+	<textarea name="<?=$field_name?>" id="property-<?=$field_name?>" class="input form-control"<?=$row?>><?=$value?></textarea>
 	<?=$help?>
 </div>
