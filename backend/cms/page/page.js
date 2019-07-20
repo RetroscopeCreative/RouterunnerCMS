@@ -73,7 +73,6 @@ page = function(caller) {
         // load components & attach models
         var attached = {};
         var models_to_attach = routerunner.get("models_to_attach");
-        console.log('models_to_attach', models_to_attach);
         var fn = function(model) {
             routerunner.components.panel.instance("modelselector").add(model, false);
 
