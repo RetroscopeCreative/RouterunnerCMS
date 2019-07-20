@@ -195,7 +195,7 @@ routerunner.init = function() {
 
         routerunner.settings = $.extend(routerunner.settings, routerunner.content_window.settings);
 
-
+        console.log('iframe on load', $(routerunner.content_document).find('li.rr-menu').get(0));
 
         routerunner.queue(function () {
             routerunner.component("cms", "thirdparty", false, "helpers");
@@ -215,6 +215,10 @@ routerunner.init = function() {
             routerunner.component("cms", "pointers", false, "framework");
             //routerunner.component("cms", "sidebar", false, "framework");
             routerunner.component("cms", "panel", false, "framework");
+
+            var models_to_attach = routerunner.get("models_to_attach");
+            console.log('models_to_attach length', models_to_attach.length);
+
             routerunner.component("cms", "page", false, "framework");
             routerunner.component("metronic", "assets", false, "framework");
             if (routerunner.settings["LANG"] && routerunner.settings["scaffold"] && routerunner.settings["BASE"]) {
@@ -238,13 +242,23 @@ routerunner.init = function() {
             }
         }, "framework.loaded");
 
-        
+
+        routerunner.content_window = routerunner.iframe.contentWindow;
+        routerunner.content_document = routerunner.content_window.document;
+
+        routerunner.content_window.$ = $;
 
         var selectors = [];
         while (window.routerunner_models.length) {
             var current_selector, current_model = false;
             if (current_selector = window.routerunner_models.splice(0, 1)) {
-                if (current_model = $("[data-routerunner-id='" + current_selector + "']").get()) {
+                if ((current_model = $("[data-routerunner-id='" + current_selector + "']").get()) && current_model.length) {
+                    $.each(current_model, function (index, selector) {
+                        if (selector && $(selector).length) {
+                            routerunner.attach(selector);
+                        }
+                    });
+                } else if ((current_model = $(routerunner.content_document).find("[data-routerunner-id='" + current_selector + "']").get()) && current_model.length) {
                     $.each(current_model, function (index, selector) {
                         if (selector && $(selector).length) {
                             routerunner.attach(selector);
@@ -255,10 +269,6 @@ routerunner.init = function() {
         }
 
         //$(routerunner.iframe).on("load", function(evt) {
-            routerunner.content_window = routerunner.iframe.contentWindow;
-            routerunner.content_document = routerunner.content_window.document;
-
-            routerunner.content_window.$ = $;
 
             $(routerunner.content_window).on("beforeunload", function() {
                 if (routerunner.get("changes").length) {

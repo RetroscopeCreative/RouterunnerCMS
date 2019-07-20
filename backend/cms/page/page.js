@@ -73,6 +73,7 @@ page = function(caller) {
         // load components & attach models
         var attached = {};
         var models_to_attach = routerunner.get("models_to_attach");
+        console.log('models_to_attach', models_to_attach);
         var fn = function(model) {
             routerunner.components.panel.instance("modelselector").add(model, false);
 
@@ -385,15 +386,27 @@ page = function(caller) {
     this.model_attacher = function(models_to_attach, fn) {
         var self = this;
         $.each(models_to_attach, function (model_id, to_attach) {
-            if (to_attach.length) {
-                attached = self.instance(model_id, new model(self, to_attach, fn));
-                var reference = $(attached.inline_elem).data("reference");
-                if (routerunner.container.models_by_routeref[attached.route + "/" + reference]) {
-                    attached = $.extend(routerunner.container.models_by_routeref[attached.route + "/" + reference], attached);
-                } else {
-                    routerunner.container.models_by_ref[reference] = attached;
-                    routerunner.container.models_by_routeref[attached.route + "/" + reference] = attached;
-                }
+            var to_attach_array = [];
+            if (typeof to_attach == "object") {
+                to_attach_array.push(to_attach);
+            } else if (typeof to_attach == "array") {
+                to_attach_array = to_attach;
+            }
+            if (to_attach_array.length) {
+                $.each(to_attach_array, function() {
+                    to_attach = this;
+
+                    var attached = self.instance(model_id, new model(self, to_attach, fn));
+                    var reference = $(attached.inline_elem).data("reference");
+                    if (routerunner.container.models_by_routeref[attached.route + "/" + reference]) {
+                        attached = $.extend(routerunner.container.models_by_routeref[attached.route + "/" + reference], attached);
+                    } else {
+                        routerunner.container.models_by_ref[reference] = attached;
+                        routerunner.container.models_by_routeref[attached.route + "/" + reference] = attached;
+                    }
+                });
+            } else {
+                console.log('no to_attach');
             }
 
             delete models_to_attach[model_id];
