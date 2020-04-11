@@ -8,7 +8,10 @@
 
 $post = $_POST;
 $msg = "";
-if (!logincrypt($post["email"], $post["password"], $msg)) {
+if (empty($post["email"]) || empty($post["password"]) || !logincrypt($post["email"], $post["password"], $msg)) {
+    if (empty($msg)) {
+        $msg = 'Unexpected error';
+    }
 	echo '<div class="alert alert-danger">' . $msg . '</div>';
 } else {
 	echo '<div class="alert alert-success">Logged in successfully!</div>';
