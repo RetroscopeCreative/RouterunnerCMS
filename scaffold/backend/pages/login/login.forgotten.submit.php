@@ -9,7 +9,7 @@
 $post = $_POST;
 $msg = "";
 $SQL = "SELECT id, email, confirm_date, licence FROM member WHERE email = :email";
-if ($result = \Routerunner\Db::query($SQL, array(":email" => $post["email"]))) {
+if (!empty($post["email"]) && ($result = \Routerunner\Db::query($SQL, array(":email" => $post["email"])))) {
 	$user = $result[0];
 	if (is_null($user["confirm_date"])) {
 		$msg = "User has not been confirmed!";
