@@ -666,13 +666,13 @@ class Form
 						$return_params[$frm_name] = $sql_params;
 					}
 				} else {
-					\Routerunner\Db::begin_transaction();
+					// \Routerunner\Db::begin_transaction();
 					if ($method === 'post') {
 						$succeed = \Routerunner\Db::insert($sql, $sql_params);
 					} else {
 						\Routerunner\Db::query($sql, $sql_params);
 					}
-					\Routerunner\Db::commit();
+					// \Routerunner\Db::commit();
 				}
 			}
 		}
