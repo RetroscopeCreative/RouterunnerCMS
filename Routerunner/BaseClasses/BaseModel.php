@@ -241,7 +241,7 @@ SQL;
 		if ($runner->model_context
 			&& (isset($runner->model_context['statement_skip']) && $runner->model_context['statement_skip'])) {
 			$this->states["active"] = true;
-		} else {
+		} else if ($this->routerunner_model) {
 			/*
 			$SQL = 'SELECT `active`, `begin`, `end`, `params` FROM `{PREFIX}model_states` WHERE `model` = :reference';
 			if ($this->reference && ($result = \Routerunner\Db::query($SQL, array(':reference' => $this->reference)))) {
